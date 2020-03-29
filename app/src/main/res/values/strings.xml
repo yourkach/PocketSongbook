@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Pocket Songbook</string>
+    <string name="hint_search_song">Song or performer name</string>
+</resources>
