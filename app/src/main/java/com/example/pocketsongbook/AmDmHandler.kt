@@ -1,6 +1,8 @@
 package com.example.pocketsongbook
 
 import android.util.Log
+import com.example.pocketsongbook.data_classes.SongViewItem
+import com.example.pocketsongbook.interfaces.WebSiteHandler
 import java.util.regex.Pattern
 
 class AmDmHandler : WebSiteHandler {
@@ -10,7 +12,7 @@ class AmDmHandler : WebSiteHandler {
         return searchPage + text.replace(' ', '+')
     }
 
-    override fun updateSearchItemsList(pageContent: String, searchItemsList: ArrayList<ItemSong>) {
+    override fun updateSearchItemsList(pageContent: String, searchItemsList: ArrayList<SongViewItem>) {
         val patternOnePiece =
             Pattern.compile("(?s)<td class=\"artist_name\"><a href=(.*?)<div class=\"b-favorite-over\">")
         val matcherOnePiece = patternOnePiece.matcher(pageContent)
@@ -30,7 +32,11 @@ class AmDmHandler : WebSiteHandler {
                 val songLink = "https:" + matcherSongLink.group(1)
                 val artist = matcherArtist.group(1)
                 val title = matcherTitle.group(1)
-                val newSong = ItemSong(artist, title, songLink)
+                val newSong = SongViewItem(
+                    artist,
+                    title,
+                    songLink
+                )
                 searchItemsList.add(newSong)
             }
         }

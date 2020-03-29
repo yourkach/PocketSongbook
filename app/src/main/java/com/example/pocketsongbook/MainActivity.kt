@@ -1,27 +1,27 @@
 package com.example.pocketsongbook
 
-import android.os.AsyncTask
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pocketsongbook.data_classes.SongViewItem
+import com.example.pocketsongbook.interfaces.AsyncResponse
+import com.example.pocketsongbook.interfaces.SongClickResponse
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    AsyncResponse, SongClickResponse {
 
-    private lateinit var textAdapter: TextRecyclerAdapter
-    private val searchItems = ArrayList<ItemSong>()
+    private lateinit var searchItemsAdapter: SearchRecyclerAdapter
+    private val searchItems = ArrayList<SongViewItem>()
 
-    private val AmDm: AmDmHandler = AmDmHandler()
+    private val amDmHandler: AmDmHandler = AmDmHandler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,62 +40,52 @@ class MainActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            textAdapter = TextRecyclerAdapter()
-            adapter = textAdapter
+            searchItemsAdapter = SearchRecyclerAdapter(this@MainActivity)
+            adapter = searchItemsAdapter
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
-        textAdapter.submitList(searchItems)
+        searchItemsAdapter.submitList(searchItems)
     }
 
     private fun performSearch() {
         val searchRequest = search_edit_text.text.toString()
 
-        //SHIT
-        val task = DownloadTask(AmDm, textAdapter, searchItems)
-        val pageContent = task.execute(AmDm.makeSearchURL(searchRequest))
+        search_edit_text.clearFocus()
+        val inp : InputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inp.hideSoftInputFromWindow(search_edit_text.windowToken, 0)
 
-        textAdapter.notifyDataSetChanged()
-    }
-
-    //JUST TRY
-    internal class DownloadTask(
-        private val handler: WebSiteHandler,
-        private val adapter: TextRecyclerAdapter,
-        private val searchItems: ArrayList<ItemSong>
-    ) :
-        AsyncTask<String?, Void?, String>() {
-
-        override fun doInBackground(vararg params: String?): String {
-            val result = StringBuilder()
-            var url: URL? = null
-            var urlConnection: HttpURLConnection? = null
-            try {
-                url = URL(params[0])
-                urlConnection = url.openConnection() as HttpURLConnection
-                val `in` = urlConnection.inputStream
-                val reader = InputStreamReader(`in`)
-                val bufferedReader = BufferedReader(reader)
-                var line = bufferedReader.readLine()
-                while (line != null) {
-                    result.append(line).append("\n")
-                    line = bufferedReader.readLine()
-                }
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } finally {
-                urlConnection?.disconnect()
-            }
-            return result.toString()
-        }
-
-        override fun onPostExecute(result: String?) {
-            if (result != null) {
-                handler.updateSearchItemsList(result, searchItems)
-                adapter.notifyDataSetChanged()
-            }
-            super.onPostExecute(result)
+        if (searchRequest != "") {
+            val task = WebPageDownloadTask(this)
+            task.execute(amDmHandler.makeSearchURL(searchRequest))
+        } else {
+            searchItems.clear()
+            searchItemsAdapter.notifyDataSetChanged()
         }
     }
+
+
+    override fun processFinish(result: String?) {
+        when {
+            result != null -> {
+                searchItems.clear()
+                amDmHandler.updateSearchItemsList(result, searchItems)
+                searchItemsAdapter.notifyDataSetChanged()
+            }
+            result == null || searchItems.isEmpty() -> {
+                Toast.makeText(this, "Nothing found!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onSelectedSongDownloaded(pos: Int, songPageContent: String) {
+        val song = searchItems[pos]
+        val intent = Intent(this, SongViewActivity::class.java)
+        intent.putExtra("artist", song.artist)
+        intent.putExtra("title", song.title)
+        intent.putExtra("text", amDmHandler.getParsedSongPageText(songPageContent))
+        startActivity(intent)
+    }
+
 }
+
