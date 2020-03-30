@@ -48,7 +48,7 @@ class AmDmHandler : WebSiteHandler {
         val matcherSong = patternSong.matcher(pageContent)
         var text: String? = null
         if (matcherSong.find()) {
-            text = matcherSong.group(1).replace("<b>([^<]*)</b>".toRegex(), "$1")
+            text = matcherSong.group(1)//.replace("<b>([^<]*)</b>".toRegex(), "$1")
         }
         return if (text != null) text.split("\n") as ArrayList<String> else arrayListOf("text parse error")
     }

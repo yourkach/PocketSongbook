@@ -27,7 +27,8 @@ public class ChordsTransponder {
     }
 
     public static Boolean isChordLine(String text) {
-        String[] words = text.split(" ");
+        /*String[] words = text.split("\\\\s+");
+        Pattern c = Pattern.compile("[a-b]*")
         Pattern m = Pattern.compile("(?m)(^| )([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\\\d?)?(/[A-G](##?|bb?)?)?)( (?!\\\\w)|$)");
         //boolean isChordLine = false;
         for (int i = 0; i < words.length; i++) {
@@ -35,7 +36,9 @@ public class ChordsTransponder {
                 return false;
             }
         }
-        return true;
+        return true;*/
+        //TODO
+        return false;
     }
 }
 

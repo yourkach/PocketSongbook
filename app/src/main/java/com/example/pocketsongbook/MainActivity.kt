@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(),
                 amDmHandler.updateSearchItemsList(result, searchItems)
                 searchItemsAdapter.notifyDataSetChanged()
             }
-            result == null || searchItems.isEmpty() -> {
+            searchItems.isEmpty() -> {
                 Toast.makeText(this, "Nothing found!", Toast.LENGTH_SHORT).show()
             }
         }

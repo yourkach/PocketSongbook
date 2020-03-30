@@ -4,17 +4,15 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.song_line_layout.view.*
-import kotlinx.android.synthetic.main.*
+import kotlinx.android.synthetic.main.text_line_layout.view.*
 
 class SongTextRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var items: ArrayList<Pair<String, Boolean>> = ArrayList() //<line, is_chord_line>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return TextViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.song_line_layout, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.text_line_layout, parent, false)
         )
     }
 
