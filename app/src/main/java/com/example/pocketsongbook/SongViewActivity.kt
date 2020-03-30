@@ -2,6 +2,8 @@ package com.example.pocketsongbook
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import androidx.core.text.HtmlCompat
 import com.example.pocketsongbook.data_classes.SongText
 import kotlinx.android.synthetic.main.activity_song_view.*
@@ -18,32 +20,34 @@ class SongViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_view)
-        val intent = this.intent
         songText =
-            intent.getStringExtra("text")
+            this.intent.getStringExtra("text")
                 .replace("\n", "<br>\n")
                 .replace(" ", "&nbsp;")
-
-
-        val song = SongText(
-            intent.getStringExtra("artist"),
-            intent.getStringExtra("title"),
-            songText
+        setSongText(
+            SongText(
+                intent.getStringExtra("artist"),
+                intent.getStringExtra("title"),
+                songText
+            )
         )
+        initChordsSet()
+        setOnClickListeners()
+    }
 
+    private fun setSongText(song: SongText) {
         artistTextView.text = song.artist
         titleTextView.text = song.songTitle
         songTextView.text =
             HtmlCompat.fromHtml(song.lyrics, HtmlCompat.FROM_HTML_MODE_COMPACT)
+    }
 
-        initChordsSet()
-
+    private fun setOnClickListeners() {
         buttonPlus.setOnClickListener {
             if (transposeAmount < 6) transposeAmount += 1
             transpose(transposeAmount)
             amountTextView.text = transposeAmount.toString()
         }
-
         buttonMinus.setOnClickListener {
             if (transposeAmount > -6) transposeAmount -= 1
             transpose(transposeAmount)
@@ -51,7 +55,7 @@ class SongViewActivity : AppCompatActivity() {
         }
     }
 
-    fun initChordsSet() {
+    private fun initChordsSet() {
         val patternChord =
             Pattern.compile("<b>(.*?)</b>")
         val matcher = patternChord.matcher(songText)
@@ -63,7 +67,7 @@ class SongViewActivity : AppCompatActivity() {
         chordsSet = chordsFound.toSet()
     }
 
-    fun transpose(amount: Int) {
+    private fun transpose(amount: Int) {
         val transposedChords = mutableMapOf<String, String>()
         chordsSet.forEach { chord ->
             transposedChords[chord] = ChordsTransponder.transposeChord(chord, amount)
