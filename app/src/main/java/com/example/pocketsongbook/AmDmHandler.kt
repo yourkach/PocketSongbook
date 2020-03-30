@@ -12,7 +12,10 @@ class AmDmHandler : WebSiteHandler {
         return searchPage + text.replace(' ', '+')
     }
 
-    override fun updateSearchItemsList(pageContent: String, searchItemsList: ArrayList<SongViewItem>) {
+    override fun updateSearchItemsList(
+        pageContent: String,
+        searchItemsList: ArrayList<SongViewItem>
+    ) {
         val patternOnePiece =
             Pattern.compile("(?s)<td class=\"artist_name\"><a href=(.*?)<div class=\"b-favorite-over\">")
         val matcherOnePiece = patternOnePiece.matcher(pageContent)
@@ -24,7 +27,7 @@ class AmDmHandler : WebSiteHandler {
             Pattern.compile("<a href=\".*\" class=\"artist\">(.*?)</a><div class=\"b-favorite-over\">")
         while (matcherOnePiece.find()) {
             val onePiece = matcherOnePiece.group(0).replace("\n".toRegex(), "")
-            Log.i("OnePiece", onePiece)
+            //Log.i("OnePiece", onePiece)
             val matcherSongLink = patternSongLink.matcher(onePiece)
             val matcherArtist = patternArtist.matcher(onePiece)
             val matcherTitle = patternTitle.matcher(onePiece)
@@ -42,14 +45,17 @@ class AmDmHandler : WebSiteHandler {
         }
     }
 
-    override fun getParsedSongPageText(pageContent: String): ArrayList<String> {
+    override fun getParsedSongPageText(pageContent: String): String {
         val patternSong =
             Pattern.compile("(?s)<pre itemprop=\"chordsBlock\">(.*?)</pre>")
+//        Pattern.compile("(?s)<pre itemprop=\"chordsBlock\">(.*?)</pre>")
+
         val matcherSong = patternSong.matcher(pageContent)
         var text: String? = null
         if (matcherSong.find()) {
-            text = matcherSong.group(1)//.replace("<b>([^<]*)</b>".toRegex(), "$1")
+            text = matcherSong.group(1)
         }
-        return if (text != null) text.split("\n") as ArrayList<String> else arrayListOf("text parse error")
+        return text ?: "text parse error"
     }
 }
+//.replace("<b>([^<]*)</b>".toRegex(), "$1")

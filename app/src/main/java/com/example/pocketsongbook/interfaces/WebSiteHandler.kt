@@ -7,5 +7,5 @@ interface WebSiteHandler {
 
     fun updateSearchItemsList(pageContent: String, searchItemsList: ArrayList<SongViewItem>)
 
-    fun getParsedSongPageText(pageContent: String): ArrayList<String>
+    fun getParsedSongPageText(pageContent: String): String
 }
