@@ -64,15 +64,29 @@ class SongViewActivity : AppCompatActivity() {
     }
 
     fun transpose(amount: Int) {
-        var newText : String = songText
+        val transposedChords = mutableMapOf<String, String>()
         chordsSet.forEach { chord ->
-            newText = newText.replace(
-                "<b>$chord</b>",
-                "<b>${ChordsTransponder.transposeChord(chord, amount)}</b>"
-            )
+            transposedChords[chord] = ChordsTransponder.transposeChord(chord, amount)
         }
+        val newTextBuilder = StringBuilder()
+        var chordStartIndex = songText.indexOf("<b>")
+        var prevChordEnd = 0
+        while (chordStartIndex != -1) {
+            val chordEnd = songText.indexOf("</b>", chordStartIndex + 3)
+            val chord =
+                songText.substring(
+                    chordStartIndex + 3,
+                    chordEnd
+                )
+            newTextBuilder.append(songText.substring(prevChordEnd, chordStartIndex + 3))
+            newTextBuilder.append(transposedChords[chord])
+            newTextBuilder.append("</b>")
+            prevChordEnd = chordEnd + 4
+            chordStartIndex = songText.indexOf("<b>", prevChordEnd)
+        }
+        newTextBuilder.append(songText.substring(prevChordEnd))
         songTextView.text =
-            HtmlCompat.fromHtml(newText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+            HtmlCompat.fromHtml(newTextBuilder.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
 }
