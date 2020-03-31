@@ -1,9 +1,12 @@
 package com.example.pocketsongbook
 
+import com.example.pocketsongbook.data_classes.SongSearchItem
+import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-import java.lang.StringBuilder
+import java.io.IOException
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -17,78 +20,41 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun htmlCompatTest() {
-        val songText =
-            "Спи в заброшенном доме, то в сладкой истоме, \n" +
-                    "      <b>Am</b>    <b>Em</b> <b>D</b>\n" +
-                    "То в судорогах.\n" +
-                    "    <b>G</b>     <b>Cmaj7</b>    <b>Em</b>      <b>Am</b>      <b>Em</b> \n" +
-                    "Слепи из пыли и тлена смешного оленя \n" +
-                    "   <b>Am</b>         <b>Em</b> <b>D</b>\n" +
-                    "На быстрых ногах.\n" +
-                    "  <b>G</b>    <b>Cmaj7</b>     <b>Em</b>        <b>Am</b>       <b>Em</b> \n" +
-                    "Плач испуганным зверем, и вырастет дерево \n" +
-                    "    <b>Am</b>        <b>Em</b> <b>D</b>\n" +
-                    "Из мертвого пня.\n" +
-                    " <b>G</b>        <b>Cmaj7</b>      <b>Em</b>        <b>Am</b>      <b>Em</b> \n" +
-                    "Сядь в разбитый трамвай и, глаза закрывая,\n" +
-                    " <b>Am</b>        <b>Em</b> <b>D</b>\n" +
-                    "Увидишь меня.  \n" +
-                    "\n" +
-                    "Припев:\n" +
-                    "         <b>A</b>                         <b>C</b>\n" +
-                    "       Кто-то разрешил трамвайным рельсам\n" +
-                    "                       <b>Em</b>\n" +
-                    "       Разрезать этот город.\n" +
-                    "            <b>A</b>                       <b>C</b>\n" +
-                    "       Трамвай идет разбитый, громыхая, через ночь\n" +
-                    "                 <b>Em</b>\n" +
-                    "       Ножом по горлу.\n" +
-                    "\n" +
-                    "  <b>G</b>      <b>Cmaj7</b>     <b>Em</b>          <b>Am</b>       <b>Em</b> \n" +
-                    "Мне все лучше и лучше, мне хочется слушать, \n" +
-                    "      <b>Am</b>    <b>Em</b> <b>D</b>\n" +
-                    "но устали чтецы\n" +
-                    "  <b>G</b>      <b>Cmaj7</b>     <b>Em</b>          <b>Am</b> <b>Em</b> \n" +
-                    "Пить весенние капли из сморщенной \n" +
-                    "      <b>Am</b>    <b>Em</b> <b>D</b>\n" +
-                    "лапы медведицы.\n" +
-                    "  <b>G</b>      <b>Cmaj7</b>     <b>Em</b>          <b>Am</b>     <b>Em</b> \n" +
-                    "Кто откроет мне двери испуганным зверем \n" +
-                    "      <b>Am</b>    <b>Em</b> <b>D</b>\n" +
-                    "из мертвого пня.\n" +
-                    "  <b>G</b>      <b>Cmaj7</b>     <b>Em</b>          <b>Am</b>     <b>Em</b> \n" +
-                    "Там в разбитом трамвае, глаза закрывая, \n" +
-                    "      <b>Am</b>    <b>Em</b> <b>D</b>\n" +
-                    "Ты увидишь меня.\n" +
-                    "\n" +
-                    "Припев:\n" +
-                    "         <b>A</b>                         <b>C</b>\n" +
-                    "       Кто-то разрешил трамвайным рельсам\n" +
-                    "                       <b>Em</b>\n" +
-                    "       Разрезать этот город.\n" +
-                    "         <b>A</b>                         <b>C</b>\n" +
-                    "       Трамвай идет разбитый, громыхая, через ночь\n" +
-                    "                       <b>Em</b>\n" +
-                    "       Ножом...  Ножом...  Ножом...  Ножом"
+    fun jsoupSearchParseTest() {
+        try {
 
-        val newTextBuilder = StringBuilder()
-        var chordStartIndex = songText.indexOf("<b>")
-        var prevChordEnd = 0
-        while (chordStartIndex != -1) {
-            val chordEnd = songText.indexOf("</b>", chordStartIndex + 3)
-            val chord =
-                songText.substring(
-                    chordStartIndex + 3,
-                    chordEnd
-                )
-            newTextBuilder.append(songText.substring(prevChordEnd, chordStartIndex + 3))
-            newTextBuilder.append(chord)
-            newTextBuilder.append("</b>")
-            prevChordEnd = chordEnd + 4
-            chordStartIndex = songText.indexOf("<b>", prevChordEnd)
+            val handler =
+                AmDmHandler()
+            val searchUrl = handler.makeSearchURL("Спи в заброшенном")
+            val doc: Document = Jsoup.connect(searchUrl).get()
+            val elements = doc.select("table.items")
+                .eq(0)
+                .select("td.artist_name")
+            val songsFound = ArrayList<SongSearchItem>()
+            elements.forEach { element ->
+                val artist = element.select("a[class=artist]").eq(0).text()
+                val title = element.select("a[class=artist]").eq(1).text()
+                val link = element.select("a[class=artist]").eq(1).attr("href")
+                songsFound.add(SongSearchItem(artist, title, link))
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        newTextBuilder.append(songText.substring(prevChordEnd))
-        println(newTextBuilder.toString())
+
+    }
+
+    @Test
+    fun jsoupSongParseTest() {
+        try {
+            val handler =
+                AmDmHandler()
+            val searchUrl = "https://amdm.ru/akkordi/splin/2523/liniya_zhizni/"
+            val doc: Document = Jsoup.connect(searchUrl).get()
+            val songText = doc.select("pre[itemprop=chordsBlock]")
+                .eq(0).html().toString()
+            println(songText)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }

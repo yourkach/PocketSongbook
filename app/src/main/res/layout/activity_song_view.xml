@@ -7,6 +7,7 @@
     tools:context=".SongViewActivity">
 
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -25,7 +26,7 @@
                 android:paddingBottom="10dp">
 
                 <TextView
-                    android:id="@+id/artistTextView"
+                    android:id="@+id/artist_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
@@ -38,7 +39,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/titleTextView"
+                    android:id="@+id/title_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -49,11 +50,11 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/artistTextView" />
+                    app:layout_constraintTop_toBottomOf="@+id/artist_text_view" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/songTextView"
+                android:id="@+id/song_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"
@@ -69,33 +70,42 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/buttonPlus"
+            android:id="@+id/button_plus"
             style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:text="+" />
+            android:background="@drawable/purple_button_backgound"
+            android:text="+"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/amountTextView"
+            android:id="@+id/amount_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="0"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="#BCBCBC"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <Button
-            android:id="@+id/buttonMinus"
+            android:id="@+id/button_minus"
             style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-" />
+            android:background="@drawable/purple_button_backgound"
+            android:text="-"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

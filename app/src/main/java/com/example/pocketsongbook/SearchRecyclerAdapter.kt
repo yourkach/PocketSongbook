@@ -5,14 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pocketsongbook.data_classes.SongViewItem
-import com.example.pocketsongbook.interfaces.AsyncResponse
+import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.interfaces.SongClickResponse
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
 class SearchRecyclerAdapter(private val delegate: SongClickResponse) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var viewItems: ArrayList<SongViewItem> = ArrayList()
+    private var viewItems: ArrayList<SongSearchItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return TextViewHolder(
@@ -34,35 +33,28 @@ class SearchRecyclerAdapter(private val delegate: SongClickResponse) :
 
     override fun getItemCount(): Int = viewItems.size
 
-    fun submitList(listViewItem: ArrayList<SongViewItem>) {
-        viewItems = listViewItem
+    fun submitList(listViewSongItem: ArrayList<SongSearchItem>) {
+        viewItems = listViewSongItem
     }
 
     class TextViewHolder constructor(itemView: View, val delegate: SongClickResponse) :
         RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-        private val artistTextView: TextView = itemView.artistTextView
-        private val songTextView: TextView = itemView.titleTextView
+        private val artistTextView: TextView = itemView.artist_text_view
+        private val songTextView: TextView = itemView.title_text_view
         private lateinit var link: String
 
         override fun onClick(v: View?) {
             if (v != null) {
-                WebPageDownloadTask(object :
-                    AsyncResponse {
-                    override fun processFinish(result: String?) {
-                        if (result != null) {
-                            delegate.onSelectedSongDownloaded(adapterPosition, result)
-                        }
-                    }
-                }).execute(link)
+                delegate.onSongClicked(adapterPosition)
             }
         }
 
-        fun bind(viewItem: SongViewItem) {
-            artistTextView.text = viewItem.artist
-            songTextView.text = viewItem.title
-            link = viewItem.link
+        fun bind(viewSongItem: SongSearchItem) {
+            artistTextView.text = viewSongItem.artist
+            songTextView.text = viewSongItem.title
+            link = viewSongItem.link
             itemView.setOnClickListener(this)
         }
     }

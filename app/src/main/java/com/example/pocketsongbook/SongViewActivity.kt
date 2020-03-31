@@ -2,17 +2,14 @@ package com.example.pocketsongbook
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
 import androidx.core.text.HtmlCompat
-import com.example.pocketsongbook.data_classes.SongText
+import com.example.pocketsongbook.data_classes.Song
 import kotlinx.android.synthetic.main.activity_song_view.*
 import java.lang.StringBuilder
 import java.util.regex.Pattern
 
 class SongViewActivity : AppCompatActivity() {
     private val songLines: ArrayList<Pair<String, Boolean>> = ArrayList()
-    private lateinit var songTextAdapter: SongTextRecyclerAdapter
     private lateinit var songText: String
     private lateinit var chordsSet: Set<String>
     private var transposeAmount: Int = 0
@@ -21,11 +18,11 @@ class SongViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_view)
         songText =
-            this.intent.getStringExtra("text")
+            this.intent.getStringExtra("lyrics")
                 .replace("\n", "<br>\n")
                 .replace(" ", "&nbsp;")
         setSongText(
-            SongText(
+            Song(
                 intent.getStringExtra("artist"),
                 intent.getStringExtra("title"),
                 songText
@@ -33,25 +30,27 @@ class SongViewActivity : AppCompatActivity() {
         )
         initChordsSet()
         setOnClickListeners()
+
+
     }
 
-    private fun setSongText(song: SongText) {
-        artistTextView.text = song.artist
-        titleTextView.text = song.songTitle
-        songTextView.text =
+    private fun setSongText(song: Song) {
+        artist_text_view.text = song.artist
+        title_text_view.text = song.title
+        song_text_view.text =
             HtmlCompat.fromHtml(song.lyrics, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
     private fun setOnClickListeners() {
-        buttonPlus.setOnClickListener {
+        button_plus.setOnClickListener {
             if (transposeAmount < 6) transposeAmount += 1
-            transpose(transposeAmount)
-            amountTextView.text = transposeAmount.toString()
+            transposeSongChords(transposeAmount)
+            amount_text_view.text = transposeAmount.toString()
         }
-        buttonMinus.setOnClickListener {
+        button_minus.setOnClickListener {
             if (transposeAmount > -6) transposeAmount -= 1
-            transpose(transposeAmount)
-            amountTextView.text = transposeAmount.toString()
+            transposeSongChords(transposeAmount)
+            amount_text_view.text = transposeAmount.toString()
         }
     }
 
@@ -67,7 +66,7 @@ class SongViewActivity : AppCompatActivity() {
         chordsSet = chordsFound.toSet()
     }
 
-    private fun transpose(amount: Int) {
+    private fun transposeSongChords(amount: Int) {
         val transposedChords = mutableMapOf<String, String>()
         chordsSet.forEach { chord ->
             transposedChords[chord] = ChordsTransponder.transposeChord(chord, amount)
@@ -89,7 +88,7 @@ class SongViewActivity : AppCompatActivity() {
             chordStartIndex = songText.indexOf("<b>", prevChordEnd)
         }
         newTextBuilder.append(songText.substring(prevChordEnd))
-        songTextView.text =
+        song_text_view.text =
             HtmlCompat.fromHtml(newTextBuilder.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 

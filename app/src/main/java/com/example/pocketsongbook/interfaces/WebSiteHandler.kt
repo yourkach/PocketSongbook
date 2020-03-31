@@ -1,11 +1,12 @@
 package com.example.pocketsongbook.interfaces
 
-import com.example.pocketsongbook.data_classes.SongViewItem
+import com.example.pocketsongbook.data_classes.SongSearchItem
+import org.jsoup.nodes.Document
 
 interface WebSiteHandler {
     fun makeSearchURL(text: String): String
 
-    fun updateSearchItemsList(pageContent: String, searchItemsList: ArrayList<SongViewItem>)
+    fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem>
 
-    fun getParsedSongPageText(pageContent: String): String
+    fun parseLyricsPage(pageContent: Document): String
 }

@@ -26,20 +26,6 @@ public class ChordsTransponder {
         return m.appendTail(buf).toString();
     }
 
-    public static Boolean isChordLine(String text) {
-        /*String[] words = text.split("\\\\s+");
-        Pattern c = Pattern.compile("[a-b]*")
-        Pattern m = Pattern.compile("(?m)(^| )([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\\\d?)?(/[A-G](##?|bb?)?)?)( (?!\\\\w)|$)");
-        //boolean isChordLine = false;
-        for (int i = 0; i < words.length; i++) {
-            if (!m.matcher(words[i]).find()) {
-                return false;
-            }
-        }
-        return true;*/
-        //TODO
-        return false;
-    }
 }
 
 
