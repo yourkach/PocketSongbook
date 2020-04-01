@@ -2,6 +2,7 @@ package com.example.pocketsongbook
 
 import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
+import com.example.pocketsongbook.webSiteHandlers.MychordsHandler
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.Assert.assertEquals
@@ -47,14 +48,31 @@ class ExampleUnitTest {
     fun jsoupSongParseTest() {
         try {
             val handler =
-                AmDmHandler()
-            val searchUrl = "https://amdm.ru/akkordi/splin/2523/liniya_zhizni/"
+                MychordsHandler()
+            /*
+            val request = "романс"
+            val searchUrl = handler.makeSearchURL(request)
             val doc: Document = Jsoup.connect(searchUrl).get()
-            val songText = doc.select("pre[itemprop=chordsBlock]")
-                .eq(0).html().toString()
-            println(songText)
+            val resItems = handler.parseSearchPage(doc)
+            resItems.forEach {
+                println(it)
+            }
+            */
+            val url = "https://mychords.net/prikolnye_pesni/7081-vot-i-pomer-ded-maksim.html"
+            val doc: Document = Jsoup.connect(url).get()
+            println(handler.parseLyricsPage(doc))
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    @Test
+    fun mathTest() {
+        println(12 % 12)
+        println(10 % 12)
+        println(-12 % 12)
+        println(-1 % 12)
+        println(-11 % 12)
+
     }
 }

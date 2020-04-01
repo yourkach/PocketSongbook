@@ -2,14 +2,16 @@ package com.example.pocketsongbook
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import com.example.pocketsongbook.data_classes.Song
 import kotlinx.android.synthetic.main.activity_song_view.*
 import java.lang.StringBuilder
 import java.util.regex.Pattern
+import kotlin.concurrent.timer
 
 class SongViewActivity : AppCompatActivity() {
-    private val songLines: ArrayList<Pair<String, Boolean>> = ArrayList()
+    private lateinit var song: Song
     private lateinit var songText: String
     private lateinit var chordsSet: Set<String>
     private var transposeAmount: Int = 0
@@ -17,22 +19,15 @@ class SongViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_view)
-        songText =
-            this.intent.getStringExtra("lyrics")
-                .replace("\n", "<br>\n")
-                .replace(" ", "&nbsp;")
-        setSongText(
-            Song(
-                intent.getStringExtra("artist"),
-                intent.getStringExtra("title"),
-                songText
-            )
-        )
+        song = this.intent.getBundleExtra("bundle").getParcelable("song")!!
+        songText = song.lyrics
+        setSongText(song)
         initChordsSet()
         setOnClickListeners()
-
-
     }
+
+    //TODO("adjustable auto scrolling in Scrollview ")
+
 
     private fun setSongText(song: Song) {
         artist_text_view.text = song.artist
@@ -43,12 +38,12 @@ class SongViewActivity : AppCompatActivity() {
 
     private fun setOnClickListeners() {
         button_plus.setOnClickListener {
-            if (transposeAmount < 6) transposeAmount += 1
+            transposeAmount = (transposeAmount + 1) % 12
             transposeSongChords(transposeAmount)
             amount_text_view.text = transposeAmount.toString()
         }
         button_minus.setOnClickListener {
-            if (transposeAmount > -6) transposeAmount -= 1
+            transposeAmount = (transposeAmount - 1) % 12
             transposeSongChords(transposeAmount)
             amount_text_view.text = transposeAmount.toString()
         }

@@ -19,6 +19,8 @@ class SongDownloadTask(
         return try {
             val document = Jsoup.connect(song.link).get()
             val lyrics = handler.parseLyricsPage(document)
+                .replace("\n", "<br>\n")
+                .replace(" ", "&nbsp;")
             Song(song.artist, song.title, lyrics)
         } catch (e: IOException) {
             e.printStackTrace()

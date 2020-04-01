@@ -19,6 +19,7 @@ import com.example.pocketsongbook.interfaces.SongClickResponse
 import com.example.pocketsongbook.interfaces.SongDownloadResponse
 import com.example.pocketsongbook.interfaces.WebSiteHandler
 import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
+import com.example.pocketsongbook.webSiteHandlers.MychordsHandler
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(),
             }
             false
         })
-        webSiteHandler = AmDmHandler() //TODO("switching between handlers")
+        webSiteHandler = MychordsHandler() //TODO("switching between handlers")
     }
 
     private fun initRecyclerView() {
@@ -67,7 +68,6 @@ class MainActivity : AppCompatActivity(),
             loadingPanel.visibility = View.VISIBLE
         } else {
             Toast.makeText(this, "Empty search reqest!", Toast.LENGTH_SHORT).show()
-            searchItemsAdapter.notifyDataSetChanged()
         }
     }
 
@@ -112,9 +112,14 @@ class MainActivity : AppCompatActivity(),
             }
             else -> {
                 val intent = Intent(this, SongViewActivity::class.java)
+                val bundle = Bundle()
+                bundle.putParcelable("song", song)
+                intent.putExtra("bundle", bundle)
+                /*
                 intent.putExtra("artist", song.artist)
                 intent.putExtra("title", song.title)
                 intent.putExtra("lyrics", song.lyrics)
+                 */
                 startActivity(intent)
             }
         }

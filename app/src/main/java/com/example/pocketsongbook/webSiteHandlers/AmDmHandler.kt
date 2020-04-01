@@ -7,8 +7,8 @@ import org.jsoup.nodes.Document
 class AmDmHandler : WebSiteHandler {
     private val searchPage = "https://amdm.ru/search/?q="
 
-    override fun makeSearchURL(text: String): String {
-        return searchPage + text.replace(' ', '+')
+    override fun makeSearchURL(reqestText: String): String {
+        return searchPage + reqestText.replace(' ', '+')
     }
 
     override fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem> {
