@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Карманный песенник</string>
     <string name="search_hint">Название песни или исполнитель</string>
+    <string name="key">тон</string>
+    <string name="font">шрифт</string>
 </resources>
