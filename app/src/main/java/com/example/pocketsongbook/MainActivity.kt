@@ -1,9 +1,9 @@
 package com.example.pocketsongbook
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -42,22 +42,11 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         initRecyclerView()
         initWebSiteHandlersMap()
         initSpinner()
-/*
-        dropdown_button.setOnClickListener {
-            if (spinner_website_select.visibility == View.VISIBLE) {
-                spinner_website_select.visibility = View.GONE
-                dropdown_button.setBackgroundResource(R.drawable.ic_arrow_drop_down_white_24dp)
-            } else if (spinner_website_select.visibility != View.VISIBLE) {
-                spinner_website_select.visibility = View.VISIBLE
-                dropdown_button.setBackgroundResource(R.drawable.ic_arrow_drop_up_black_24dp)
-            }
-        }
-*/
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         //TODO(idk just do some shit)
-        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp)
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -73,6 +62,29 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         )
 
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.website_select -> {
+                if (spinner_website_select.visibility == View.VISIBLE) {
+                    hideWebsiteSelector()
+                } else if (spinner_website_select.visibility != View.VISIBLE) {
+                    showWebsiteSelector()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun hideWebsiteSelector(){
+        spinner_website_select.visibility = View.GONE
+    }
+
+    private fun showWebsiteSelector(){
+        spinner_website_select.visibility = View.VISIBLE
     }
 
     private fun initRecyclerView() {
@@ -120,6 +132,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
     override fun onQueryTextChange(newText: String?): Boolean = true
 
     private fun performSearch(searchRequest: String) {
+        hideWebsiteSelector()
         if (searchRequest != "") {
             val task =
                 SearchPerformingTask(
@@ -127,7 +140,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
                     this
                 )
             task.execute(searchRequest)
-            loading_panel.visibility = View.VISIBLE
+            showLoadingPanel()
         } else {
             Toast.makeText(this, "Empty search request!", Toast.LENGTH_SHORT).show()
         }
@@ -135,7 +148,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
 
     override fun onSearchFinished(searchResult: ArrayList<SongSearchItem>?) {
         searchItems.clear()
-        loading_panel.visibility = View.GONE
+        hideLoadingPanel()
         when {
             searchResult == null -> {
                 Toast.makeText(this, "Internet connection error!", Toast.LENGTH_SHORT).show()
@@ -157,7 +170,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
                 this
             )
         downloadTask.execute(searchItems[pos])
-        loading_panel.visibility = View.VISIBLE
+        showLoadingPanel()
     }
 
     override fun onSongDownloadFinish(song: Song?) {
@@ -173,7 +186,19 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
                 startActivity(intent)
             }
         }
-        loading_panel.visibility = View.GONE
+        hideLoadingPanel()
+    }
+
+    private fun showLoadingPanel(){
+        if (loading_panel.visibility != View.VISIBLE) {
+            loading_panel.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingPanel(){
+        if (loading_panel.visibility != View.GONE) {
+            loading_panel.visibility = View.GONE
+        }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) = Unit

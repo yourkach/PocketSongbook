@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:theme="@style/AppTheme.Toolbar"
         >
-
+<!--
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dropdown_button"
             style="@style/Widget.AppCompat.Button.Small"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_arrow_drop_up_black_24dp"
             tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="4dp" />
+            tools:layout_editor_absoluteY="4dp" /> -->
     </androidx.appcompat.widget.Toolbar>
 
 
