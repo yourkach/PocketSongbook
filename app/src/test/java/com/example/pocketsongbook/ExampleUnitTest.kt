@@ -2,7 +2,7 @@ package com.example.pocketsongbook
 
 import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
-import com.example.pocketsongbook.webSiteHandlers.MychordsHandler
+import com.example.pocketsongbook.webSiteHandlers.MyChordsHandler
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.Assert.assertEquals
@@ -48,7 +48,7 @@ class ExampleUnitTest {
     fun jsoupSongParseTest() {
         try {
             val handler =
-                MychordsHandler()
+                MyChordsHandler()
             /*
             val request = "романс"
             val searchUrl = handler.makeSearchURL(request)

@@ -4,7 +4,7 @@ import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.interfaces.WebSiteHandler
 import org.jsoup.nodes.Document
 
-class MychordsHandler : WebSiteHandler {
+class MyChordsHandler : WebSiteHandler {
     private val searchPage = "https://mychords.net/search?q="
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 
@@ -20,15 +20,16 @@ class MychordsHandler : WebSiteHandler {
         elements.forEach { element ->
             val songItem = element.select("a[class=b-listing__item__link]").eq(0)
             val itemText = songItem.text()
-            var splitIndex = itemText.indexOfAny(charArrayOf('-', '–', '—', '—'))
+            var splitIndex = itemText.indexOfAny(listOf(" - ", " – ", " — ", " — "))
             val artist: String
             if (splitIndex != -1) {
-                artist = itemText.substring(0, splitIndex - 1)
+                artist = itemText.substring(0, splitIndex)
+                splitIndex += 3
             } else {
                 artist = "Неизвестен"
-                splitIndex = -2
+                splitIndex = 0
             }
-            val title = itemText.substring(splitIndex + 2)
+            val title = itemText.substring(splitIndex)
             val link = "https://mychords.net/" + songItem.attr("href")
             songItems.add(SongSearchItem(artist, title, link))
         }
@@ -45,10 +46,4 @@ class MychordsHandler : WebSiteHandler {
             .replace("<a\\b[^>]*>Взято с сайта https://mychords.net</a>".toRegex(), "")
         return text
     }
-
-    /*
-
-    <a class="tooltip" href="#" onclick="return false;" data-title="<img src='/i/img/akkords/Fsharp7.png?ch201' style='min-width:64px;min-height:64px;' >">
-
-    */
 }
