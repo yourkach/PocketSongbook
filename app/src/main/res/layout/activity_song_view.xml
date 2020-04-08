@@ -44,12 +44,12 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:singleLine="true"
-                    android:text="Song Title"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toStartOf="@+id/button"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/artist_text_view" />
+                    app:layout_constraintTop_toBottomOf="@+id/artist_text_view"
+                    tools:text="Song Title" />
 
                 <TextView
                     android:id="@+id/artist_text_view"
@@ -57,13 +57,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:singleLine="true"
-                    android:text="Artist"
                     android:textColor="@color/colorWhite"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/button"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Artist" />
 
 
                 <LinearLayout

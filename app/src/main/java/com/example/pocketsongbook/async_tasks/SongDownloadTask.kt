@@ -7,10 +7,11 @@ import com.example.pocketsongbook.interfaces.SongDownloadResponse
 import com.example.pocketsongbook.interfaces.WebSiteHandler
 import org.jsoup.Jsoup
 import java.io.IOException
+import java.lang.ref.WeakReference
 
 class SongDownloadTask(
     private val handler: WebSiteHandler,
-    private val delegate: SongDownloadResponse
+    private val delegate: WeakReference<SongDownloadResponse>
 ) :
     AsyncTask<SongSearchItem, Void, Song?>() {
 
@@ -21,7 +22,7 @@ class SongDownloadTask(
             val lyrics = handler.parseLyricsPage(document)
                 .replace("\n", "<br>\n")
                 .replace(" ", "&nbsp;")
-            Song(song.artist, song.title, lyrics)
+            Song(song.artist, song.title, lyrics, song.link)
         } catch (e: IOException) {
             e.printStackTrace()
             null
@@ -29,7 +30,7 @@ class SongDownloadTask(
     }
 
     override fun onPostExecute(result: Song?) {
-        delegate.onSongDownloadFinish(result)
+        delegate.get()?.onSongDownloadFinish(result)
         super.onPostExecute(result)
     }
 

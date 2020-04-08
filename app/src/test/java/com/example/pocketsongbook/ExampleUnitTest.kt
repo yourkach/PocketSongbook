@@ -1,8 +1,8 @@
 package com.example.pocketsongbook
 
 import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
-import com.example.pocketsongbook.webSiteHandlers.MyChordsHandler
+import com.example.pocketsongbook.website_handlers.AmDmHandler
+import com.example.pocketsongbook.website_handlers.MyChordsHandler
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.Assert.assertEquals
@@ -26,7 +26,7 @@ class ExampleUnitTest {
 
             val handler =
                 AmDmHandler()
-            val searchUrl = handler.makeSearchURL("Спи в заброшенном")
+            val searchUrl = handler.buildSearchURL("Спи в заброшенном")
             val doc: Document = Jsoup.connect(searchUrl).get()
             val elements = doc.select("table.items")
                 .eq(0)
@@ -51,7 +51,7 @@ class ExampleUnitTest {
                 MyChordsHandler()
             /*
             val request = "романс"
-            val searchUrl = handler.makeSearchURL(request)
+            val searchUrl = handler.buildSearchURL(request)
             val doc: Document = Jsoup.connect(searchUrl).get()
             val resItems = handler.parseSearchPage(doc)
             resItems.forEach {

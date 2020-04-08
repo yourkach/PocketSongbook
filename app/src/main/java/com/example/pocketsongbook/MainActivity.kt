@@ -21,9 +21,10 @@ import com.example.pocketsongbook.interfaces.SearchFinishResponse
 import com.example.pocketsongbook.interfaces.SongClickResponse
 import com.example.pocketsongbook.interfaces.SongDownloadResponse
 import com.example.pocketsongbook.interfaces.WebSiteHandler
-import com.example.pocketsongbook.webSiteHandlers.AmDmHandler
-import com.example.pocketsongbook.webSiteHandlers.MyChordsHandler
+import com.example.pocketsongbook.website_handlers.AmDmHandler
+import com.example.pocketsongbook.website_handlers.MyChordsHandler
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.ref.WeakReference
 
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
@@ -40,28 +41,74 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initRecyclerView()
-        initWebSiteHandlersMap()
+        initWebSiteHandlersList()
         initSpinner()
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
-        //TODO(idk just do some shit)
+        //TODO(navigation to favourites activity)
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
+    }
+
+
+    private fun initRecyclerView() {
+        recycler_view.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            searchItemsAdapter = SearchRecyclerAdapter(this@MainActivity)
+            adapter = searchItemsAdapter
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
+        searchItemsAdapter.submitList(searchItems)
+    }
+
+    private fun initWebSiteHandlersList() {
+        siteHandlersList = listOf(
+            "MyChords.net" to MyChordsHandler(),
+            "AmDm.ru" to AmDmHandler()
+        )
+        webSiteHandler = siteHandlersList.first().second
+    }
+
+    private fun initSpinner() {
+        spinner_website_select.apply {
+            adapter =
+                ArrayAdapter(
+                    this@MainActivity,
+                    R.layout.spinner_item,
+                    siteHandlersList.map {
+                        it.first
+                    }
+                )
+            onItemSelectedListener = this@MainActivity
+            setSelection(0)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         val item = menu.findItem(R.id.search)
-
         val searchView: SearchView = item.actionView as SearchView
         searchView.setOnQueryTextListener(this)
-
         searchView.queryHint = HtmlCompat.fromHtml(
             "<font color = #ffffff>" + getString(R.string.search_hint) + "</font>",
             HtmlCompat.FROM_HTML_MODE_COMPACT
         )
-
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList("search_items", searchItems)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        val savedItems = savedInstanceState.getParcelableArrayList<SongSearchItem>("search_items")
+        searchItems.clear()
+        savedItems?.forEach {
+            searchItems.add(it)
+        }
+        searchItemsAdapter.notifyDataSetChanged()
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -79,45 +126,12 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         }
     }
 
-    private fun hideWebsiteSelector(){
+    private fun hideWebsiteSelector() {
         spinner_website_select.visibility = View.GONE
     }
 
-    private fun showWebsiteSelector(){
+    private fun showWebsiteSelector() {
         spinner_website_select.visibility = View.VISIBLE
-    }
-
-    private fun initRecyclerView() {
-        recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            searchItemsAdapter = SearchRecyclerAdapter(this@MainActivity)
-            adapter = searchItemsAdapter
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        }
-        searchItemsAdapter.submitList(searchItems)
-    }
-
-    private fun initWebSiteHandlersMap() {
-        siteHandlersList = listOf(
-            "AmDm.ru" to AmDmHandler(),
-            "MyChords.net" to MyChordsHandler()
-        )
-        webSiteHandler = AmDmHandler()
-    }
-
-    private fun initSpinner() {
-        spinner_website_select.apply {
-            adapter =
-                ArrayAdapter<String>(
-                    this@MainActivity,
-                    R.layout.spinner_item,
-                    siteHandlersList.map {
-                        it.first
-                    }
-                )
-            onItemSelectedListener = this@MainActivity
-            setSelection(0)
-        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -137,7 +151,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
             val task =
                 SearchPerformingTask(
                     webSiteHandler,
-                    this
+                    WeakReference(this)
                 )
             task.execute(searchRequest)
             showLoadingPanel()
@@ -167,7 +181,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         val downloadTask =
             SongDownloadTask(
                 webSiteHandler,
-                this
+                WeakReference(this)
             )
         downloadTask.execute(searchItems[pos])
         showLoadingPanel()
@@ -189,13 +203,13 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         hideLoadingPanel()
     }
 
-    private fun showLoadingPanel(){
+    private fun showLoadingPanel() {
         if (loading_panel.visibility != View.VISIBLE) {
             loading_panel.visibility = View.VISIBLE
         }
     }
 
-    private fun hideLoadingPanel(){
+    private fun hideLoadingPanel() {
         if (loading_panel.visibility != View.GONE) {
             loading_panel.visibility = View.GONE
         }

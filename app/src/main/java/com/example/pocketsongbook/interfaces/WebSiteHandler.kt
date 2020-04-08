@@ -4,7 +4,7 @@ import com.example.pocketsongbook.data_classes.SongSearchItem
 import org.jsoup.nodes.Document
 
 interface WebSiteHandler {
-    fun makeSearchURL(reqestText: String): String
+    fun buildSearchURL(searchQuery: String): String
 
     fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem>
 

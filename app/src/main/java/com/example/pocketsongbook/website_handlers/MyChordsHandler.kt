@@ -1,15 +1,15 @@
-package com.example.pocketsongbook.webSiteHandlers
+package com.example.pocketsongbook.website_handlers
 
 import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.interfaces.WebSiteHandler
 import org.jsoup.nodes.Document
 
 class MyChordsHandler : WebSiteHandler {
-    private val searchPage = "https://mychords.net/search?q="
+    private val baseUrl = "https://mychords.net/search?q="
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 
-    override fun makeSearchURL(reqestText: String): String {
-        return searchPage + reqestText.replace(' ', '+') + searchSettings
+    override fun buildSearchURL(searchQuery: String): String {
+        return baseUrl + searchQuery.replace(' ', '+') + searchSettings
     }
 
     override fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem> {

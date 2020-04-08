@@ -1,14 +1,14 @@
-package com.example.pocketsongbook.webSiteHandlers
+package com.example.pocketsongbook.website_handlers
 
 import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.interfaces.WebSiteHandler
 import org.jsoup.nodes.Document
 
 class AmDmHandler : WebSiteHandler {
-    private val searchPage = "https://amdm.ru/search/?q="
+    private val baseUrl = "https://amdm.ru/search/?q="
 
-    override fun makeSearchURL(reqestText: String): String {
-        return searchPage + reqestText.replace(' ', '+')
+    override fun buildSearchURL(searchQuery: String): String {
+        return baseUrl + searchQuery.replace(' ', '+')
     }
 
     override fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem> {
