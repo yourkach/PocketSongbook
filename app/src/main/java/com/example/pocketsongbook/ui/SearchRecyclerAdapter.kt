@@ -1,15 +1,16 @@
-package com.example.pocketsongbook
+package com.example.pocketsongbook.ui
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.interfaces.SongClickResponse
+import com.example.pocketsongbook.presenter.SearchPresenter
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
-class SearchRecyclerAdapter(private val delegate: SongClickResponse) :
+class SearchRecyclerAdapter(private val presenter: SearchPresenter) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var viewItems: ArrayList<SongSearchItem> = ArrayList()
 
@@ -19,7 +20,7 @@ class SearchRecyclerAdapter(private val delegate: SongClickResponse) :
                 R.layout.song_item_layout,
                 parent,
                 false
-            ), delegate
+            ), presenter
         )
     }
 
@@ -37,12 +38,12 @@ class SearchRecyclerAdapter(private val delegate: SongClickResponse) :
         viewItems = listViewSongItem
     }
 
-    class TextViewHolder constructor(itemView: View, val delegate: SongClickResponse) :
+    class TextViewHolder constructor(itemView: View, private val delegate: SearchPresenter) :
         RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-        private val artistTextView: TextView = itemView.artist_text_view
-        private val songTextView: TextView = itemView.title_text_view
+        private val artistTextView: TextView = itemView.songArtistTv
+        private val songTextView: TextView = itemView.songTitleTv
         private lateinit var link: String
 
         override fun onClick(v: View?) {

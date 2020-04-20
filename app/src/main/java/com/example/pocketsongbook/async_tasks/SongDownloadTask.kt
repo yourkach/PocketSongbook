@@ -3,15 +3,14 @@ package com.example.pocketsongbook.async_tasks
 import android.os.AsyncTask
 import com.example.pocketsongbook.data_classes.SongSearchItem
 import com.example.pocketsongbook.data_classes.Song
-import com.example.pocketsongbook.interfaces.SongDownloadResponse
 import com.example.pocketsongbook.interfaces.WebSiteHandler
+import com.example.pocketsongbook.presenter.SearchPresenter
 import org.jsoup.Jsoup
 import java.io.IOException
-import java.lang.ref.WeakReference
 
 class SongDownloadTask(
     private val handler: WebSiteHandler,
-    private val delegate: WeakReference<SongDownloadResponse>
+    private val presenter: SearchPresenter
 ) :
     AsyncTask<SongSearchItem, Void, Song?>() {
 
@@ -30,7 +29,7 @@ class SongDownloadTask(
     }
 
     override fun onPostExecute(result: Song?) {
-        delegate.get()?.onSongDownloadFinish(result)
+        presenter.onSongDownloadFinish(result)
         super.onPostExecute(result)
     }
 

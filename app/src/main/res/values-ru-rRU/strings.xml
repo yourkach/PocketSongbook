@@ -4,4 +4,5 @@
     <string name="search_hint">Название песни или исполнитель</string>
     <string name="key">тон</string>
     <string name="font">шрифт</string>
+    <string name="menu_item_search">Поиск</string>
 </resources>

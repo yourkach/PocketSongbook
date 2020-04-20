@@ -2,15 +2,14 @@ package com.example.pocketsongbook.async_tasks
 
 import android.os.AsyncTask
 import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.interfaces.SearchFinishResponse
 import com.example.pocketsongbook.interfaces.WebSiteHandler
+import com.example.pocketsongbook.presenter.SearchPresenter
 import org.jsoup.Jsoup
 import java.io.IOException
-import java.lang.ref.WeakReference
 
 class SearchPerformingTask(
     private val handler: WebSiteHandler,
-    private val delegate: WeakReference<SearchFinishResponse>
+    private val presenter: SearchPresenter
 ) :
     AsyncTask<String, Void, ArrayList<SongSearchItem>?>() {
 
@@ -26,7 +25,7 @@ class SearchPerformingTask(
     }
 
     override fun onPostExecute(result: ArrayList<SongSearchItem>?) {
-        delegate.get()?.onSearchFinished(result)
+        presenter.onSearchFinished(result)
         super.onPostExecute(result)
     }
 }

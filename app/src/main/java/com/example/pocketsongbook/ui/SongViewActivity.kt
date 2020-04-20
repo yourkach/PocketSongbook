@@ -1,9 +1,11 @@
-package com.example.pocketsongbook
+package com.example.pocketsongbook.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.core.text.HtmlCompat
+import com.example.pocketsongbook.misc.ChordsTransponder
+import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data_classes.Song
 import kotlinx.android.synthetic.main.activity_song_view.*
 import java.lang.StringBuilder
@@ -15,10 +17,6 @@ class SongViewActivity : AppCompatActivity() {
     private lateinit var chordsSet: Set<String>
 
     private var chordsKey: Int = 0
-
-    private val FONT_SIZE_DEFAULT: Float = 16.0F
-    private val FONT_SIZE_MIN: Float = 8.0F
-    private val FONT_SIZE_MAX: Float = 36.0F
 
     private var currentFontSize: Float = FONT_SIZE_DEFAULT
 
@@ -44,7 +42,7 @@ class SongViewActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         currentFontSize = savedInstanceState.getFloat("font_size")
-        song_text_view.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize)
+        songLyricsTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize)
         updateFontSizeLabel()
 
         chordsKey = savedInstanceState.getInt("key")
@@ -63,41 +61,41 @@ class SongViewActivity : AppCompatActivity() {
         val chordsFound = ArrayList<String>()
         while (matcher.find()) {
             val chord = matcher.group(1)
-            chordsFound.add(chord)
+            if (chord != null) chordsFound.add(chord)
         }
         chordsSet = chordsFound.toSet()
     }
 
     private fun setSongText(song: Song) {
-        artist_text_view.text = song.artist
-        title_text_view.text = song.title
-        song_text_view.text =
+        songArtistTv.text = song.artist
+        songTitleTv.text = song.title
+        songLyricsTv.text =
             HtmlCompat.fromHtml(song.lyrics, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
     private fun setOnClickListeners() {
-        button_up_key.setOnClickListener {
+        songKeyUpBtn.setOnClickListener {
             chordsKey = (chordsKey + 1) % 12
             transposeSongChords(chordsKey)
             updateKeyLabel()
         }
-        button_down_key.setOnClickListener {
+        songKeyDownBtn.setOnClickListener {
             chordsKey = (chordsKey - 1) % 12
             transposeSongChords(chordsKey)
             updateKeyLabel()
         }
-        key_amount_text_view.setOnClickListener {
+        songKeyAmountTv.setOnClickListener {
             chordsKey = 0
             transposeSongChords(chordsKey)
             updateKeyLabel()
         }
-        button_plus_font.setOnClickListener {
+        songFontPlusBtn.setOnClickListener {
             changeFontSize(amount = 2.0F)
         }
-        button_minus_font.setOnClickListener {
+        songFontMinusBtn.setOnClickListener {
             changeFontSize(amount = -2.0F)
         }
-        font_size_text_view.setOnClickListener {
+        songFontSizeTv.setOnClickListener {
             changeFontSize(setDefaultSize = true)
         }
     }
@@ -113,7 +111,7 @@ class SongViewActivity : AppCompatActivity() {
         }
         if (newFontSize in FONT_SIZE_MIN..FONT_SIZE_MAX) {
             currentFontSize = newFontSize
-            song_text_view.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize)
+            songLyricsTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, currentFontSize)
             updateFontSizeLabel()
         }
     }
@@ -121,10 +119,10 @@ class SongViewActivity : AppCompatActivity() {
     private fun updateFontSizeLabel() {
         when {
             currentFontSize != FONT_SIZE_DEFAULT -> {
-                font_size_text_view.text = currentFontSize.toInt().toString()
+                songFontSizeTv.text = currentFontSize.toInt().toString()
             }
             else -> {
-                font_size_text_view.text = getString(R.string.font)
+                songFontSizeTv.text = getString(R.string.font)
             }
         }
     }
@@ -132,10 +130,10 @@ class SongViewActivity : AppCompatActivity() {
     private fun updateKeyLabel() {
         when (chordsKey) {
             0 -> {
-                key_amount_text_view.text = getString(R.string.key)
+                songKeyAmountTv.text = getString(R.string.key)
             }
             else -> {
-                key_amount_text_view.text = chordsKey.toString()
+                songKeyAmountTv.text = chordsKey.toString()
             }
         }
     }
@@ -144,7 +142,11 @@ class SongViewActivity : AppCompatActivity() {
         val transposedChords = mutableMapOf<String, String>()
 
         chordsSet.forEach { chord ->
-            transposedChords[chord] = ChordsTransponder.transposeChord(chord, amount)
+            transposedChords[chord] =
+                ChordsTransponder.transposeChord(
+                    chord,
+                    amount
+                )
         }
         val lyrics = song.lyrics
         val newTextBuilder = StringBuilder()
@@ -170,6 +172,12 @@ class SongViewActivity : AppCompatActivity() {
 
 
     private fun updateLyricsText() {
-        song_text_view.text = HtmlCompat.fromHtml(songText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        songLyricsTv.text = HtmlCompat.fromHtml(songText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+    }
+
+    companion object {
+        const val FONT_SIZE_DEFAULT: Float = 16.0F
+        const val FONT_SIZE_MIN: Float = 8.0F
+        const val FONT_SIZE_MAX: Float = 36.0F
     }
 }
