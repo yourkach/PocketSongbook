@@ -1,6 +1,6 @@
-package com.example.pocketsongbook.interfaces
+package com.example.pocketsongbook.website_handlers
 
-import com.example.pocketsongbook.data_classes.SongSearchItem
+import com.example.pocketsongbook.data.SongSearchItem
 import org.jsoup.nodes.Document
 
 interface WebSiteHandler {

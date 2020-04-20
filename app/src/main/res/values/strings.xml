@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Pocket Songbook</string>
     <string name="search_hint">Song or performer name</string>
-    <string name="key">key</string>
-    <string name="font">font</string>
+    <string name="song_key_label">key</string>
+    <string name="song_font_label">font</string>
     <string name="menu_item_search">Search</string>
 </resources>

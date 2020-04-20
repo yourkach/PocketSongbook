@@ -1,7 +1,6 @@
 package com.example.pocketsongbook.website_handlers
 
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.interfaces.WebSiteHandler
+import com.example.pocketsongbook.data.SongSearchItem
 import org.jsoup.nodes.Document
 
 class AmDmHandler : WebSiteHandler {

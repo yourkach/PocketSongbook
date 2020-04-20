@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui
+package com.example.pocketsongbook.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,15 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.data_classes.Song
-import com.example.pocketsongbook.interfaces.*
-import com.example.pocketsongbook.presenter.SearchPresenter
+import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.data.Song
+import com.example.pocketsongbook.ui.presenter.SearchPresenter
+import com.example.pocketsongbook.ui.adapter.SearchRecyclerAdapter
+import com.example.pocketsongbook.view.SearchSongView
 import kotlinx.android.synthetic.main.activity_search.*
 
 
-class SongSearchActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListener,
-    AdapterView.OnItemSelectedListener, SongSearchView {
+class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListener,
+    AdapterView.OnItemSelectedListener, SearchSongView {
 
     @InjectPresenter
     lateinit var presenter: SearchPresenter
@@ -49,20 +50,19 @@ class SongSearchActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     override fun startSongViewActivity(song: Song) {
         val intent = Intent(this, SongViewActivity::class.java)
         val bundle = Bundle()
-        bundle.putParcelable("song", song)
-        intent.putExtra("bundle", bundle)
+        bundle.putParcelable(SONG_BUNDLE_KEY, song)
+        intent.putExtra(BUNDLE_KEY, bundle)
         startActivity(intent)
     }
 
-    override fun enableRecyclerView(enabled: Boolean) {
-        TODO()
-    }
 
     private fun initRecyclerView() {
         searchRecycler.apply {
-            layoutManager = LinearLayoutManager(this@SongSearchActivity)
+            layoutManager = LinearLayoutManager(this@SearchSongActivity)
             searchItemsAdapter =
-                SearchRecyclerAdapter(presenter)
+                SearchRecyclerAdapter(
+                    presenter
+                )
             adapter = searchItemsAdapter
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
@@ -72,10 +72,10 @@ class SongSearchActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         searchWebsiteSelector.apply {
             adapter =
                 ArrayAdapter(
-                    this@SongSearchActivity,
+                    this@SearchSongActivity,
                     R.layout.spinner_item, presenter.getSpinnerItems()
                 )
-            onItemSelectedListener = this@SongSearchActivity
+            onItemSelectedListener = this@SearchSongActivity
         }
     }
 
@@ -122,6 +122,10 @@ class SongSearchActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         presenter.onSpinnerItemSelected(position)
     }
 
+    companion object {
+        const val BUNDLE_KEY = "bundle"
+        const val SONG_BUNDLE_KEY = "song"
+    }
 
 }
 

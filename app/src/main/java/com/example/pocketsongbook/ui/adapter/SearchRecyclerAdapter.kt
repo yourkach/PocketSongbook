@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui
+package com.example.pocketsongbook.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.presenter.SearchPresenter
+import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.ui.presenter.SearchPresenter
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
 class SearchRecyclerAdapter(private val presenter: SearchPresenter) :

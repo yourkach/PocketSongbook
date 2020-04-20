@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.website_handlers
 
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.interfaces.WebSiteHandler
+import com.example.pocketsongbook.data.SongSearchItem
 import org.jsoup.nodes.Document
 
-class MyChordsHandler : WebSiteHandler {
+class MyChordsHandler :
+    WebSiteHandler {
     private val baseUrl = "https://mychords.net/search?q="
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 

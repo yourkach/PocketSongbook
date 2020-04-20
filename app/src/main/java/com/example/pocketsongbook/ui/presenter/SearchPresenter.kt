@@ -1,23 +1,24 @@
-package com.example.pocketsongbook.presenter
+package com.example.pocketsongbook.ui.presenter
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import com.example.pocketsongbook.async_tasks.SearchPerformingTask
-import com.example.pocketsongbook.async_tasks.SongDownloadTask
-import com.example.pocketsongbook.data_classes.Song
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.interfaces.SongSearchView
-import com.example.pocketsongbook.interfaces.WebSiteHandler
+import com.example.pocketsongbook.model.SearchPerformingTask
+import com.example.pocketsongbook.model.SongDownloadTask
+import com.example.pocketsongbook.data.Song
+import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.view.SearchSongView
+import com.example.pocketsongbook.website_handlers.WebSiteHandler
 import com.example.pocketsongbook.website_handlers.AmDmHandler
 import com.example.pocketsongbook.website_handlers.MyChordsHandler
 
 @InjectViewState
-class SearchPresenter : MvpPresenter<SongSearchView>() {
+class SearchPresenter : MvpPresenter<SearchSongView>() {
 
     private lateinit var webSiteHandler: WebSiteHandler
     private lateinit var siteHandlersList: List<Pair<String, WebSiteHandler>>
     private var searchQuery: String = ""
     private val searchItems = ArrayList<SongSearchItem>()
+    private var isDownloading: Boolean = false
 
     init {
         initWebSiteHandlersList()
@@ -70,17 +71,20 @@ class SearchPresenter : MvpPresenter<SongSearchView>() {
     }
 
     fun onSongClicked(pos: Int) {
-        viewState.enableRecyclerView(false)
-        val downloadTask =
-            SongDownloadTask(
-                webSiteHandler,
-                this
-            )
-        downloadTask.execute(searchItems[pos])
-        viewState.showLoadingPanel(true)
+        if (!isDownloading) {
+            isDownloading = true
+            val downloadTask =
+                SongDownloadTask(
+                    webSiteHandler,
+                    this
+                )
+            downloadTask.execute(searchItems[pos])
+            viewState.showLoadingPanel(true)
+        }
     }
 
     fun onSongDownloadFinish(song: Song?) {
+        isDownloading = false
         when (song) {
             null -> {
                 viewState.showToast("Failed to download song!")
@@ -90,7 +94,6 @@ class SearchPresenter : MvpPresenter<SongSearchView>() {
             }
         }
         viewState.showLoadingPanel(false)
-        viewState.enableRecyclerView(true)
     }
 
     fun onSpinnerItemSelected(pos: Int) {

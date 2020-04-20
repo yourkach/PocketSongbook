@@ -1,6 +1,6 @@
 package com.example.pocketsongbook
 
-import com.example.pocketsongbook.data_classes.SongSearchItem
+import com.example.pocketsongbook.data.SongSearchItem
 import com.example.pocketsongbook.website_handlers.AmDmHandler
 import com.example.pocketsongbook.website_handlers.MyChordsHandler
 import org.jsoup.Jsoup

@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.data_classes
+package com.example.pocketsongbook.data
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

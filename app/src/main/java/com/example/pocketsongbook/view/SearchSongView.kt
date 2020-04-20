@@ -1,16 +1,15 @@
-package com.example.pocketsongbook.interfaces
+package com.example.pocketsongbook.view
 
-import android.security.keystore.SecureKeyImportUnavailableException
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import com.example.pocketsongbook.data_classes.Song
-import com.example.pocketsongbook.data_classes.SongSearchItem
+import com.example.pocketsongbook.data.Song
+import com.example.pocketsongbook.data.SongSearchItem
 
 
 @StateStrategyType(SkipStrategy::class)
-interface SongSearchView : MvpView {
+interface SearchSongView : MvpView {
 
     @StateStrategyType(SkipStrategy::class)
     fun showLoadingPanel(visible: Boolean)
@@ -24,6 +23,4 @@ interface SongSearchView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun startSongViewActivity(song: Song)
 
-    @StateStrategyType(SkipStrategy::class)
-    fun enableRecyclerView(enabled: Boolean)
 }

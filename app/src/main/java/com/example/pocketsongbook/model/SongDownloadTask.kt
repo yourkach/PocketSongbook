@@ -1,10 +1,10 @@
-package com.example.pocketsongbook.async_tasks
+package com.example.pocketsongbook.model
 
 import android.os.AsyncTask
-import com.example.pocketsongbook.data_classes.SongSearchItem
-import com.example.pocketsongbook.data_classes.Song
-import com.example.pocketsongbook.interfaces.WebSiteHandler
-import com.example.pocketsongbook.presenter.SearchPresenter
+import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.data.Song
+import com.example.pocketsongbook.website_handlers.WebSiteHandler
+import com.example.pocketsongbook.ui.presenter.SearchPresenter
 import org.jsoup.Jsoup
 import java.io.IOException
 
