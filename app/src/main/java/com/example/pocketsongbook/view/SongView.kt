@@ -1,15 +1,15 @@
 package com.example.pocketsongbook.view
 
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import moxy.MvpView
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SongView : MvpView {
 
-    fun setKeyLabelText(text : String)
+    fun setKeyLabelText(text : String = "", setDefault: Boolean = false)
 
-    fun setFontSizeLabelText(text : String)
+    fun setFontSizeLabelText(text : String = "", setDefault: Boolean = false)
 
     fun setArtistLabelText(text : String)
 

@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.ui.presenter
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.example.pocketsongbook.data.Song
 import com.example.pocketsongbook.misc.ChordsTransponder
 import com.example.pocketsongbook.view.SongView
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import java.util.regex.Pattern
 
 
@@ -12,19 +12,13 @@ import java.util.regex.Pattern
 class SongPresenter : MvpPresenter<SongView>() {
 
     private lateinit var song: Song
-    private lateinit var keyDefaultLabel: String
-    private lateinit var fontDefaultLabel: String
     private lateinit var chordsSet: Set<String>
     private var chordsKey: Int = 0
     private var currentFontSize: Float = FONT_SIZE_DEFAULT
 
     fun setData(
-        song: Song,
-        keyDefaultLabel: String,
-        fontDefaultLabel: String
+        song: Song
     ) {
-        this.keyDefaultLabel = keyDefaultLabel
-        this.fontDefaultLabel = fontDefaultLabel
         this.song = song
         initChordsSet()
         transposeLyrics(chordsKey)
@@ -57,13 +51,12 @@ class SongPresenter : MvpPresenter<SongView>() {
         if (newFontSize in FONT_SIZE_MIN..FONT_SIZE_MAX) {
             currentFontSize = newFontSize
             viewState.setLyricsFontSize(newFontSize)
-            val fontSizeLabelText =
-                if (currentFontSize == FONT_SIZE_DEFAULT) {
-                    fontDefaultLabel
-                } else {
-                    currentFontSize.toInt().toString()
-                }
-            viewState.setFontSizeLabelText(fontSizeLabelText)
+
+            if (currentFontSize == FONT_SIZE_DEFAULT) {
+                viewState.setFontSizeLabelText(setDefault = true)
+            } else {
+                viewState.setFontSizeLabelText(text = currentFontSize.toInt().toString())
+            }
         }
 
     }
@@ -83,56 +76,61 @@ class SongPresenter : MvpPresenter<SongView>() {
     fun onKeyUpClicked() {
         chordsKey = (chordsKey + 1) % 12
         transposeLyrics(chordsKey)
-        val keyLabel = if (chordsKey == 0) keyDefaultLabel else chordsKey.toString()
-        viewState.setKeyLabelText(keyLabel)
     }
 
     fun onKeyLabelClicked() {
         chordsKey = 0
         transposeLyrics(chordsKey)
-        val keyLabel = keyDefaultLabel
-        viewState.setKeyLabelText(keyLabel)
     }
 
     fun onKeyDownClicked() {
         chordsKey = (chordsKey - 1) % 12
         transposeLyrics(chordsKey)
-        val keyLabel = if (chordsKey == 0) keyDefaultLabel else chordsKey.toString()
-        viewState.setKeyLabelText(keyLabel)
     }
-
 
     private fun transposeLyrics(amount: Int) {
-        val transposedChords = mutableMapOf<String, String>()
-        chordsSet.forEach { chord ->
-            transposedChords[chord] =
-                ChordsTransponder.transposeChord(
-                    chord,
-                    amount
-                )
+        if (amount != 0) {
+            val transposedChords = mutableMapOf<String, String>()
+            chordsSet.forEach { chord ->
+                transposedChords[chord] =
+                    ChordsTransponder.transposeChord(
+                        chord,
+                        amount
+                    )
+            }
+            val lyrics = song.lyrics
+            val newTextBuilder = StringBuilder()
+            var chordStartIndex = lyrics.indexOf("<b>")
+            var prevChordEnd = 0
+            while (chordStartIndex != -1) {
+                val chordEnd = lyrics.indexOf("</b>", chordStartIndex + 3)
+                val chord =
+                    lyrics.substring(
+                        chordStartIndex + 3,
+                        chordEnd
+                    )
+                newTextBuilder.append(lyrics.substring(prevChordEnd, chordStartIndex + 3))
+                newTextBuilder.append(transposedChords[chord])
+                newTextBuilder.append("</b>")
+                prevChordEnd = chordEnd + 4
+                chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
+            }
+            newTextBuilder.append(lyrics.substring(prevChordEnd))
+            val transposedLyrics = newTextBuilder.toString()
+            viewState.setSongLyrics(transposedLyrics)
+        } else {
+            viewState.setSongLyrics(song.lyrics)
         }
-        val lyrics = song.lyrics
-        val newTextBuilder = StringBuilder()
-        var chordStartIndex = lyrics.indexOf("<b>")
-        var prevChordEnd = 0
-        while (chordStartIndex != -1) {
-            val chordEnd = lyrics.indexOf("</b>", chordStartIndex + 3)
-            val chord =
-                lyrics.substring(
-                    chordStartIndex + 3,
-                    chordEnd
-                )
-            newTextBuilder.append(lyrics.substring(prevChordEnd, chordStartIndex + 3))
-            newTextBuilder.append(transposedChords[chord])
-            newTextBuilder.append("</b>")
-            prevChordEnd = chordEnd + 4
-            chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
-        }
-        newTextBuilder.append(lyrics.substring(prevChordEnd))
-        val transposedLyrics = newTextBuilder.toString()
-        viewState.setSongLyrics(transposedLyrics)
+        updateKeyLabel()
     }
 
+    private fun updateKeyLabel() {
+        if (chordsKey == 0) {
+            viewState.setKeyLabelText(setDefault = true)
+        } else {
+            viewState.setKeyLabelText(chordsKey.toString())
+        }
+    }
 
     companion object {
         private const val FONT_CHANGE_AMOUNT: Float = 2.0F

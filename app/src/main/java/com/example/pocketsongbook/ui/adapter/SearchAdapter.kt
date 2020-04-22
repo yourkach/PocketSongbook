@@ -10,7 +10,7 @@ import com.example.pocketsongbook.data.SongSearchItem
 import com.example.pocketsongbook.ui.presenter.SearchPresenter
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
-class SearchRecyclerAdapter(private val presenter: SearchPresenter) :
+class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var viewItems: ArrayList<SongSearchItem> = ArrayList()
 
@@ -20,7 +20,7 @@ class SearchRecyclerAdapter(private val presenter: SearchPresenter) :
                 R.layout.song_item_layout,
                 parent,
                 false
-            ), presenter
+            )
         )
     }
 
@@ -38,7 +38,7 @@ class SearchRecyclerAdapter(private val presenter: SearchPresenter) :
         viewItems = listViewSongItem
     }
 
-    class TextViewHolder constructor(itemView: View, private val delegate: SearchPresenter) :
+    inner class TextViewHolder constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
@@ -48,7 +48,7 @@ class SearchRecyclerAdapter(private val presenter: SearchPresenter) :
 
         override fun onClick(v: View?) {
             if (v != null) {
-                delegate.onSongClicked(adapterPosition)
+                onItemClickResponse(adapterPosition)
             }
         }
 

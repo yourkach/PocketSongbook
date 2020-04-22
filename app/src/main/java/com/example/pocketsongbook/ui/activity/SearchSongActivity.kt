@@ -11,15 +11,15 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.SongSearchItem
 import com.example.pocketsongbook.data.Song
 import com.example.pocketsongbook.ui.presenter.SearchPresenter
-import com.example.pocketsongbook.ui.adapter.SearchRecyclerAdapter
+import com.example.pocketsongbook.ui.adapter.SearchAdapter
 import com.example.pocketsongbook.view.SearchSongView
 import kotlinx.android.synthetic.main.activity_search.*
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
 
 
 class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListener,
@@ -29,7 +29,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     lateinit var presenter: SearchPresenter
 
 
-    private lateinit var searchItemsAdapter: SearchRecyclerAdapter
+    private lateinit var searchItemsAdapter: SearchAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,12 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         //TODO(navigation to favourites activity)
-        searchToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
+        searchToolbar.setNavigationIcon(R.drawable.ic_star_border_white_24dp)
+        searchToolbar.setNavigationOnClickListener {
+            presenter.onFavouritesClicked()
+        }
     }
+
 
     override fun showToast(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
@@ -50,9 +54,13 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     override fun startSongViewActivity(song: Song) {
         val intent = Intent(this, SongViewActivity::class.java)
         val bundle = Bundle()
-        bundle.putParcelable(SONG_BUNDLE_KEY, song)
-        intent.putExtra(BUNDLE_KEY, bundle)
+        bundle.putParcelable(KEY_BUNDLE_SONG, song)
+        intent.putExtra(KEY_BUNDLE, bundle)
         startActivity(intent)
+    }
+
+    override fun startFavouritesActivity() {
+        startActivity(Intent(this, FavouritesActivity::class.java))
     }
 
 
@@ -60,9 +68,9 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         searchRecycler.apply {
             layoutManager = LinearLayoutManager(this@SearchSongActivity)
             searchItemsAdapter =
-                SearchRecyclerAdapter(
-                    presenter
-                )
+                SearchAdapter { position ->
+                    presenter.onSongClicked(position)
+                }
             adapter = searchItemsAdapter
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
@@ -80,7 +88,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.options_menu, menu)
+        menuInflater.inflate(R.menu.search_options_menu, menu)
         val item = menu.findItem(R.id.search)
         val searchView: SearchView = item.actionView as SearchView
         searchView.setOnQueryTextListener(this)
@@ -123,8 +131,8 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     }
 
     companion object {
-        const val BUNDLE_KEY = "bundle"
-        const val SONG_BUNDLE_KEY = "song"
+        const val KEY_BUNDLE = "bundle"
+        const val KEY_BUNDLE_SONG = "song"
     }
 
 }

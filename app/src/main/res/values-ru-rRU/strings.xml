@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Карманный песенник</string>
-    <string name="search_hint">Название песни или исполнитель</string>
+    <string name="search_hint">Песня или исполнитель</string>
     <string name="song_key_label">тон</string>
     <string name="song_font_label">шрифт</string>
     <string name="menu_item_search">Поиск</string>

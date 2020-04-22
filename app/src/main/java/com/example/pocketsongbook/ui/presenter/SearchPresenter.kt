@@ -1,7 +1,5 @@
 package com.example.pocketsongbook.ui.presenter
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import com.example.pocketsongbook.model.SearchPerformingTask
 import com.example.pocketsongbook.model.SongDownloadTask
 import com.example.pocketsongbook.data.Song
@@ -10,6 +8,8 @@ import com.example.pocketsongbook.view.SearchSongView
 import com.example.pocketsongbook.website_handlers.WebSiteHandler
 import com.example.pocketsongbook.website_handlers.AmDmHandler
 import com.example.pocketsongbook.website_handlers.MyChordsHandler
+import moxy.InjectViewState
+import moxy.MvpPresenter
 
 @InjectViewState
 class SearchPresenter : MvpPresenter<SearchSongView>() {
@@ -97,9 +97,16 @@ class SearchPresenter : MvpPresenter<SearchSongView>() {
     }
 
     fun onSpinnerItemSelected(pos: Int) {
-        webSiteHandler = siteHandlersList[pos].second
-        if (searchQuery != "") {
-            performSearch(searchQuery)
+        if (webSiteHandler != siteHandlersList[pos].second) {
+            webSiteHandler = siteHandlersList[pos].second
+            if (searchQuery != "") {
+                performSearch(searchQuery)
+                viewState.updateRecyclerItems(ArrayList())
+            }
         }
+    }
+
+    fun onFavouritesClicked() {
+        viewState.startFavouritesActivity()
     }
 }
