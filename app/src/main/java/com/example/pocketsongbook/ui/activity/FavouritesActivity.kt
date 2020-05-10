@@ -1,27 +1,53 @@
 package com.example.pocketsongbook.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.SearchView
 import androidx.core.text.HtmlCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongEntity
+import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.ui.activity.SongViewActivity.Companion.SONG_KEY
+import com.example.pocketsongbook.ui.adapter.FavouritesAdapter
+import com.example.pocketsongbook.ui.adapter.SearchAdapter
 import com.example.pocketsongbook.ui.presenter.FavouritesPresenter
-import com.example.pocketsongbook.view.FavouritesView
+import com.example.pocketsongbook.ui.view.FavouritesView
 import kotlinx.android.synthetic.main.activity_favourites.*
 import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
-class FavouritesActivity : MvpAppCompatActivity(), FavouritesView, SearchView.OnQueryTextListener {
+class FavouritesActivity : MvpAppCompatActivity(),
+    FavouritesView, SearchView.OnQueryTextListener {
 
-    @InjectPresenter
-    lateinit var presenter: FavouritesPresenter
+    @Inject
+    lateinit var favouritesPresenter: FavouritesPresenter
+
+    private val presenter by moxyPresenter { favouritesPresenter }
+
+    private val favouritesAdapter = FavouritesAdapter(onItemClickResponse = {
+        presenter.onSongClicked(it)
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favourites)
         setUpToolbar()
+        setUpRecycler()
+    }
+
+    private fun setUpRecycler() {
+        favouritesRv.apply {
+            layoutManager = LinearLayoutManager(this@FavouritesActivity)
+            adapter = favouritesAdapter
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,19 +67,25 @@ class FavouritesActivity : MvpAppCompatActivity(), FavouritesView, SearchView.On
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
-            setDisplayShowTitleEnabled(false)
+            title = getString(R.string.label_favourites)
         }
         favouritesToolbar.setNavigationOnClickListener {
             finish()
         }
     }
 
-    override fun updateItems(newItems: List<SongSearchItem>) {
-        TODO("Not yet implemented")
+    override fun updateItems(newItems: List<SongEntity>) {
+        favouritesAdapter.setList(newItems)
     }
 
     override fun clearToolbarFocus() {
         favouritesToolbar.clearFocus()
+    }
+
+    override fun startSongViewActivity(song: Song) {
+        val intent = Intent(this, SongViewActivity::class.java)
+        intent.putExtra(SONG_KEY, song)
+        startActivity(intent)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.misc;
+package com.example.pocketsongbook;
 
 import java.util.HashMap;
 import java.util.Map;

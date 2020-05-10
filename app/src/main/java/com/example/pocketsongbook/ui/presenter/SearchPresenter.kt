@@ -1,107 +1,97 @@
 package com.example.pocketsongbook.ui.presenter
 
-import com.example.pocketsongbook.model.SearchPerformingTask
-import com.example.pocketsongbook.model.SongDownloadTask
-import com.example.pocketsongbook.data.Song
-import com.example.pocketsongbook.data.SongSearchItem
-import com.example.pocketsongbook.view.SearchSongView
-import com.example.pocketsongbook.website_handlers.WebSiteHandler
-import com.example.pocketsongbook.website_handlers.AmDmHandler
-import com.example.pocketsongbook.website_handlers.MyChordsHandler
+import com.example.pocketsongbook.R
+import com.example.pocketsongbook.domain.FavouriteSongsDao
+import com.example.pocketsongbook.domain.SongsReposFacade
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.ui.view.SearchSongView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-class SearchPresenter : MvpPresenter<SearchSongView>() {
+class SearchPresenter @Inject constructor(
+    private val songsReposFacade: SongsReposFacade,
+    private val favouriteSongsDao: FavouriteSongsDao
+) : MvpPresenter<SearchSongView>() {
 
-    private lateinit var webSiteHandler: WebSiteHandler
-    private lateinit var siteHandlersList: List<Pair<String, WebSiteHandler>>
+
     private var searchQuery: String = ""
-    private val searchItems = ArrayList<SongSearchItem>()
+    private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
 
-    init {
-        initWebSiteHandlersList()
-    }
+    fun getSpinnerItems(): List<String> = songsReposFacade.getWebsiteNames()
 
-    private fun initWebSiteHandlersList() {
-        siteHandlersList = listOf(
-            "MyChords.net" to MyChordsHandler(),
-            "AmDm.ru" to AmDmHandler()
-        )
-        webSiteHandler = siteHandlersList.first().second
-    }
-
-    fun getSpinnerItems(): List<String> {
-        return siteHandlersList.map {
-            it.first
-        }
-    }
-
-    fun performSearch(query: String) {
-        searchQuery = query
-        if (query != "") {
-            val task =
-                SearchPerformingTask(
-                    webSiteHandler,
-                    this
-                )
-            task.execute(query)
-            viewState.showLoadingPanel(true)
+    fun onQueryTextSubmit(query: String?): Boolean {
+        return if (query != null) {
+            viewState.clearToolbarFocus()
+            performSearch(query)
+            true
         } else {
-            viewState.showToast("Empty search request!")
+            viewState.showToast(R.string.toast_empty_request)
+            false
         }
     }
 
-    fun onSearchFinished(searchResult: ArrayList<SongSearchItem>?) {
-        searchItems.clear()
-        viewState.showLoadingPanel(false)
-        when {
-            searchResult == null -> {
-                viewState.showToast("Internet connection error!")
+    private fun performSearch(query: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            searchItems.clear()
+            searchQuery = query
+            viewState.showLoadingPanel(true)
+            val searchResult = withContext(Dispatchers.IO) {
+                val result = songsReposFacade.getSearchResults(
+                    searchQuery
+                )
+                result?.forEach {
+                    it.isFavourite = favouriteSongsDao.findByUrl(it.link).isNotEmpty()
+                }
+                return@withContext result
             }
-            searchResult.isNotEmpty() -> {
-                searchResult.forEach { item -> searchItems.add(item) }
-            }
-            else -> {
-                viewState.showToast("Nothing found!")
+            viewState.showLoadingPanel(false)
+            if (searchResult == null) {
+                viewState.showToast(R.string.toast_error_connection)
+            } else {
+                if (searchResult.isNotEmpty()) {
+                    searchResult.forEach { item -> searchItems.add(item) }
+                    viewState.updateRecyclerItems(searchItems)
+                } else {
+                    viewState.showToast(R.string.toast_no_results)
+                }
             }
         }
-        viewState.updateRecyclerItems(searchItems)
+    }
+
+    fun onSpinnerItemSelected(pos: Int) {
+        if (songsReposFacade.switchToRepo(pos)) {
+            if (searchQuery != "") {
+                performSearch(searchQuery)
+                viewState.updateRecyclerItems(listOf())
+            }
+        }
     }
 
     fun onSongClicked(pos: Int) {
         if (!isDownloading) {
-            isDownloading = true
-            val downloadTask =
-                SongDownloadTask(
-                    webSiteHandler,
-                    this
-                )
-            downloadTask.execute(searchItems[pos])
-            viewState.showLoadingPanel(true)
-        }
-    }
-
-    fun onSongDownloadFinish(song: Song?) {
-        isDownloading = false
-        when (song) {
-            null -> {
-                viewState.showToast("Failed to download song!")
-            }
-            else -> {
-                viewState.startSongViewActivity(song)
-            }
-        }
-        viewState.showLoadingPanel(false)
-    }
-
-    fun onSpinnerItemSelected(pos: Int) {
-        if (webSiteHandler != siteHandlersList[pos].second) {
-            webSiteHandler = siteHandlersList[pos].second
-            if (searchQuery != "") {
-                performSearch(searchQuery)
-                viewState.updateRecyclerItems(ArrayList())
+            CoroutineScope(Dispatchers.Main).launch {
+                isDownloading = true
+                viewState.showLoadingPanel(true)
+                val song = withContext(Dispatchers.IO) {
+                    return@withContext favouriteSongsDao.findByUrl(searchItems[pos].link)
+                        .firstOrNull()?.let { Song(it) }
+                        ?: songsReposFacade.getSong(searchItems[pos])
+                }
+                viewState.showLoadingPanel(false)
+                isDownloading = false
+                if (song != null) {
+                    viewState.startSongViewActivity(song)
+                } else {
+                    viewState.showToast(R.string.toast_download_fail)
+                }
             }
         }
     }

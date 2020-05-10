@@ -1,18 +1,34 @@
-package com.example.pocketsongbook.website_handlers
+package com.example.pocketsongbook.data.song_repos
 
-import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongSearchItem
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.io.IOException
 
-class MyChordsHandler :
-    WebSiteHandler {
+class MychordsRepo : SongsRepo {
+
+    override val websiteName: String = "MyChords.ru"
+
     private val baseUrl = "https://mychords.net/search?q="
+
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 
-    override fun buildSearchURL(searchQuery: String): String {
+    private fun buildSearchURL(searchQuery: String): String {
         return baseUrl + searchQuery.replace(' ', '+') + searchSettings
     }
 
-    override fun parseSearchPage(pageContent: Document): ArrayList<SongSearchItem> {
+    override suspend fun getSearchResults(searchRequest: String): List<SongSearchItem>? {
+        return try {
+            val document = Jsoup.connect(buildSearchURL(searchRequest)).get()
+            parseSearchPage(document)
+        } catch (e: IOException) {
+            null
+        }
+    }
+
+
+    private fun parseSearchPage(pageContent: Document): List<SongSearchItem> {
         val elements = pageContent.select("ul.b-listing") //[class=b-listing]
             .eq(0)
             .select("li[class=b-listing__item]")
@@ -31,13 +47,30 @@ class MyChordsHandler :
             }
             val title = itemText.substring(splitIndex)
             val link = "https://mychords.net/" + songItem.attr("href")
-            songItems.add(SongSearchItem(artist, title, link))
+            songItems.add(
+                SongSearchItem(
+                    artist,
+                    title,
+                    link
+                )
+            )
         }
         return songItems
     }
 
+    override suspend fun getSong(songSearchItem: SongSearchItem): Song? {
+        return try {
+            val document = Jsoup.connect(songSearchItem.link).get()
+            val lyrics = parseLyricsPage(document)
+                .replace("\n", "<br>\n")
+                .replace(" ", "&nbsp;")
+            Song(songSearchItem, lyrics)
+        } catch (e: IOException) {
+            null
+        }
+    }
 
-    override fun parseLyricsPage(pageContent: Document): String {
+    private fun parseLyricsPage(pageContent: Document): String {
         var text = pageContent.select("pre.w-words__text")
             .eq(0).html().toString()
         text = text.replace("</a></span>", "</b>")

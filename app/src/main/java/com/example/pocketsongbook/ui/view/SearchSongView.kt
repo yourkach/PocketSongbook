@@ -1,7 +1,7 @@
-package com.example.pocketsongbook.view
+package com.example.pocketsongbook.ui.view
 
-import com.example.pocketsongbook.data.Song
-import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongSearchItem
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
@@ -15,14 +15,17 @@ interface SearchSongView : MvpView {
     fun showLoadingPanel(visible: Boolean)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun updateRecyclerItems(newItems: ArrayList<SongSearchItem>)
+    fun updateRecyclerItems(newItems: List<SongSearchItem>)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showToast(text: String)
+    fun showToast(messageId: Int)
 
     @StateStrategyType(SkipStrategy::class)
     fun startSongViewActivity(song: Song)
 
     @StateStrategyType(SkipStrategy::class)
     fun startFavouritesActivity()
+
+    @StateStrategyType(SkipStrategy::class)
+    fun clearToolbarFocus()
 }

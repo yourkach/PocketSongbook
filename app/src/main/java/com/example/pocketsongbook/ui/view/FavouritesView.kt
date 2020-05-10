@@ -1,6 +1,8 @@
-package com.example.pocketsongbook.view
+package com.example.pocketsongbook.ui.view
 
-import com.example.pocketsongbook.data.SongSearchItem
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongEntity
+import com.example.pocketsongbook.domain.model.SongSearchItem
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
@@ -10,8 +12,12 @@ import moxy.viewstate.strategy.StateStrategyType
 interface FavouritesView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun updateItems(newItems: List<SongSearchItem>)
+    fun updateItems(newItems: List<SongEntity>)
 
     @StateStrategyType(SkipStrategy::class)
     fun clearToolbarFocus()
+
+
+    @StateStrategyType(SkipStrategy::class)
+    fun startSongViewActivity(song: Song)
 }

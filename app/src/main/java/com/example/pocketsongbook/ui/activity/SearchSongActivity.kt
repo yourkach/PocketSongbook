@@ -11,51 +11,56 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.SongSearchItem
-import com.example.pocketsongbook.data.Song
+import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.ui.activity.SongViewActivity.Companion.SONG_KEY
 import com.example.pocketsongbook.ui.presenter.SearchPresenter
 import com.example.pocketsongbook.ui.adapter.SearchAdapter
-import com.example.pocketsongbook.view.SearchSongView
+import com.example.pocketsongbook.ui.view.SearchSongView
 import kotlinx.android.synthetic.main.activity_search.*
 import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 
 class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListener,
-    AdapterView.OnItemSelectedListener, SearchSongView {
+    AdapterView.OnItemSelectedListener,
+    SearchSongView {
 
-    @InjectPresenter
-    lateinit var presenter: SearchPresenter
+    @Inject
+    lateinit var searchPresenter: SearchPresenter
 
+    private val presenter by moxyPresenter { searchPresenter }
 
     private lateinit var searchItemsAdapter: SearchAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        initRecyclerView()
+        setUpRecyclerView()
         initSpinner()
+        setUpToolbar()
+    }
+
+    private fun setUpToolbar() {
         setSupportActionBar(searchToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        //TODO(navigation to favourites activity)
         searchToolbar.setNavigationIcon(R.drawable.ic_star_border_white_24dp)
         searchToolbar.setNavigationOnClickListener {
             presenter.onFavouritesClicked()
         }
     }
 
-
-    override fun showToast(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+    override fun showToast(messageId: Int) {
+        Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show()
     }
 
     override fun startSongViewActivity(song: Song) {
         val intent = Intent(this, SongViewActivity::class.java)
-        val bundle = Bundle()
-        bundle.putParcelable(KEY_BUNDLE_SONG, song)
-        intent.putExtra(KEY_BUNDLE, bundle)
+        intent.putExtra(SONG_KEY, song)
         startActivity(intent)
     }
 
@@ -64,7 +69,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     }
 
 
-    private fun initRecyclerView() {
+    private fun setUpRecyclerView() {
         searchRecycler.apply {
             layoutManager = LinearLayoutManager(this@SearchSongActivity)
             searchItemsAdapter =
@@ -100,12 +105,11 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (query != null) {
-            searchToolbar.clearFocus()
-            presenter.performSearch(query)
-            return true
-        }
-        return false
+        return presenter.onQueryTextSubmit(query)
+    }
+
+    override fun clearToolbarFocus() {
+        searchToolbar.clearFocus()
     }
 
     override fun onQueryTextChange(newText: String?): Boolean = true
@@ -119,9 +123,10 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         }
     }
 
-    override fun updateRecyclerItems(newItems: ArrayList<SongSearchItem>) {
-        searchItemsAdapter.submitList(newItems)
-        searchItemsAdapter.notifyDataSetChanged()
+    override fun updateRecyclerItems(newItems: List<SongSearchItem>) {
+        searchItemsAdapter.apply {
+            setList(newItems)
+        }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) = Unit
@@ -130,10 +135,6 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         presenter.onSpinnerItemSelected(position)
     }
 
-    companion object {
-        const val KEY_BUNDLE = "bundle"
-        const val KEY_BUNDLE_SONG = "song"
-    }
 
 }
 

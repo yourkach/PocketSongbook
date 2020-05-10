@@ -3,16 +3,15 @@ package com.example.pocketsongbook.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.domain.model.SongEntity
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
-class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
+class FavouritesAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items: List<SongSearchItem> = listOf()
+    private var items: List<SongEntity> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(
@@ -34,28 +33,21 @@ class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
 
     override fun getItemCount(): Int = items.size
 
-    fun setList(newItems: List<SongSearchItem>) {
+    fun setList(newItems: List<SongEntity>) {
         items = newItems
         notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(searchItem: SongSearchItem) {
+        fun bind(song: SongEntity) {
             itemView.apply {
-                songTitleTv.text = searchItem.title
-                songArtistTv.text = searchItem.artist
-                if (searchItem.isFavourite) {
-                    songFavoriteIv.visibility = View.VISIBLE
-                } else {
-                    songFavoriteIv.visibility = View.GONE
-                }
+                songTitleTv.text = song.title
+                songArtistTv.text = song.artist
                 setOnClickListener {
                     onItemClickResponse(adapterPosition)
                 }
             }
         }
     }
-
 }
-

@@ -1,37 +1,60 @@
 package com.example.pocketsongbook.ui.presenter
 
-import com.example.pocketsongbook.data.Song
-import com.example.pocketsongbook.misc.ChordsTransponder
-import com.example.pocketsongbook.view.SongView
+import com.example.pocketsongbook.ChordsTransponder
+import com.example.pocketsongbook.R
+import com.example.pocketsongbook.domain.FavouriteSongsDao
+import com.example.pocketsongbook.domain.model.Chord
+import com.example.pocketsongbook.domain.model.Song
+import com.example.pocketsongbook.domain.model.SongEntity
+import com.example.pocketsongbook.ui.view.SongView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 
 @InjectViewState
-class SongPresenter : MvpPresenter<SongView>() {
+class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private val song: Song) :
+    MvpPresenter<SongView>() {
 
-    private lateinit var song: Song
     private lateinit var chordsSet: Set<String>
+    private var transposedChordsList: List<String>
+    private var transposedLyrics: String = ""
+    private var isFavourite: Boolean = false
     private var chordsKey: Int = 0
     private var currentFontSize: Float = FONT_SIZE_DEFAULT
+    private var chordsBarOpened = false
 
-    fun setData(
-        song: Song
-    ) {
-        this.song = song
-        initChordsSet()
-        transposeLyrics(chordsKey)
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        if (transposedLyrics == "") transposedLyrics = getTransposedLyrics(chordsKey)
+        updateViewAfterTransposing()
         viewState.setArtistLabelText(song.artist)
         viewState.setTitleLabelText(song.title)
+        updateChordsImages()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            isFavourite = favouriteSongsDao.findByUrl(song.link).isNotEmpty()
+            withContext(Dispatchers.Main) {
+                viewState.setFavouritesButtonFilled(isFavourite)
+            }
+        }
     }
 
+    init {
+        initChordsSet()
+        transposedChordsList = chordsSet.toList()
+    }
 
     private fun initChordsSet() {
-        val patternChord =
+        val chordPattern =
             Pattern.compile("<b>(.*?)</b>")
-        val matcher = patternChord.matcher(song.lyrics)
-        val chordsFound = ArrayList<String>()
+        val matcher = chordPattern.matcher(song.lyrics)
+        val chordsFound = mutableListOf<String>()
         while (matcher.find()) {
             val chord = matcher.group(1)
             if (chord != null) chordsFound.add(chord)
@@ -53,12 +76,11 @@ class SongPresenter : MvpPresenter<SongView>() {
             viewState.setLyricsFontSize(newFontSize)
 
             if (currentFontSize == FONT_SIZE_DEFAULT) {
-                viewState.setFontSizeLabelText(setDefault = true)
+                viewState.setFontSizeLabelText(R.string.song_font_default)
             } else {
-                viewState.setFontSizeLabelText(text = currentFontSize.toInt().toString())
+                viewState.setFontSizeLabelText(currentFontSize.toInt().toString())
             }
         }
-
     }
 
     fun onFontPlusClicked() {
@@ -75,29 +97,74 @@ class SongPresenter : MvpPresenter<SongView>() {
 
     fun onKeyUpClicked() {
         chordsKey = (chordsKey + 1) % 12
-        transposeLyrics(chordsKey)
+        transposedLyrics = getTransposedLyrics(chordsKey)
+        updateViewAfterTransposing()
     }
 
     fun onKeyLabelClicked() {
         chordsKey = 0
-        transposeLyrics(chordsKey)
+        transposedLyrics = getTransposedLyrics(chordsKey)
+        updateViewAfterTransposing()
     }
 
     fun onKeyDownClicked() {
         chordsKey = (chordsKey - 1) % 12
-        transposeLyrics(chordsKey)
+        transposedLyrics = getTransposedLyrics(chordsKey)
+        updateViewAfterTransposing()
     }
 
-    private fun transposeLyrics(amount: Int) {
-        if (amount != 0) {
+    private fun updateViewAfterTransposing() {
+        viewState.setSongLyrics(transposedLyrics)
+        updateKeyLabel()
+        updateChordsImages()
+    }
+
+    fun onFavouritesButtonClicked() {
+        if (isFavourite) {
+            removeFromFavourites()
+            viewState.setFavouritesButtonFilled(false)
+        } else {
+            addToFavourites()
+            viewState.setFavouritesButtonFilled(true)
+        }
+    }
+
+    fun onFloatingButtonClicked() {
+        if (chordsBarOpened) {
+            viewState.closeChordBar()
+        } else {
+            viewState.openChordBar()
+        }
+        chordsBarOpened = !chordsBarOpened
+    }
+
+    private fun addToFavourites() {
+        CoroutineScope(Dispatchers.IO).launch {
+            favouriteSongsDao.insert(SongEntity(song))
+        }
+        isFavourite = true
+    }
+
+    private fun removeFromFavourites() {
+        CoroutineScope(Dispatchers.IO).launch {
+            favouriteSongsDao.deleteByUrl(song.link)
+        }
+        isFavourite = false
+    }
+
+    private fun getTransposedLyrics(amount: Int): String {
+        return if (amount != 0) {
+            val newTransposed = mutableListOf<String>()
             val transposedChords = mutableMapOf<String, String>()
-            chordsSet.forEach { chord ->
-                transposedChords[chord] =
-                    ChordsTransponder.transposeChord(
-                        chord,
-                        amount
-                    )
+            chordsSet.forEach {
+                val newChord = ChordsTransponder.transposeChord(
+                    it,
+                    amount
+                )
+                transposedChords[it] = newChord
+                newTransposed.add(newChord)
             }
+            transposedChordsList = newTransposed
             val lyrics = song.lyrics
             val newTextBuilder = StringBuilder()
             var chordStartIndex = lyrics.indexOf("<b>")
@@ -116,20 +183,29 @@ class SongPresenter : MvpPresenter<SongView>() {
                 chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
             }
             newTextBuilder.append(lyrics.substring(prevChordEnd))
-            val transposedLyrics = newTextBuilder.toString()
-            viewState.setSongLyrics(transposedLyrics)
+            newTextBuilder.toString()
         } else {
-            viewState.setSongLyrics(song.lyrics)
+            transposedChordsList = chordsSet.toList()
+            song.lyrics
         }
-        updateKeyLabel()
     }
 
     private fun updateKeyLabel() {
         if (chordsKey == 0) {
-            viewState.setKeyLabelText(setDefault = true)
+            viewState.setKeyLabelText(R.string.song_key_default)
         } else {
             viewState.setKeyLabelText(chordsKey.toString())
         }
+    }
+
+    private fun updateChordsImages() {
+        val newChords = transposedChordsList.map {
+            Chord(
+                it,
+                "https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
+            )
+        }
+        viewState.loadChords(newChords)
     }
 
     companion object {
@@ -138,4 +214,9 @@ class SongPresenter : MvpPresenter<SongView>() {
         const val FONT_SIZE_MIN: Float = 8.0F
         const val FONT_SIZE_MAX: Float = 36.0F
     }
+}
+
+
+class SongPresenterFactory @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) {
+    fun create(song: Song): SongPresenter = SongPresenter(favouriteSongsDao, song)
 }
