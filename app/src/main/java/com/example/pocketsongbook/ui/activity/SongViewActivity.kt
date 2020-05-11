@@ -2,8 +2,8 @@ package com.example.pocketsongbook.ui.activity
 
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.DragEvent
 import android.view.View
+import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.App
@@ -15,6 +15,7 @@ import com.example.pocketsongbook.ui.presenter.SongPresenter
 import com.example.pocketsongbook.ui.presenter.SongPresenterFactory
 import com.example.pocketsongbook.ui.view.SongView
 import kotlinx.android.synthetic.main.activity_song_view.*
+import kotlinx.coroutines.*
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -31,6 +32,8 @@ class SongViewActivity : MvpAppCompatActivity(),
 
     private val chordsAdapter = ChordsAdapter()
 
+    private var scrollJob: Job? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         song = intent.getParcelableExtra(SONG_KEY)!!
@@ -39,6 +42,55 @@ class SongViewActivity : MvpAppCompatActivity(),
         setContentView(R.layout.activity_song_view)
         setOnClickListeners()
         setUpChordsRecycler()
+        setUpSeekBar()
+    }
+
+    private fun setUpSeekBar() {
+        songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                setAutoScrollSpeed(progress)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                songScrollSb.alpha = 1.0f
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                songScrollSb.alpha = 0.3f
+            }
+        })
+    }
+
+    /**
+     * [speed] must be in 0..30 range
+     */
+    fun setAutoScrollSpeed(speed: Int) {
+        scrollJob?.cancel()
+        if (speed != 0) {
+            val newJob = CoroutineScope(Dispatchers.Main).launch {
+                coroutineTimer(repeatMillis = (35 - speed).toLong(),
+                    action = {
+                        songScrollView.smoothScrollBy(0, 1)
+                        songLinearLayout.measuredHeight > (songScrollView.scrollY + songScrollView.height)
+                    }
+                )
+            }
+            newJob.invokeOnCompletion {
+                if (it !is CancellationException) songScrollSb.progress = 0
+            }
+            scrollJob = newJob
+        }
+    }
+
+    private suspend inline fun coroutineTimer(
+        repeatMillis: Long = 0,
+        crossinline action: () -> Boolean
+    ) {
+        if (repeatMillis > 0) {
+            while (action()) {
+                delay(repeatMillis)
+            }
+        } else {
+            action()
+        }
     }
 
     private fun setUpChordsRecycler() {
@@ -49,8 +101,6 @@ class SongViewActivity : MvpAppCompatActivity(),
             adapter = chordsAdapter
         }
     }
-
-    //TODO("adjustable auto scrolling in Scrollview ")
 
     private fun setOnClickListeners() {
         songKeyUpBtn.setOnClickListener {

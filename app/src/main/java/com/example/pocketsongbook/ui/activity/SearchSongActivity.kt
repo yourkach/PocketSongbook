@@ -41,7 +41,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setUpRecyclerView()
-        initSpinner()
+        setUpSpinner()
         setUpToolbar()
     }
 
@@ -81,7 +81,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
         }
     }
 
-    private fun initSpinner() {
+    private fun setUpSpinner() {
         searchWebsiteSelector.apply {
             adapter =
                 ArrayAdapter(

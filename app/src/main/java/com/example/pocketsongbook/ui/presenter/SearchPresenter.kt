@@ -67,7 +67,7 @@ class SearchPresenter @Inject constructor(
     }
 
     fun onSpinnerItemSelected(pos: Int) {
-        if (songsReposFacade.switchToRepo(pos)) {
+        if (songsReposFacade.switchToWebsite(pos)) {
             if (searchQuery != "") {
                 performSearch(searchQuery)
                 viewState.updateRecyclerItems(listOf())

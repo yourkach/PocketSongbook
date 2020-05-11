@@ -18,7 +18,7 @@ class SongsReposFacadeImpl(private val songsRepos: List<SongsRepo>) :
     /**
      * returns true if switch was successful
      */
-    override fun switchToRepo(position: Int): Boolean {
+    override fun switchToWebsite(position: Int): Boolean {
         return when {
             position !in songsRepos.indices -> {
                 throw IndexOutOfBoundsException()
