@@ -70,7 +70,7 @@ class SearchSongActivity : MvpAppCompatActivity(), SearchView.OnQueryTextListene
 
 
     private fun setUpRecyclerView() {
-        searchRecycler.apply {
+        searchRv.apply {
             layoutManager = LinearLayoutManager(this@SearchSongActivity)
             searchItemsAdapter =
                 SearchAdapter { position ->

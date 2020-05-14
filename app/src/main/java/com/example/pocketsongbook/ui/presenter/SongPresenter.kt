@@ -202,7 +202,8 @@ class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private va
         val newChords = transposedChordsList.map {
             Chord(
                 it,
-                "https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
+                //"https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
+                "https://amdm.ru/images/chords/${it.replace("#", "w")}_0.gif"
             )
         }
         viewState.loadChords(newChords)

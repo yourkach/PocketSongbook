@@ -2,7 +2,7 @@ package com.example.pocketsongbook.ui.presenter
 
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.FavouriteSongsDao
-import com.example.pocketsongbook.domain.SongsReposFacade
+import com.example.pocketsongbook.domain.SongsReposManager
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
 import com.example.pocketsongbook.ui.view.SearchSongView
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
-    private val songsReposFacade: SongsReposFacade,
+    private val songsReposManager: SongsReposManager,
     private val favouriteSongsDao: FavouriteSongsDao
 ) : MvpPresenter<SearchSongView>() {
 
@@ -25,7 +25,7 @@ class SearchPresenter @Inject constructor(
     private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
 
-    fun getSpinnerItems(): List<String> = songsReposFacade.getWebsiteNames()
+    fun getSpinnerItems(): List<String> = songsReposManager.getWebsiteNames()
 
     fun onQueryTextSubmit(query: String?): Boolean {
         return if (query != null) {
@@ -44,7 +44,7 @@ class SearchPresenter @Inject constructor(
             searchQuery = query
             viewState.showLoadingPanel(true)
             val searchResult = withContext(Dispatchers.IO) {
-                val result = songsReposFacade.getSearchResults(
+                val result = songsReposManager.getSearchResults(
                     searchQuery
                 )
                 result?.forEach {
@@ -67,7 +67,7 @@ class SearchPresenter @Inject constructor(
     }
 
     fun onSpinnerItemSelected(pos: Int) {
-        if (songsReposFacade.switchToWebsite(pos)) {
+        if (songsReposManager.switchToWebsite(pos)) {
             if (searchQuery != "") {
                 performSearch(searchQuery)
                 viewState.updateRecyclerItems(listOf())
@@ -83,7 +83,7 @@ class SearchPresenter @Inject constructor(
                 val song = withContext(Dispatchers.IO) {
                     return@withContext favouriteSongsDao.findByUrl(searchItems[pos].link)
                         .firstOrNull()?.let { Song(it) }
-                        ?: songsReposFacade.getSong(searchItems[pos])
+                        ?: songsReposManager.getSong(searchItems[pos])
                 }
                 viewState.showLoadingPanel(false)
                 isDownloading = false

@@ -1,12 +1,12 @@
 package com.example.pocketsongbook.data
 
 import com.example.pocketsongbook.data.song_repos.SongsRepo
-import com.example.pocketsongbook.domain.SongsReposFacade
+import com.example.pocketsongbook.domain.SongsReposManager
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
 
-class SongsReposFacadeImpl(private val songsRepos: List<SongsRepo>) :
-    SongsReposFacade {
+class SongsReposManagerImpl(private val songsRepos: List<SongsRepo>) :
+    SongsReposManager {
 
     override fun getWebsiteNames(): List<String> = songsRepos.map { it.websiteName }
 
@@ -14,10 +14,6 @@ class SongsReposFacadeImpl(private val songsRepos: List<SongsRepo>) :
 
     private var currentRepoIndex = defaultRepoIndex
 
-
-    /**
-     * returns true if switch was successful
-     */
     override fun switchToWebsite(position: Int): Boolean {
         return when {
             position !in songsRepos.indices -> {
