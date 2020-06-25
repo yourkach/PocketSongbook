@@ -2,7 +2,7 @@ package com.example.pocketsongbook.ui.presenter
 
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.FavouriteSongsDao
-import com.example.pocketsongbook.domain.SongsReposManager
+import com.example.pocketsongbook.domain.SongsApiManager
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
 import com.example.pocketsongbook.ui.view.SearchSongView
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
-    private val songsReposManager: SongsReposManager,
+    private val songsApiManager: SongsApiManager,
     private val favouriteSongsDao: FavouriteSongsDao
 ) : MvpPresenter<SearchSongView>() {
 
@@ -25,11 +25,10 @@ class SearchPresenter @Inject constructor(
     private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
 
-    fun getSpinnerItems(): List<String> = songsReposManager.getWebsiteNames()
+    fun getSpinnerItems(): List<String> = songsApiManager.getWebsiteNames()
 
     fun onQueryTextSubmit(query: String?): Boolean {
         return if (query != null) {
-            viewState.clearToolbarFocus()
             performSearch(query)
             true
         } else {
@@ -44,7 +43,7 @@ class SearchPresenter @Inject constructor(
             searchQuery = query
             viewState.showLoadingPanel(true)
             val searchResult = withContext(Dispatchers.IO) {
-                val result = songsReposManager.getSearchResults(
+                val result = songsApiManager.getSearchResults(
                     searchQuery
                 )
                 result?.forEach {
@@ -67,7 +66,7 @@ class SearchPresenter @Inject constructor(
     }
 
     fun onSpinnerItemSelected(pos: Int) {
-        if (songsReposManager.switchToWebsite(pos)) {
+        if (songsApiManager.switchToWebsite(pos)) {
             if (searchQuery != "") {
                 performSearch(searchQuery)
                 viewState.updateRecyclerItems(listOf())
@@ -83,7 +82,7 @@ class SearchPresenter @Inject constructor(
                 val song = withContext(Dispatchers.IO) {
                     return@withContext favouriteSongsDao.findByUrl(searchItems[pos].link)
                         .firstOrNull()?.let { Song(it) }
-                        ?: songsReposManager.getSong(searchItems[pos])
+                        ?: songsApiManager.getSong(searchItems[pos])
                 }
                 viewState.showLoadingPanel(false)
                 isDownloading = false

@@ -1,31 +1,29 @@
 package com.example.pocketsongbook.ui.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.SearchView
-import android.widget.Toast
-import androidx.core.text.HtmlCompat
+import android.view.ViewGroup
+import android.widget.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
-import com.example.pocketsongbook.ui.activity.FavouritesActivity
-import com.example.pocketsongbook.ui.activity.SongViewActivity
 import com.example.pocketsongbook.ui.adapter.SearchAdapter
 import com.example.pocketsongbook.ui.presenter.SearchPresenter
 import com.example.pocketsongbook.ui.view.SearchSongView
-import kotlinx.android.synthetic.main.activity_search.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import kotlinx.android.synthetic.main.fragment_search.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSongView {
+class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSongView,
+    AdapterView.OnItemSelectedListener {
 
     @Inject
     lateinit var searchPresenter: SearchPresenter
@@ -38,12 +36,49 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        setUpRecyclerView()
-        setUpSpinner()
-        setUpToolbar()
     }
 
-    private fun setUpToolbar() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpRecyclerView()
+        setUpSpinner()
+        setUpSearchView()
+
+        searchOpenFavouritesIv.setOnClickListener {
+
+        }
+    }
+
+    private fun setUpSearchView() {
+        //TODO сделать белый текст в searchView
+        Observable.create<String> { emitter ->
+            searchViewMain.setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        if (!query.isNullOrEmpty()) {
+                            emitter.onNext(query)
+                            cleanSearchBarFocus()
+                        }
+                        return true
+                    }
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        if (!newText.isNullOrEmpty()) {
+                            emitter.onNext(newText)
+                        }
+                        return true
+                    }
+                }
+            )
+        }
+            .distinctUntilChanged()
+            .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+            .subscribe { query ->
+                presenter.onQueryTextSubmit(query)
+            }
+    }
+
+    /*private fun setUpToolbar() {
         //activity?.actionBar TODO
         activity?.getSupportActionBar()
         setSupportActionBar(searchToolbar)
@@ -52,7 +87,7 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
         searchToolbar.setNavigationOnClickListener {
             presenter.onFavouritesClicked()
         }
-    }
+    }*/
 
     override fun showToast(messageId: Int) {
         Toast.makeText(context, getString(messageId), Toast.LENGTH_SHORT).show()
@@ -81,12 +116,11 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
 
     private fun setUpSpinner() {
         searchWebsiteSelector.apply {
-            adapter =
-                ArrayAdapter(
-                    context,
-                    R.layout.spinner_item, presenter.getSpinnerItems()
-                )
-            onItemSelectedListener = TODO("make item selected listener") //this@SearchSongActivity
+            adapter = ArrayAdapter(
+                context,
+                R.layout.spinner_item, presenter.getSpinnerItems()
+            )
+            onItemSelectedListener = this@SearchFragment
         }
     }
 
@@ -115,16 +149,9 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
 
      */
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return presenter.onQueryTextSubmit(query)
+    private fun cleanSearchBarFocus() {
+        searchViewMain.clearFocus()
     }
-
-    override fun clearToolbarFocus() {
-        searchToolbar.clearFocus()
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean = true
-
 
     override fun showLoadingPanel(visible: Boolean) {
         if (visible) {
@@ -140,6 +167,11 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
         }
     }
 
+    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        presenter.onSpinnerItemSelected(position)
+    }
 
 
 }

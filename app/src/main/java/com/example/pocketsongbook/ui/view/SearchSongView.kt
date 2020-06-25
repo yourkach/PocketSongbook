@@ -26,6 +26,4 @@ interface SearchSongView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun navigateToFavourites()
 
-    @StateStrategyType(SkipStrategy::class)
-    fun clearToolbarFocus()
 }

@@ -1,8 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/searchToolbarStub"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/searchOpenFavouritesIv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/circle_ripple_background"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@+id/searchToolbarStub"
+        app:layout_constraintStart_toStartOf="@+id/searchToolbarStub"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_star_border_white_24dp" />
+
+    <SearchView
+        android:id="@+id/searchViewMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:closeIcon="@drawable/ic_close_24"
+        android:goIcon="@drawable/ic_right_arrow_24"
+        android:queryHint="@string/search_hint"
+        android:searchHintIcon="@drawable/ic_search_white_24dp"
+        android:searchIcon="@drawable/ic_search_white_24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/searchToolbarStub"
+        app:layout_constraintEnd_toEndOf="@+id/searchToolbarStub"
+        app:layout_constraintTop_toTopOf="@+id/searchToolbarStub" />
+
+    <!--        android:layoutDirection="rtl"-->
 
 
     <Spinner
@@ -13,7 +48,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/searchToolbarStub" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRv"
@@ -34,5 +69,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchToolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

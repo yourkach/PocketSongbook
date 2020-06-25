@@ -1,9 +1,9 @@
 package com.example.pocketsongbook.di.modules
 
-import com.example.pocketsongbook.domain.SongsReposManager
-import com.example.pocketsongbook.data.song_repos.AmdmRepo
-import com.example.pocketsongbook.data.song_repos.MychordsRepo
-import com.example.pocketsongbook.data.SongsReposManagerImpl
+import com.example.pocketsongbook.domain.SongsApiManager
+import com.example.pocketsongbook.data.songs_api.AmdmWebsiteApi
+import com.example.pocketsongbook.data.songs_api.MychordsWebsiteApi
+import com.example.pocketsongbook.data.SongsApiManagerImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -13,10 +13,10 @@ class WebsitesModule {
 
     @Provides
     @Singleton
-    fun provideSongsRepoManager(): SongsReposManager = SongsReposManagerImpl(
+    fun provideSongsRepoManager(): SongsApiManager = SongsApiManagerImpl(
         listOf(
-            MychordsRepo(),
-            AmdmRepo()
+            MychordsWebsiteApi(),
+            AmdmWebsiteApi()
         )
     )
 }

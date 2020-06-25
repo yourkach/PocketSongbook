@@ -12,7 +12,6 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongEntity
 import com.example.pocketsongbook.domain.model.SongSearchItem
-import com.example.pocketsongbook.ui.activity.SongViewActivity.Companion.SONG_KEY
 import com.example.pocketsongbook.ui.adapter.FavouritesAdapter
 import com.example.pocketsongbook.ui.adapter.SearchAdapter
 import com.example.pocketsongbook.ui.presenter.FavouritesPresenter
@@ -21,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_favourites.*
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
+/*
 
 class FavouritesActivity : MvpAppCompatActivity(),
     FavouritesView, SearchView.OnQueryTextListener {
@@ -98,3 +98,4 @@ class FavouritesActivity : MvpAppCompatActivity(),
         return true
     }
 }
+*/

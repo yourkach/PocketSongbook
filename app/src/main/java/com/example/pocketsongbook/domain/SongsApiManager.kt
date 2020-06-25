@@ -3,7 +3,7 @@ package com.example.pocketsongbook.domain
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
 
-interface SongsReposManager {
+interface SongsApiManager {
 
     /**
      * returns list of website names

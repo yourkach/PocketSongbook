@@ -1,14 +1,14 @@
 package com.example.pocketsongbook.data
 
-import com.example.pocketsongbook.data.song_repos.SongsRepo
-import com.example.pocketsongbook.domain.SongsReposManager
+import com.example.pocketsongbook.data.songs_api.SongsWebsiteApi
+import com.example.pocketsongbook.domain.SongsApiManager
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
 
-class SongsReposManagerImpl(private val songsRepos: List<SongsRepo>) :
-    SongsReposManager {
+class SongsApiManagerImpl(private val songsWebsitesApi: List<SongsWebsiteApi>) :
+    SongsApiManager {
 
-    override fun getWebsiteNames(): List<String> = songsRepos.map { it.websiteName }
+    override fun getWebsiteNames(): List<String> = songsWebsitesApi.map { it.websiteName }
 
     private val defaultRepoIndex = 0
 
@@ -16,7 +16,7 @@ class SongsReposManagerImpl(private val songsRepos: List<SongsRepo>) :
 
     override fun switchToWebsite(position: Int): Boolean {
         return when {
-            position !in songsRepos.indices -> {
+            position !in songsWebsitesApi.indices -> {
                 throw IndexOutOfBoundsException()
             }
             currentRepoIndex != position -> {
@@ -28,8 +28,8 @@ class SongsReposManagerImpl(private val songsRepos: List<SongsRepo>) :
     }
 
     override suspend fun getSearchResults(query: String): List<SongSearchItem>? =
-        songsRepos[currentRepoIndex].getSearchResults(query)
+        songsWebsitesApi[currentRepoIndex].getSearchResults(query)
 
     override suspend fun getSong(songSearchItem: SongSearchItem): Song? =
-        songsRepos[currentRepoIndex].getSong(songSearchItem)
+        songsWebsitesApi[currentRepoIndex].getSong(songSearchItem)
 }

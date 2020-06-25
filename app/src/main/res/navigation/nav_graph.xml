@@ -35,7 +35,7 @@
         tools:layout="@layout/fragment_song">
         <argument
             android:name="song"
-            app:argType="Song"
+            app:argType="com.example.pocketsongbook.domain.model.Song"
             app:nullable="false" />
     </fragment>
 </navigation>

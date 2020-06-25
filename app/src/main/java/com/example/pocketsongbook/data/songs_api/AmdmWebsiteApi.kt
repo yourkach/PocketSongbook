@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.data.song_repos
+package com.example.pocketsongbook.data.songs_api
 
 import com.example.pocketsongbook.domain.model.Song
 import com.example.pocketsongbook.domain.model.SongSearchItem
@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
 
-class AmdmRepo : SongsRepo {
+class AmdmWebsiteApi : SongsWebsiteApi {
 
     override val websiteName: String = "AmDm.ru"
 

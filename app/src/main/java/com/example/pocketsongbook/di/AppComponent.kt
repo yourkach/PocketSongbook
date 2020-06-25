@@ -3,9 +3,6 @@ package com.example.pocketsongbook.di
 import android.content.Context
 import com.example.pocketsongbook.di.modules.DatabaseModule
 import com.example.pocketsongbook.di.modules.WebsitesModule
-import com.example.pocketsongbook.ui.activity.FavouritesActivity
-import com.example.pocketsongbook.ui.activity.SearchSongActivity
-import com.example.pocketsongbook.ui.activity.SongViewActivity
 import com.example.pocketsongbook.ui.fragments.FavouritesFragment
 import com.example.pocketsongbook.ui.fragments.SearchFragment
 import com.example.pocketsongbook.ui.fragments.SongFragment

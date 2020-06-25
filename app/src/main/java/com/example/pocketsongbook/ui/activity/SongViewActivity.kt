@@ -1,4 +1,5 @@
 package com.example.pocketsongbook.ui.activity
+/*
 
 import android.os.Bundle
 import android.util.TypedValue
@@ -59,9 +60,11 @@ class SongViewActivity : MvpAppCompatActivity(),
         })
     }
 
-    /**
+    */
+/**
      * [speed] must be in 0..30 range
-     */
+     *//*
+
     fun setAutoScrollSpeed(speed: Int) {
         scrollJob?.cancel()
         if (speed != 0) {
@@ -190,3 +193,4 @@ class SongViewActivity : MvpAppCompatActivity(),
         const val SONG_KEY = "song"
     }
 }
+*/
