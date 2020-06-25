@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/searchFragment">
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.pocketsongbook.ui.fragments.SearchFragment"
+        android:label="Search Fragment"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_favouritesFragment"
+            app:destination="@id/favouritesFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_songFragment"
+            app:destination="@id/songFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.example.pocketsongbook.ui.fragments.FavouritesFragment"
+        android:label="Favourites Fragment"
+        tools:layout="@layout/activity_favourites" >
+        <action
+            android:id="@+id/action_favouritesFragment_to_songFragment"
+            app:destination="@id/songFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/songFragment"
+        android:name="com.example.pocketsongbook.ui.fragments.SearchFragment"
+        android:label="Song Fragment"
+        tools:layout="@layout/fragment_song">
+        <argument
+            android:name="song"
+            app:argType="Song"
+            app:nullable="false" />
+    </fragment>
+</navigation>

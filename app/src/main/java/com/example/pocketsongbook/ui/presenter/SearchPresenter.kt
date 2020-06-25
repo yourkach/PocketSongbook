@@ -88,7 +88,7 @@ class SearchPresenter @Inject constructor(
                 viewState.showLoadingPanel(false)
                 isDownloading = false
                 if (song != null) {
-                    viewState.startSongViewActivity(song)
+                    viewState.navigateToSongView(song)
                 } else {
                     viewState.showToast(R.string.toast_download_fail)
                 }
@@ -97,6 +97,6 @@ class SearchPresenter @Inject constructor(
     }
 
     fun onFavouritesClicked() {
-        viewState.startFavouritesActivity()
+        viewState.navigateToFavourites()
     }
 }

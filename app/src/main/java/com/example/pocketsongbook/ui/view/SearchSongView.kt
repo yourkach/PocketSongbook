@@ -21,10 +21,10 @@ interface SearchSongView : MvpView {
     fun showToast(messageId: Int)
 
     @StateStrategyType(SkipStrategy::class)
-    fun startSongViewActivity(song: Song)
+    fun navigateToSongView(song: Song)
 
     @StateStrategyType(SkipStrategy::class)
-    fun startFavouritesActivity()
+    fun navigateToFavourites()
 
     @StateStrategyType(SkipStrategy::class)
     fun clearToolbarFocus()

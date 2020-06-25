@@ -6,6 +6,9 @@ import com.example.pocketsongbook.di.modules.WebsitesModule
 import com.example.pocketsongbook.ui.activity.FavouritesActivity
 import com.example.pocketsongbook.ui.activity.SearchSongActivity
 import com.example.pocketsongbook.ui.activity.SongViewActivity
+import com.example.pocketsongbook.ui.fragments.FavouritesFragment
+import com.example.pocketsongbook.ui.fragments.SearchFragment
+import com.example.pocketsongbook.ui.fragments.SongFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -25,8 +28,14 @@ interface AppComponent {
         fun context(context: Context): Builder
         fun build(): AppComponent
     }
-
+/*
     fun inject(activity: SearchSongActivity)
     fun inject(activity: FavouritesActivity)
     fun inject(activity: SongViewActivity)
+*/
+
+    fun inject(fragment: SearchFragment)
+    fun inject(fragment: FavouritesFragment)
+    fun inject(fragment: SongFragment)
+
 }
