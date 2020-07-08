@@ -3,10 +3,9 @@ package com.example.pocketsongbook.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.domain.models.SongSearchItem
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
 class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :

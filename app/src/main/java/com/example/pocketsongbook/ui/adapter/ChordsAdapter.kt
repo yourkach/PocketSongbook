@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.model.Chord
+import com.example.pocketsongbook.domain.models.Chord
 import kotlinx.android.synthetic.main.chord_item.view.*
 
 class ChordsAdapter() :

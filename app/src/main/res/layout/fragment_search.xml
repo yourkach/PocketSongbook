@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:id="@+id/searchToolbarStub"
@@ -13,9 +14,9 @@
 
     <ImageView
         android:id="@+id/searchOpenFavouritesIv"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
         android:background="@drawable/circle_ripple_background"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="@+id/searchToolbarStub"
@@ -23,19 +24,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_star_border_white_24dp" />
 
-    <SearchView
-        android:id="@+id/searchViewMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:closeIcon="@drawable/ic_close_24"
-        android:goIcon="@drawable/ic_right_arrow_24"
-        android:queryHint="@string/search_hint"
-        android:searchHintIcon="@drawable/ic_search_white_24dp"
-        android:searchIcon="@drawable/ic_search_white_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/searchToolbarStub"
-        app:layout_constraintEnd_toEndOf="@+id/searchToolbarStub"
-        app:layout_constraintTop_toTopOf="@+id/searchToolbarStub" />
+
+    <FrameLayout
+        android:id="@+id/catalogSearchCl"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        app:layout_constraintStart_toEndOf="@id/searchOpenFavouritesIv"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/searchToolbarStub"
+        app:layout_constraintBottom_toBottomOf="@id/searchToolbarStub">
+
+        <SearchView
+            android:id="@+id/searchViewMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:closeIcon="@drawable/ic_close_24"
+            android:goIcon="@drawable/ic_right_arrow_24"
+            android:queryBackground="@drawable/bg_rounded_white"
+            android:queryHint="@string/search_hint"
+            android:searchIcon="@drawable/ic_search_24_white"
+            android:layoutDirection="rtl"
+            android:fadingEdge="horizontal"
+            />
+    </FrameLayout>
 
     <!--        android:layoutDirection="rtl"-->
 
@@ -46,6 +59,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:visibility="visible"
+        tools:listitem="@layout/spinner_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchToolbarStub" />

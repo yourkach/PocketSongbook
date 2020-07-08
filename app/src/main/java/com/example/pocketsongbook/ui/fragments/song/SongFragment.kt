@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui.fragments
+package com.example.pocketsongbook.ui.fragments.song
 
 import com.example.pocketsongbook.R
 import moxy.MvpAppCompatFragment

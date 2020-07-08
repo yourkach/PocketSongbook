@@ -1,7 +1,4 @@
-package com.example.pocketsongbook.domain.model
-
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+package com.example.pocketsongbook.domain.models
 
 data class SongSearchItem(
     val artist: String,

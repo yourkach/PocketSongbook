@@ -1,8 +1,7 @@
-package com.example.pocketsongbook.domain
+package com.example.pocketsongbook.domain.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.pocketsongbook.domain.model.SongEntity
 
 @Database(entities = [SongEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

@@ -1,25 +1,5 @@
 package com.example.pocketsongbook.ui.activity
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.Menu
-import android.widget.SearchView
-import androidx.core.text.HtmlCompat
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pocketsongbook.App
-import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.domain.model.SongEntity
-import com.example.pocketsongbook.domain.model.SongSearchItem
-import com.example.pocketsongbook.ui.adapter.FavouritesAdapter
-import com.example.pocketsongbook.ui.adapter.SearchAdapter
-import com.example.pocketsongbook.ui.presenter.FavouritesPresenter
-import com.example.pocketsongbook.ui.view.FavouritesView
-import kotlinx.android.synthetic.main.activity_favourites.*
-import moxy.MvpAppCompatActivity
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
 /*
 
 class FavouritesActivity : MvpAppCompatActivity(),

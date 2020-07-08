@@ -1,7 +1,7 @@
-package com.example.pocketsongbook.data.songs_api
+package com.example.pocketsongbook.domain.api.websites_api
 
-import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.domain.models.Song
+import com.example.pocketsongbook.domain.models.SongSearchItem
 
 interface SongsWebsiteApi {
     val websiteName: String

@@ -1,21 +1,63 @@
-package com.example.pocketsongbook.ui.presenter
+package com.example.pocketsongbook.ui.fragments.song
 
 import com.example.pocketsongbook.ChordsTransponder
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.FavouriteSongsDao
-import com.example.pocketsongbook.domain.model.Chord
-import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.domain.model.SongEntity
-import com.example.pocketsongbook.ui.view.SongView
+import com.example.pocketsongbook.domain.database.FavouriteSongsDao
+import com.example.pocketsongbook.domain.models.Chord
+import com.example.pocketsongbook.domain.models.Song
+import com.example.pocketsongbook.domain.database.SongEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import moxy.MvpView
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.StateStrategyType
 import java.util.regex.Pattern
 import javax.inject.Inject
 
+
+@StateStrategyType(AddToEndSingleStrategy::class)
+interface SongView : MvpView {
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setKeyLabelText(text: String = "")
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setKeyLabelText(resId : Int)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setFontSizeLabelText(text: String = "")
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setFontSizeLabelText(resId : Int)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setArtistLabelText(text: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setTitleLabelText(text: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setSongLyrics(lyricsHtml: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setLyricsFontSize(fontSize: Float)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setFavouritesButtonFilled(filled: Boolean)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun loadChords(chords : List<Chord>)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun openChordBar()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun closeChordBar()
+}
 
 @InjectViewState
 class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private val song: Song) :
@@ -26,7 +68,8 @@ class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private va
     private var transposedLyrics: String = ""
     private var isFavourite: Boolean = false
     private var chordsKey: Int = 0
-    private var currentFontSize: Float = FONT_SIZE_DEFAULT
+    private var currentFontSize: Float =
+        FONT_SIZE_DEFAULT
     private var chordsBarOpened = false
 
     override fun onFirstViewAttach() {
@@ -140,7 +183,11 @@ class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private va
 
     private fun addToFavourites() {
         CoroutineScope(Dispatchers.IO).launch {
-            favouriteSongsDao.insert(SongEntity(song))
+            favouriteSongsDao.insert(
+                SongEntity(
+                    song
+                )
+            )
         }
         isFavourite = true
     }
@@ -219,5 +266,9 @@ class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private va
 
 
 class SongPresenterFactory @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) {
-    fun create(song: Song): SongPresenter = SongPresenter(favouriteSongsDao, song)
+    fun create(song: Song): SongPresenter =
+        SongPresenter(
+            favouriteSongsDao,
+            song
+        )
 }

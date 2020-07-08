@@ -1,28 +1,26 @@
-package com.example.pocketsongbook.ui.fragments
+package com.example.pocketsongbook.ui.fragments.search
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.domain.model.SongSearchItem
+import com.example.pocketsongbook.domain.models.Song
+import com.example.pocketsongbook.domain.models.SongSearchItem
 import com.example.pocketsongbook.ui.adapter.SearchAdapter
-import com.example.pocketsongbook.ui.presenter.SearchPresenter
-import com.example.pocketsongbook.ui.view.SearchSongView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.coroutines.flow.Flow
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSongView,
+class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
+    SearchSongView,
     AdapterView.OnItemSelectedListener {
 
     @Inject
@@ -32,6 +30,8 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
 
     private lateinit var searchItemsAdapter: SearchAdapter
 
+    // TODO: 08.07.20 сделать реализацию поиска с debounce на корутинах вместо RxJava
+    private lateinit var searchFlow : Flow<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
@@ -45,7 +45,7 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchSon
         setUpSearchView()
 
         searchOpenFavouritesIv.setOnClickListener {
-
+            // TODO: 08.07.20
         }
     }
 

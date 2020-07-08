@@ -1,6 +1,7 @@
-package com.example.pocketsongbook.domain.model
+package com.example.pocketsongbook.domain.models
 
 import android.os.Parcelable
+import com.example.pocketsongbook.domain.database.SongEntity
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

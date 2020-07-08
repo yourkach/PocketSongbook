@@ -1,16 +1,35 @@
-package com.example.pocketsongbook.ui.presenter
+package com.example.pocketsongbook.ui.fragments.favourites
 
-import com.example.pocketsongbook.domain.FavouriteSongsDao
-import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.domain.model.SongEntity
-import com.example.pocketsongbook.ui.view.FavouritesView
+import com.example.pocketsongbook.domain.database.FavouriteSongsDao
+import com.example.pocketsongbook.domain.models.Song
+import com.example.pocketsongbook.domain.database.SongEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import moxy.MvpView
+import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.SkipStrategy
+import moxy.viewstate.strategy.StateStrategyType
 import javax.inject.Inject
+
+
+@StateStrategyType(AddToEndSingleStrategy::class)
+interface FavouritesView : MvpView {
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun updateItems(newItems: List<SongEntity>)
+
+    @StateStrategyType(SkipStrategy::class)
+    fun clearToolbarFocus()
+
+
+    @StateStrategyType(SkipStrategy::class)
+    fun startSongViewActivity(song: Song)
+}
+
 
 @InjectViewState
 class FavouritesPresenter @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) :
