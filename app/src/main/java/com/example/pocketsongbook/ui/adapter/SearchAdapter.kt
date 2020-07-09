@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.setOnSafeClickListener
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
 class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
@@ -49,7 +50,7 @@ class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
                 } else {
                     songFavoriteIv.visibility = View.GONE
                 }
-                setOnClickListener {
+                setOnSafeClickListener {
                     onItemClickResponse(adapterPosition)
                 }
             }
