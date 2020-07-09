@@ -3,12 +3,13 @@ package com.example.pocketsongbook.ui.fragments.search
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.ui.adapter.SearchAdapter
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -18,6 +19,7 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
     SearchSongView,
@@ -31,7 +33,7 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
     private lateinit var searchItemsAdapter: SearchAdapter
 
     // TODO: 08.07.20 сделать реализацию поиска с debounce на корутинах вместо RxJava
-    private lateinit var searchFlow : Flow<String>
+//    private lateinit var searchFlow: Flow<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
@@ -45,12 +47,16 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
         setUpSearchView()
 
         searchOpenFavouritesIv.setOnClickListener {
-            // TODO: 08.07.20
+            presenter.onFavouritesClicked()
         }
     }
 
     private fun setUpSearchView() {
-        //TODO сделать белый текст в searchView
+        //TODO сделать не черный текст в searchView
+        searchViewMain.apply {
+            val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
+            findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
+        }
         Observable.create<String> { emitter ->
             searchViewMain.setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
@@ -78,27 +84,20 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
             }
     }
 
-    /*private fun setUpToolbar() {
-        //activity?.actionBar TODO
-        activity?.getSupportActionBar()
-        setSupportActionBar(searchToolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        searchToolbar.setNavigationIcon(R.drawable.ic_star_border_white_24dp)
-        searchToolbar.setNavigationOnClickListener {
-            presenter.onFavouritesClicked()
-        }
-    }*/
-
     override fun showToast(messageId: Int) {
         Toast.makeText(context, getString(messageId), Toast.LENGTH_SHORT).show()
     }
 
     override fun navigateToSongView(song: Song) {
-        //TODO
+        findNavController().navigate(
+            SearchFragmentDirections.actionSearchFragmentToSongFragment(song)
+        )
     }
 
     override fun navigateToFavourites() {
-        //TODO
+        findNavController().navigate(
+            SearchFragmentDirections.actionSearchFragmentToFavouritesFragment()
+        )
     }
 
 
@@ -124,30 +123,6 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
         }
     }
 
-    /*
-    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        presenter.onSpinnerItemSelected(position)
-    }
-
- */
-
-    /*
-    TODO
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_options_menu, menu)
-        val item = menu.findItem(R.id.search)
-        val searchView: SearchView = item.actionView as SearchView
-        searchView.setOnQueryTextListener(this)
-        searchView.queryHint = HtmlCompat.fromHtml(
-            "<font color = #ffffff>" + getString(R.string.search_hint) + "</font>",
-            HtmlCompat.FROM_HTML_MODE_COMPACT
-        )
-        return true
-    }
-
-     */
 
     private fun cleanSearchBarFocus() {
         searchViewMain.clearFocus()

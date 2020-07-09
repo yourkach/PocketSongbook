@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.ui.fragments
 
-import com.example.pocketsongbook.domain.BaseUseCase
+import com.example.pocketsongbook.data.BaseUseCase
 import kotlinx.coroutines.*
 import moxy.MvpPresenter
 import moxy.MvpView
@@ -31,9 +31,9 @@ abstract class BasePresenter<TView : MvpView> : MvpPresenter<TView>(), Coroutine
 
 
     //todo убрать диспатчер
-    suspend fun <P, R> BaseUseCase<P, R>.execute(param: P): R {
-        return withContext(this.baseDispatcher) {
-            this@execute(param)
-        }
-    }
+//    suspend fun <P, R> BaseUseCase<P, R>.execute(param: P): R {
+//        return withContext(this.baseDispatcher) {
+//            this@execute(param)
+//        }
+//    }
 }

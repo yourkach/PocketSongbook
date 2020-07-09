@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.domain.database
+package com.example.pocketsongbook.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -1,9 +1,8 @@
-package com.example.pocketsongbook.domain.database
+package com.example.pocketsongbook.data.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.pocketsongbook.domain.database.SongEntity
 
 @Dao
 interface FavouriteSongsDao {

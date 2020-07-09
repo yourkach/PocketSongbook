@@ -25,11 +25,6 @@ interface AppComponent {
         fun context(context: Context): Builder
         fun build(): AppComponent
     }
-/*
-    fun inject(activity: SearchSongActivity)
-    fun inject(activity: FavouritesActivity)
-    fun inject(activity: SongViewActivity)
-*/
 
     fun inject(fragment: SearchFragment)
     fun inject(fragment: FavouritesFragment)

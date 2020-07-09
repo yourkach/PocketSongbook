@@ -2,10 +2,10 @@ package com.example.pocketsongbook.ui.fragments.song
 
 import com.example.pocketsongbook.ChordsTransponder
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.database.FavouriteSongsDao
-import com.example.pocketsongbook.domain.models.Chord
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.database.SongEntity
+import com.example.pocketsongbook.data.database.FavouriteSongsDao
+import com.example.pocketsongbook.data.models.Chord
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.database.SongEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

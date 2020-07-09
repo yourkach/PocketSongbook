@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.ui.fragments.search.interactor
 
-import com.example.pocketsongbook.domain.BaseUseCase
-import com.example.pocketsongbook.domain.api.SongsApiManager
+import com.example.pocketsongbook.data.BaseUseCase
+import com.example.pocketsongbook.data.api.SongsApiManager
 import javax.inject.Inject
 
 class GetWebsiteNamesUseCase @Inject constructor(

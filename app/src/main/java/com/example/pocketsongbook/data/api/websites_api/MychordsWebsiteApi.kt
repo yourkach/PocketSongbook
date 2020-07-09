@@ -1,13 +1,13 @@
-package com.example.pocketsongbook.domain.api.websites_api
+package com.example.pocketsongbook.data.api.websites_api
 
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongSearchItem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
+import javax.inject.Inject
 
-class MychordsWebsiteApi :
-    SongsWebsiteApi {
+class MychordsWebsiteApi @Inject constructor() : SongsWebsiteApi {
 
     override val websiteName: String = "MyChords.ru"
 

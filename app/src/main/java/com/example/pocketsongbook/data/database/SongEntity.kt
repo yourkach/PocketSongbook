@@ -1,9 +1,9 @@
-package com.example.pocketsongbook.domain.database
+package com.example.pocketsongbook.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.pocketsongbook.domain.models.Song
+import com.example.pocketsongbook.data.models.Song
 
 @Entity(tableName = "songs")
 data class SongEntity(

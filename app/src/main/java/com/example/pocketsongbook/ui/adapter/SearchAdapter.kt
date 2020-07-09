@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.setOnSafeClickListener
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 

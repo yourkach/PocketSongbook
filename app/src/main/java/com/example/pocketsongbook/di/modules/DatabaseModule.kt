@@ -2,8 +2,8 @@ package com.example.pocketsongbook.di.modules
 
 import android.content.Context
 import androidx.room.Room
-import com.example.pocketsongbook.domain.database.AppDatabase
-import com.example.pocketsongbook.domain.database.FavouriteSongsDao
+import com.example.pocketsongbook.data.database.AppDatabase
+import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

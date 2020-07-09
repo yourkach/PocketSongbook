@@ -1,7 +1,7 @@
-package com.example.pocketsongbook.domain.api
+package com.example.pocketsongbook.data.api
 
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongSearchItem
 
 interface SongsApiManager {
 

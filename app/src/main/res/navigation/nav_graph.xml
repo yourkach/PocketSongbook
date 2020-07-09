@@ -12,30 +12,34 @@
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_searchFragment_to_favouritesFragment"
-            app:destination="@id/favouritesFragment" />
+            app:destination="@id/favouritesFragment"/>
         <action
             android:id="@+id/action_searchFragment_to_songFragment"
-            app:destination="@id/songFragment" />
+            app:destination="@id/songFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"/>
     </fragment>
 
     <fragment
         android:id="@+id/favouritesFragment"
         android:name="com.example.pocketsongbook.ui.fragments.favourites.FavouritesFragment"
         android:label="Favourites Fragment"
-        tools:layout="@layout/activity_favourites" >
+        tools:layout="@layout/fragment_favourites" >
         <action
             android:id="@+id/action_favouritesFragment_to_songFragment"
-            app:destination="@id/songFragment" />
+            app:destination="@id/songFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"/>
     </fragment>
 
     <fragment
         android:id="@+id/songFragment"
-        android:name="com.example.pocketsongbook.ui.fragments.search.SearchFragment"
-        android:label="Song Fragment"
+        android:name="com.example.pocketsongbook.ui.fragments.song.SongFragment"
+        android:label="SongFragment"
         tools:layout="@layout/fragment_song">
         <argument
             android:name="song"
-            app:argType="com.example.pocketsongbook.domain.models.Song"
+            app:argType="com.example.pocketsongbook.data.models.Song"
             app:nullable="false" />
     </fragment>
 </navigation>

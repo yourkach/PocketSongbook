@@ -1,13 +1,12 @@
-package com.example.pocketsongbook.domain
+package com.example.pocketsongbook.data
 
 import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
 
 abstract class BaseUseCase<P, R> {
 
-    open val baseDispatcher = Dispatchers.IO
+    abstract suspend operator fun invoke(param: P): R
 
-    abstract suspend operator fun invoke(param: P): Result<R>
+//    abstract suspend operator fun invoke(param: P): Result<R>
 
 //    fun execute(param: P): Result<R>{
 //

@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.ui.fragments.favourites
 
-import com.example.pocketsongbook.domain.database.FavouriteSongsDao
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.database.SongEntity
+import com.example.pocketsongbook.data.database.FavouriteSongsDao
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.database.SongEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,9 +25,8 @@ interface FavouritesView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun clearToolbarFocus()
 
-
     @StateStrategyType(SkipStrategy::class)
-    fun startSongViewActivity(song: Song)
+    fun navigateToSong(song: Song)
 }
 
 
@@ -48,7 +47,7 @@ class FavouritesPresenter @Inject constructor(private val favouriteSongsDao: Fav
     }
 
     fun onSongClicked(position: Int) {
-        viewState.startSongViewActivity(Song(items[position]))
+        viewState.navigateToSong(Song(items[position]))
     }
 
     fun onQueryTextChanged(newText: String) {

@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.ui.fragments.search.interactor
 
-import com.example.pocketsongbook.domain.BaseUseCase
-import com.example.pocketsongbook.domain.api.SongsApiManager
-import com.example.pocketsongbook.domain.database.FavouriteSongsDao
-import com.example.pocketsongbook.domain.models.Song
-import com.example.pocketsongbook.domain.models.SongSearchItem
+import com.example.pocketsongbook.data.BaseUseCase
+import com.example.pocketsongbook.data.api.SongsApiManager
+import com.example.pocketsongbook.data.database.FavouriteSongsDao
+import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongSearchItem
 import javax.inject.Inject
 
 class GetSongUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.domain.models
+package com.example.pocketsongbook.data.models
 
 data class SongSearchItem(
     val artist: String,

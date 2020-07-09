@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.domain.database.SongEntity
+import com.example.pocketsongbook.data.database.SongEntity
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
 class FavouritesAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
