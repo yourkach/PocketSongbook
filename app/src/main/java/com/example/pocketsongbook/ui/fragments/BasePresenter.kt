@@ -29,6 +29,8 @@ abstract class BasePresenter<TView : MvpView> : MvpPresenter<TView>(), Coroutine
         }
     }
 
+
+    //todo убрать диспатчер
     suspend fun <P, R> BaseUseCase<P, R>.execute(param: P): R {
         return withContext(this.baseDispatcher) {
             this@execute(param)
