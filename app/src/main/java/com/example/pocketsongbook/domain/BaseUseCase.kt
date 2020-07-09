@@ -7,7 +7,12 @@ abstract class BaseUseCase<P, R> {
 
     open val baseDispatcher = Dispatchers.IO
 
-    abstract suspend operator fun invoke(param: P): R
+    abstract suspend operator fun invoke(param: P): Result<R>
+
+//    fun execute(param: P): Result<R>{
+//
+//
+//    }
 
 }
 
