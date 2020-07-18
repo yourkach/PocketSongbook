@@ -18,6 +18,9 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO: 18.07.20 отображать сайт сохранённой песни
+// TODO: 18.07.20 добавить возможность выбрать сортировку по времени добавления
+
 class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), FavouritesView,
     SearchView.OnQueryTextListener {
 
@@ -61,10 +64,6 @@ class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), F
         favouritesAdapter.setList(newItems)
     }
 
-    override fun clearToolbarFocus() {
-        favouritesToolbar.clearFocus()
-    }
-
     override fun navigateToSong(song: Song) {
         findNavController().navigate(
             FavouritesFragmentDirections.actionFavouritesFragmentToSongFragment(song)
@@ -72,7 +71,8 @@ class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), F
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (query != null) presenter.onQuerySubmit(query)
+        if (query != null) presenter.onQueryTextChanged(query)
+        favouritesToolbar.clearFocus()
         return true
     }
 

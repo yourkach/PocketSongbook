@@ -29,6 +29,7 @@ class SongFragment : MvpAppCompatFragment(R.layout.fragment_song), SongView {
 
     private val chordsAdapter = ChordsAdapter()
 
+    // TODO: 18.07.20 переделать на Handler и postDelayed
     private var scrollJob: Job? = null
 
 

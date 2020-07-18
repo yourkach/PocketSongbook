@@ -8,7 +8,7 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.database.SongEntity
 import kotlinx.android.synthetic.main.song_item_layout.view.*
 
-class FavouritesAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
+class FavouritesAdapter(private val onItemClickResponse: (song: SongEntity) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: List<SongEntity> = listOf()
@@ -45,7 +45,7 @@ class FavouritesAdapter(private val onItemClickResponse: (position: Int) -> Unit
                 songTitleTv.text = song.title
                 songArtistTv.text = song.artist
                 setOnClickListener {
-                    onItemClickResponse(adapterPosition)
+                    onItemClickResponse(song)
                 }
             }
         }

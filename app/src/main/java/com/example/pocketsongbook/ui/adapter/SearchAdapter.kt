@@ -3,6 +3,7 @@ package com.example.pocketsongbook.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.SongSearchItem
@@ -45,11 +46,8 @@ class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
             itemView.apply {
                 songTitleTv.text = searchItem.title
                 songArtistTv.text = searchItem.artist
-                if (searchItem.isFavourite) {
-                    songFavoriteIv.visibility = View.VISIBLE
-                } else {
-                    songFavoriteIv.visibility = View.GONE
-                }
+                // TODO: 18.07.20 раскомментировать после добавления проверки песни в избранных
+//                songFavoriteIv.isVisible = searchItem.isFavourite
                 setOnSafeClickListener {
                     onItemClickResponse(adapterPosition)
                 }

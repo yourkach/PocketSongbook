@@ -16,8 +16,8 @@ class WebsitesModule {
     fun provideSongsRepoManager(): SongsApiManager =
         SongsApiManagerImpl(
             listOf(
-                MychordsWebsiteApi(),
-                AmdmWebsiteApi()
+                AmdmWebsiteApi(),
+                MychordsWebsiteApi()
             )
         )
 }

@@ -4,10 +4,10 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.ui.fragments.BasePresenter
-import com.example.pocketsongbook.ui.fragments.search.interactor.GetSearchResultsUseCase
-import com.example.pocketsongbook.ui.fragments.search.interactor.GetSongUseCase
-import com.example.pocketsongbook.ui.fragments.search.interactor.GetWebsiteNamesUseCase
-import com.example.pocketsongbook.ui.fragments.search.interactor.SwitchToWebSiteUseCase
+import com.example.pocketsongbook.ui.fragments.search.usecase.GetSearchResultsUseCase
+import com.example.pocketsongbook.ui.fragments.search.usecase.GetSongUseCase
+import com.example.pocketsongbook.ui.fragments.search.usecase.GetWebsiteNamesUseCase
+import com.example.pocketsongbook.ui.fragments.search.usecase.SwitchToWebSiteUseCase
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpView
@@ -36,7 +36,8 @@ interface SearchSongView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun navigateToFavourites()
 
-// TODO: 09.07.20 сделать метод setSpinnerItems вместо получения из презентера
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setSpinnerItems(spinnerItems: List<String>)
 
 }
 
@@ -54,11 +55,12 @@ class SearchPresenter @Inject constructor(
     private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
 
-    fun getSpinnerItems(): List<String> {
-        return runBlocking {
-            getWebsiteNamesUseCase(Unit)
-        }
-    }
+//    fun getSpinnerItems(): List<String> {
+//        return runBlocking {
+//            getWebsiteNamesUseCase(Unit)
+//        }
+//    }
+
 
     fun onQueryTextSubmit(query: String?): Boolean {
         return if (query != null && query != lastSearchQuery) {
@@ -68,6 +70,20 @@ class SearchPresenter @Inject constructor(
         } else {
             if (query.isNullOrEmpty()) viewState.showToast(R.string.toast_empty_request)
             false
+        }
+    }
+
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        setUpWebsiteNames()
+    }
+
+    private fun setUpWebsiteNames(){
+        doInMainContext {
+            val items = withContext(Dispatchers.IO) {
+                getWebsiteNamesUseCase(Unit)
+            }
+            viewState.setSpinnerItems(items)
         }
     }
 
@@ -82,12 +98,8 @@ class SearchPresenter @Inject constructor(
             if (searchResult == null) {
                 viewState.showToast(R.string.toast_error_connection)
             } else {
-                if (searchResult.isNotEmpty()) {
-                    searchResult.forEach { item -> searchItems.add(item) }
-                    viewState.updateRecyclerItems(searchItems)
-                } else {
-                    viewState.showToast(R.string.toast_no_results)
-                }
+                searchResult.forEach { item -> searchItems.add(item) }
+                viewState.updateRecyclerItems(searchItems)
             }
         }
     }

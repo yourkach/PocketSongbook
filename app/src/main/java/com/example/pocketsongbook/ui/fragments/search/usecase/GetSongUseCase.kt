@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui.fragments.search.interactor
+package com.example.pocketsongbook.ui.fragments.search.usecase
 
 import com.example.pocketsongbook.data.BaseUseCase
 import com.example.pocketsongbook.data.api.SongsApiManager

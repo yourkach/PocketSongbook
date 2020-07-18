@@ -6,6 +6,11 @@ import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.database.SongEntity
+import com.example.pocketsongbook.ui.fragments.BasePresenter
+import com.example.pocketsongbook.ui.fragments.song.usecase.ChangeFontSizeUseCase
+import com.example.pocketsongbook.ui.fragments.song.usecase.CheckSongFavouriteStatusUseCase
+import com.example.pocketsongbook.ui.fragments.song.usecase.GetChordsUseCase
+import com.example.pocketsongbook.ui.fragments.song.usecase.GetTransposedLyricsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,17 +27,19 @@ import javax.inject.Inject
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SongView : MvpView {
 
+    // TODO: 18.07.20 переработать методы (объединить, убрать лишние)
+
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setKeyLabelText(text: String = "")
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setKeyLabelText(resId : Int)
+    fun setKeyLabelText(resId: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setFontSizeLabelText(text: String = "")
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setFontSizeLabelText(resId : Int)
+    fun setFontSizeLabelText(resId: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setArtistLabelText(text: String)
@@ -50,7 +57,7 @@ interface SongView : MvpView {
     fun setFavouritesButtonFilled(filled: Boolean)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun loadChords(chords : List<Chord>)
+    fun loadChords(chords: List<Chord>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun openChordBar()
@@ -60,8 +67,14 @@ interface SongView : MvpView {
 }
 
 @InjectViewState
-class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private val song: Song) :
-    MvpPresenter<SongView>() {
+class SongPresenter constructor(
+    private val song: Song,
+    private val changeFontSizeUseCase: ChangeFontSizeUseCase,
+    private val checkSongFavouriteStatusUseCase: CheckSongFavouriteStatusUseCase,
+    private val getTransposedLyricsUseCase: GetTransposedLyricsUseCase,
+    private val getChordsUseCase: GetChordsUseCase,
+    private val favouriteSongsDao: FavouriteSongsDao
+) : BasePresenter<SongView>() {
 
     private lateinit var chordsSet: Set<String>
     private var transposedChordsList: List<String>
@@ -264,7 +277,7 @@ class SongPresenter(private val favouriteSongsDao: FavouriteSongsDao, private va
     }
 }
 
-
+// TODO: 18.07.20 использовать AssistedInject
 class SongPresenterFactory @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) {
     fun create(song: Song): SongPresenter =
         SongPresenter(
