@@ -1,7 +1,9 @@
 package com.example.pocketsongbook.di
 
 import android.content.Context
+import com.example.pocketsongbook.di.modules.AssistantInjectModule
 import com.example.pocketsongbook.di.modules.DatabaseModule
+import com.example.pocketsongbook.di.modules.UIModule
 import com.example.pocketsongbook.di.modules.WebsitesModule
 import com.example.pocketsongbook.ui.fragments.favourites.FavouritesFragment
 import com.example.pocketsongbook.ui.fragments.search.SearchFragment
@@ -13,7 +15,9 @@ import javax.inject.Singleton
 @Component(
     modules = [
         WebsitesModule::class,
-        DatabaseModule::class
+        DatabaseModule::class,
+        AssistantInjectModule::class,
+        UIModule::class
     ]
 )
 @Singleton

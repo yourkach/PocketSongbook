@@ -11,6 +11,8 @@ import com.example.pocketsongbook.ui.fragments.song.usecase.ChangeFontSizeUseCas
 import com.example.pocketsongbook.ui.fragments.song.usecase.CheckSongFavouriteStatusUseCase
 import com.example.pocketsongbook.ui.fragments.song.usecase.GetChordsUseCase
 import com.example.pocketsongbook.ui.fragments.song.usecase.GetTransposedLyricsUseCase
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,8 +69,8 @@ interface SongView : MvpView {
 }
 
 @InjectViewState
-class SongPresenter constructor(
-    private val song: Song,
+class SongPresenter @AssistedInject constructor(
+    @Assisted private val song: Song,
     private val changeFontSizeUseCase: ChangeFontSizeUseCase,
     private val checkSongFavouriteStatusUseCase: CheckSongFavouriteStatusUseCase,
     private val getTransposedLyricsUseCase: GetTransposedLyricsUseCase,
@@ -269,6 +271,11 @@ class SongPresenter constructor(
         viewState.loadChords(newChords)
     }
 
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(song: Song): SongPresenter
+    }
+
     companion object {
         private const val FONT_CHANGE_AMOUNT: Float = 2.0F
         const val FONT_SIZE_DEFAULT: Float = 16.0F
@@ -278,10 +285,10 @@ class SongPresenter constructor(
 }
 
 // TODO: 18.07.20 использовать AssistedInject
-class SongPresenterFactory @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) {
-    fun create(song: Song): SongPresenter =
-        SongPresenter(
-            favouriteSongsDao,
-            song
-        )
-}
+//class SongPresenterFactory @Inject constructor(private val favouriteSongsDao: FavouriteSongsDao) {
+//    fun create(song: Song): SongPresenter =
+//        SongPresenter(
+//            favouriteSongsDao,
+//            song
+//        )
+//}

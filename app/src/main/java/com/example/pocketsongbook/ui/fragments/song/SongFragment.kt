@@ -11,6 +11,7 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.ui.adapter.ChordsAdapter
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
 import moxy.MvpAppCompatFragment
@@ -20,8 +21,11 @@ import javax.inject.Inject
 class SongFragment : MvpAppCompatFragment(R.layout.fragment_song), SongView {
 
 
+//    @Inject
+//    lateinit var songPresenterFactory: SongPresenterFactory
+
     @Inject
-    lateinit var songPresenterFactory: SongPresenterFactory
+    lateinit var songPresenterFactory : SongPresenter.Factory
 
     private val presenter: SongPresenter by moxyPresenter { songPresenterFactory.create(song) }
 
@@ -35,7 +39,8 @@ class SongFragment : MvpAppCompatFragment(R.layout.fragment_song), SongView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         song = SongFragmentArgs.fromBundle(requireArguments()).song
-        App.appComponent.inject(this)
+//        App.appComponent.inject(this)
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
     }
 
