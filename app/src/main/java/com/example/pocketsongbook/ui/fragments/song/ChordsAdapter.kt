@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui.adapter
+package com.example.pocketsongbook.ui.fragments.song
 
 import android.view.LayoutInflater
 import android.view.View

@@ -6,40 +6,36 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.ui.adapter.ChordsAdapter
+import com.example.pocketsongbook.ui.navigation.ArgsFragment
+import com.example.pocketsongbook.ui.navigation.FragmentArgs
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
-class SongFragment : MvpAppCompatFragment(R.layout.fragment_song), SongView {
+class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song), SongView {
 
-
-//    @Inject
-//    lateinit var songPresenterFactory: SongPresenterFactory
 
     @Inject
-    lateinit var songPresenterFactory : SongPresenter.Factory
+    lateinit var songPresenterFactory: SongPresenter.Factory
 
-    private val presenter: SongPresenter by moxyPresenter { songPresenterFactory.create(song) }
+    private val presenter: SongPresenter by moxyPresenter {
+        songPresenterFactory.create(args.song)
+    }
 
-    private lateinit var song: Song
-
-    private val chordsAdapter = ChordsAdapter()
+    private val chordsAdapter by lazy { ChordsAdapter() }
 
     // TODO: 18.07.20 переделать на Handler и postDelayed
     private var scrollJob: Job? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        song = SongFragmentArgs.fromBundle(requireArguments()).song
-//        App.appComponent.inject(this)
+//        song = SongFragmentArgs.fromBundle(requireArguments()).song
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
     }
@@ -214,7 +210,7 @@ class SongFragment : MvpAppCompatFragment(R.layout.fragment_song), SongView {
     }
 
 
-    companion object {
-        const val SONG_KEY = "song"
-    }
+    @Parcelize
+    data class SongArgs(val song: Song) : FragmentArgs<SongFragment>
+
 }

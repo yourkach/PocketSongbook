@@ -3,17 +3,30 @@ package com.example.pocketsongbook
 import android.app.Application
 import com.example.pocketsongbook.di.AppComponent
 import com.example.pocketsongbook.di.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import javax.inject.Inject
 
-class App : Application() {
+class App : Application(), HasAndroidInjector {
+
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+
+    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.builder()
-            .context(this)
+            .application(this)
             .build()
+
+        appComponent.inject(this)
     }
 
     companion object {
         lateinit var appComponent: AppComponent
+        private set
     }
 }

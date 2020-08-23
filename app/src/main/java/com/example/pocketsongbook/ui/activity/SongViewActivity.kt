@@ -11,7 +11,7 @@ import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.domain.model.Chord
 import com.example.pocketsongbook.domain.model.Song
-import com.example.pocketsongbook.ui.adapter.ChordsAdapter
+import com.example.pocketsongbook.ui.fragments.song.ChordsAdapter
 import com.example.pocketsongbook.ui.fragments.song.SongPresenter
 import com.example.pocketsongbook.ui.fragments.song.SongPresenterFactory
 import com.example.pocketsongbook.ui.view.SongView

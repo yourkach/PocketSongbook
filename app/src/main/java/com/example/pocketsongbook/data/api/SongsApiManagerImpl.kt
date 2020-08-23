@@ -4,8 +4,10 @@ import com.example.pocketsongbook.data.api.websites_api.SongsWebsiteApi
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 
-class SongsApiManagerImpl(private val songsWebsitesApi: List<SongsWebsiteApi>) :
+class SongsApiManagerImpl(vararg songApis: SongsWebsiteApi) :
     SongsApiManager {
+
+    private val songsWebsitesApi: List<SongsWebsiteApi> = songApis.toList()
 
     override fun getWebsiteNames(): List<String> = songsWebsitesApi.map { it.websiteName }
 

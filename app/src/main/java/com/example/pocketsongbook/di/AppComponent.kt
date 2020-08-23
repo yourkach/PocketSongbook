@@ -1,37 +1,39 @@
 package com.example.pocketsongbook.di
 
+import android.app.Application
 import android.content.Context
-import com.example.pocketsongbook.di.modules.AssistantInjectModule
-import com.example.pocketsongbook.di.modules.DatabaseModule
-import com.example.pocketsongbook.di.modules.UIModule
-import com.example.pocketsongbook.di.modules.WebsitesModule
-import com.example.pocketsongbook.ui.fragments.favourites.FavouritesFragment
-import com.example.pocketsongbook.ui.fragments.search.SearchFragment
-import com.example.pocketsongbook.ui.fragments.song.SongFragment
+import com.example.pocketsongbook.App
+import com.example.pocketsongbook.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
+        AppModule::class,
+        NavigationModule::class,
         WebsitesModule::class,
-        DatabaseModule::class,
+        RoomModule::class,
         AssistantInjectModule::class,
-        UIModule::class
+        AndroidInjectionModule::class,
+        AndroidSupportInjectionModule::class,
+        MainUIModule::class
     ]
 )
-@Singleton
 interface AppComponent {
 
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun context(context: Context): Builder
+        fun application(app : Application) : Builder
         fun build(): AppComponent
     }
 
-    fun inject(fragment: SearchFragment)
-    fun inject(fragment: FavouritesFragment)
-    fun inject(fragment: SongFragment)
+    val appContext: Context
+
+    fun inject(app: App)
 
 }

@@ -13,11 +13,6 @@ class WebsitesModule {
 
     @Provides
     @Singleton
-    fun provideSongsRepoManager(): SongsApiManager =
-        SongsApiManagerImpl(
-            listOf(
-                AmdmWebsiteApi(),
-                MychordsWebsiteApi()
-            )
-        )
+    fun provideSongsApiManager(amdm : AmdmWebsiteApi, myChords: MychordsWebsiteApi): SongsApiManager =
+        SongsApiManagerImpl(amdm, myChords)
 }

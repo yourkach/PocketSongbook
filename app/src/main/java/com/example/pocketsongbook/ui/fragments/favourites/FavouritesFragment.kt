@@ -1,22 +1,19 @@
 package com.example.pocketsongbook.ui.fragments.favourites
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pocketsongbook.App
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.database.SongEntity
 import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.ui.adapter.FavouritesAdapter
+import com.example.pocketsongbook.ui.navigation.ArgsFragment
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
-import javax.inject.Singleton
 
 // TODO: 18.07.20 отображать сайт сохранённой песни
 // TODO: 18.07.20 добавить возможность выбрать сортировку по времени добавления
@@ -30,12 +27,14 @@ class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), F
 
     private val presenter by moxyPresenter { favouritesPresenter }
 
-    private val favouritesAdapter = FavouritesAdapter(onItemClickResponse = {
-        presenter.onSongClicked(it)
-    })
+    private val favouritesAdapter =
+        FavouritesAdapter(
+            onItemClickResponse = {
+                presenter.onSongClicked(it)
+            })
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -55,7 +54,7 @@ class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), F
 
     private fun setUpToolbar() {
         favouritesGoBackIv.setOnClickListener {
-            findNavController().popBackStack()
+//            findNavController().popBackStack()
         }
         searchViewFavourites.setOnQueryTextListener(this)
     }
@@ -65,9 +64,10 @@ class FavouritesFragment : MvpAppCompatFragment(R.layout.fragment_favourites), F
     }
 
     override fun navigateToSong(song: Song) {
-        findNavController().navigate(
-            FavouritesFragmentDirections.actionFavouritesFragmentToSongFragment(song)
-        )
+        TODO("navigation not yet implemented")
+//        findNavController().navigate(
+//            FavouritesFragmentDirections.actionFavouritesFragmentToSongFragment(song)
+//        )
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

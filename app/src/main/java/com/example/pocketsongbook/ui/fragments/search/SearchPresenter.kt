@@ -12,8 +12,10 @@ import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.alias.OneExecution
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,16 +26,16 @@ interface SearchSongView : MvpView {
     @StateStrategyType(SkipStrategy::class)
     fun showLoadingPanel(visible: Boolean)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun updateRecyclerItems(newItems: List<SongSearchItem>)
 
-    @StateStrategyType(SkipStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(messageId: Int)
 
-    @StateStrategyType(SkipStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun navigateToSongView(song: Song)
 
-    @StateStrategyType(SkipStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun navigateToFavourites()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
@@ -50,35 +52,28 @@ class SearchPresenter @Inject constructor(
     private val getSongUseCase: GetSongUseCase
 ) : BasePresenter<SearchSongView>() {
 
-
-    private var lastSearchQuery: String = ""
+    private var lastSearchQuery: String? = ""
     private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
-
-//    fun getSpinnerItems(): List<String> {
-//        return runBlocking {
-//            getWebsiteNamesUseCase(Unit)
-//        }
-//    }
-
-
-    fun onQueryTextSubmit(query: String?): Boolean {
-        return if (query != null && query != lastSearchQuery) {
-            lastSearchQuery = query
-            performSearch(query)
-            true
-        } else {
-            if (query.isNullOrEmpty()) viewState.showToast(R.string.toast_empty_request)
-            false
-        }
-    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         setUpWebsiteNames()
     }
 
-    private fun setUpWebsiteNames(){
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    fun onQueryTextSubmit(query: String): Boolean {
+        return if (query != lastSearchQuery) {
+            lastSearchQuery = query
+            performSearch(query)
+            true
+        } else false
+    }
+
+    private fun setUpWebsiteNames() {
         doInMainContext {
             val items = withContext(Dispatchers.IO) {
                 getWebsiteNamesUseCase(Unit)
@@ -106,10 +101,10 @@ class SearchPresenter @Inject constructor(
 
     fun onSpinnerItemSelected(pos: Int) {
         doInMainContext {
-            val switched = withContext(Dispatchers.IO) {
+            val switchWasDone = withContext(Dispatchers.IO) {
                 switchToWebSiteUseCase(pos)
             }
-            if (switched) performSearch(lastSearchQuery)
+            if (switchWasDone) lastSearchQuery?.let(::performSearch)
         }
     }
 
