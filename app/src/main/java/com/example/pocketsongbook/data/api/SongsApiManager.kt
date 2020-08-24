@@ -5,6 +5,8 @@ import com.example.pocketsongbook.data.models.SongSearchItem
 
 interface SongsApiManager {
 
+    val selectedWebsitePosition : Int
+
     /**
      * returns list of website names
      */

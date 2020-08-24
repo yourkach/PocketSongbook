@@ -6,10 +6,14 @@ import javax.inject.Inject
 
 class GetWebsiteNamesUseCase @Inject constructor(
     private val songsApiManager: SongsApiManager
-) : BaseUseCase<Unit, List<String>>() {
+) : BaseUseCase<Unit, GetWebsiteNamesUseCase.Response>() {
 
-    override suspend operator fun invoke(param: Unit): List<String> {
-        return songsApiManager.getWebsiteNames()
+    override suspend operator fun invoke(param: Unit): Response {
+        return Response(
+            songsApiManager.getWebsiteNames(),
+            songsApiManager.selectedWebsitePosition
+        )
     }
 
+    data class Response(val websiteNames: List<String>, val selectedWebsitePosition: Int)
 }

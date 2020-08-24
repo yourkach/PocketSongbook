@@ -10,6 +10,8 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.ui.fragments.favourites.FavouritesFragment
+import com.example.pocketsongbook.ui.fragments.search.list.SearchAdapter
+import com.example.pocketsongbook.ui.fragments.search.list.WebsitesAdapter
 import com.example.pocketsongbook.ui.fragments.song.SongFragment
 import com.example.pocketsongbook.ui.navigation.*
 import dagger.android.support.AndroidSupportInjection
@@ -38,6 +40,10 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
 
     private lateinit var searchItemsAdapter: SearchAdapter
 
+    private val websitesAdapter = WebsitesAdapter { clickedPosition ->
+        presenter.onWebsiteItemSelected(clickedPosition)
+    }
+
     // TODO: 08.07.20 сделать реализацию поиска с debounce на Coroutines Flow вместо RxJava
     private val searchQuerySubject = PublishSubject.create<String>()
 
@@ -46,29 +52,18 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
         super.onCreate(savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpRecyclerView()
-        setUpSearchView()
+        initRecyclerView()
+        initSearchView()
+        initWebsiteSelector()
 
         searchOpenFavouritesIv.setOnClickListener {
             presenter.onFavouritesClicked()
         }
     }
 
-    private fun setUpSearchView() {
+    private fun initSearchView() {
         searchViewMain.apply {
             val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
             findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
@@ -116,7 +111,7 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
     }
 
 
-    private fun setUpRecyclerView() {
+    private fun initRecyclerView() {
         searchRv.apply {
             layoutManager = LinearLayoutManager(context)
             searchItemsAdapter =
@@ -128,15 +123,19 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
         }
     }
 
-    // TODO: 23.08.20 решить проблему при перезапуске экрана (возможно заменить спиннер на горизонтальный список)
-    override fun setSpinnerItems(spinnerItems: List<String>) {
+    private fun initWebsiteSelector() {
+        websiteSelectorContainer.outlineProvider = null
         searchWebsiteSelector.apply {
-            adapter = ArrayAdapter(
-                context,
-                R.layout.spinner_item, spinnerItems
-            )
-            onItemSelectedListener = this@SearchFragment
+            adapter = websitesAdapter
         }
+    }
+
+    override fun setWebsites(websiteNames: List<String>, selectedWebsitePosition: Int) {
+        websitesAdapter.setWebsiteNames(websiteNames, selectedWebsitePosition)
+    }
+
+    override fun setWebsiteSelected(selectedWebsitePosition: Int) {
+        websitesAdapter.setSelectedPosition(selectedWebsitePosition)
     }
 
     private fun cleanSearchBarFocus() {
@@ -161,7 +160,7 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search),
     override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        presenter.onSpinnerItemSelected(position)
+        presenter.onWebsiteItemSelected(position)
     }
 
 }

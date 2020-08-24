@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.ui.fragments.search
+package com.example.pocketsongbook.ui.fragments.search.list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.setOnSafeClickListener
-import kotlinx.android.synthetic.main.song_item_layout.view.*
+import kotlinx.android.synthetic.main.item_search_song.view.*
 
 class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -17,7 +17,7 @@ class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.song_item_layout,
+                R.layout.item_search_song,
                 parent,
                 false
             )

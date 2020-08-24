@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.database.SongEntity
-import kotlinx.android.synthetic.main.song_item_layout.view.*
+import kotlinx.android.synthetic.main.item_search_song.view.*
 
 class FavouritesAdapter(private val onItemClickResponse: (song: SongEntity) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -16,7 +16,7 @@ class FavouritesAdapter(private val onItemClickResponse: (song: SongEntity) -> U
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.song_item_layout,
+                R.layout.item_search_song,
                 parent,
                 false
             )

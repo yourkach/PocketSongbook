@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/searchToolbarStub"
+        android:id="@+id/searchToolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/colorPrimary"
@@ -19,8 +19,8 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/circle_ripple_background"
         android:scaleType="center"
-        app:layout_constraintBottom_toBottomOf="@+id/searchToolbarStub"
-        app:layout_constraintStart_toStartOf="@+id/searchToolbarStub"
+        app:layout_constraintBottom_toBottomOf="@+id/searchToolbarContainer"
+        app:layout_constraintStart_toStartOf="@+id/searchToolbarContainer"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_star_border_white_24dp" />
 
@@ -31,10 +31,10 @@
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/searchToolbarStub"
+        app:layout_constraintBottom_toBottomOf="@id/searchToolbarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/searchOpenFavouritesIv"
-        app:layout_constraintTop_toTopOf="@id/searchToolbarStub">
+        app:layout_constraintTop_toTopOf="@id/searchToolbarContainer">
 
         <SearchView
             android:id="@+id/searchViewMain"
@@ -49,28 +49,58 @@
             android:searchIcon="@drawable/ic_search_24_white" />
     </FrameLayout>
 
-    <!--        android:layoutDirection="rtl"-->
 
-
-    <Spinner
-        android:id="@+id/searchWebsiteSelector"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchToolbarStub"
-        tools:listitem="@layout/spinner_item" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchRv"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/searchContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchWebsiteSelector" />
+        app:layout_constraintTop_toBottomOf="@id/searchToolbarContainer">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/websiteSelectorContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchToolbarContainer">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchWebsiteSelector"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimary"
+                android:clipToPadding="false"
+                android:layoutDirection="rtl"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:paddingVertical="5dp"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_scrollFlags="scroll|enterAlways"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_website" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:splitMotionEvents="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/websiteSelectorContainer" />
+
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <TextView
         android:id="@+id/searchNothingFoundLabel"
@@ -79,11 +109,11 @@
         android:text="@string/nothing_found"
         android:textSize="22sp"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/searchRv"
-        app:layout_constraintLeft_toLeftOf="@id/searchRv"
-        app:layout_constraintRight_toRightOf="@id/searchRv"
-        app:layout_constraintTop_toTopOf="@id/searchRv" />
+        app:layout_constraintBottom_toBottomOf="@id/searchContainer"
+        app:layout_constraintLeft_toLeftOf="@id/searchContainer"
+        app:layout_constraintRight_toRightOf="@id/searchContainer"
+        app:layout_constraintTop_toTopOf="@id/searchContainer"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/searchLoadingPanel"
@@ -92,8 +122,8 @@
         android:layout_height="wrap_content"
         android:indeterminateDrawable="@drawable/circular_progress_bar"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/searchRv"
-        app:layout_constraintEnd_toEndOf="@id/searchRv"
-        app:layout_constraintStart_toStartOf="@id/searchRv"
-        app:layout_constraintTop_toTopOf="@id/searchRv" />
+        app:layout_constraintBottom_toBottomOf="@id/searchContainer"
+        app:layout_constraintEnd_toEndOf="@id/searchContainer"
+        app:layout_constraintStart_toStartOf="@id/searchContainer"
+        app:layout_constraintTop_toTopOf="@id/searchContainer" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,6 @@ import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import moxy.viewstate.strategy.alias.OneExecution
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,7 +38,10 @@ interface SearchSongView : MvpView {
     fun navigateToFavourites()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setSpinnerItems(spinnerItems: List<String>)
+    fun setWebsites(websiteNames: List<String>, selectedWebsitePosition: Int)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setWebsiteSelected(selectedWebsitePosition: Int)
 
 }
 
@@ -52,7 +54,7 @@ class SearchPresenter @Inject constructor(
     private val getSongUseCase: GetSongUseCase
 ) : BasePresenter<SearchSongView>() {
 
-    private var lastSearchQuery: String? = ""
+    private var lastSearchQuery: String? = null
     private val searchItems = mutableListOf<SongSearchItem>()
     private var isDownloading: Boolean = false
 
@@ -66,7 +68,7 @@ class SearchPresenter @Inject constructor(
     }
 
     fun onQueryTextSubmit(query: String): Boolean {
-        return if (query != lastSearchQuery) {
+        return if (query.isNotEmpty() && query != lastSearchQuery) {
             lastSearchQuery = query
             performSearch(query)
             true
@@ -75,10 +77,10 @@ class SearchPresenter @Inject constructor(
 
     private fun setUpWebsiteNames() {
         doInMainContext {
-            val items = withContext(Dispatchers.IO) {
+            val response = withContext(Dispatchers.IO) {
                 getWebsiteNamesUseCase(Unit)
             }
-            viewState.setSpinnerItems(items)
+            viewState.setWebsites(response.websiteNames, response.selectedWebsitePosition)
         }
     }
 
@@ -99,12 +101,15 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    fun onSpinnerItemSelected(pos: Int) {
+    fun onWebsiteItemSelected(itemPosition: Int) {
         doInMainContext {
             val switchWasDone = withContext(Dispatchers.IO) {
-                switchToWebSiteUseCase(pos)
+                switchToWebSiteUseCase(itemPosition)
             }
-            if (switchWasDone) lastSearchQuery?.let(::performSearch)
+            if (switchWasDone) {
+                viewState.setWebsiteSelected(itemPosition)
+                if (!lastSearchQuery.isNullOrEmpty()) performSearch(lastSearchQuery!!)
+            }
         }
     }
 
