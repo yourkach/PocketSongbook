@@ -2,7 +2,7 @@ package com.example.pocketsongbook.di
 
 import android.app.Application
 import android.content.Context
-import com.example.pocketsongbook.App
+import com.example.pocketsongbook.common.App
 import com.example.pocketsongbook.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
