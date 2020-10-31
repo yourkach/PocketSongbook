@@ -9,7 +9,7 @@ import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.utils.setOnSafeClickListener
 import kotlinx.android.synthetic.main.item_search_song.view.*
 
-class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
+class SearchAdapter(private val onItemClickResponse: (searchItem: SongSearchItem) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: List<SongSearchItem> = listOf()
@@ -48,7 +48,7 @@ class SearchAdapter(private val onItemClickResponse: (position: Int) -> Unit) :
                 // TODO: 18.07.20 раскомментировать после добавления проверки песни в избранных
 //                songFavoriteIv.isVisible = searchItem.isFavourite
                 setOnSafeClickListener {
-                    onItemClickResponse(adapterPosition)
+                    onItemClickResponse(searchItem)
                 }
             }
         }

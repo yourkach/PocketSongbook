@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.di.modules
 
 import com.example.pocketsongbook.data.network.WebsitesManager
-import com.example.pocketsongbook.data.network.websites_api.AmdmWebsiteParser
-import com.example.pocketsongbook.data.network.websites_api.MychordsWebsiteParser
+import com.example.pocketsongbook.data.network.website_parsers.AmdmWebsiteParser
+import com.example.pocketsongbook.data.network.website_parsers.MychordsWebsiteParser
 import com.example.pocketsongbook.data.network.WebsitesManagerImpl
 import dagger.Module
 import dagger.Provides

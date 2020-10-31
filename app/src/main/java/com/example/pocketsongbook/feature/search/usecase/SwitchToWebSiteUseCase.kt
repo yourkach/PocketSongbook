@@ -6,12 +6,18 @@ import javax.inject.Inject
 
 class SwitchToWebSiteUseCase @Inject constructor(
     private val websitesManager: WebsitesManager
-) : BaseUseCase<Int, Boolean>() {
+) : BaseUseCase<SwitchToWebSiteUseCase.Param, SwitchToWebSiteUseCase.Response>() {
 
-    //todo возможно стоит возвращать Bool как результат переключения
-
-    override suspend fun execute(param: Int) : Boolean {
-        return websitesManager.switchToWebsite(param)
+    override suspend fun execute(param: Param): Response {
+        return Response(
+            switchSuccessful = websitesManager.selectByName(
+                websiteName = param.websiteName
+            )
+        )
     }
+
+    data class Param(val websiteName: String)
+
+    data class Response(val switchSuccessful: Boolean)
 
 }

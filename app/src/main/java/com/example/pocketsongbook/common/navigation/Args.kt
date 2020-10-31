@@ -3,8 +3,9 @@ package com.example.pocketsongbook.common.navigation
 import android.os.Parcelable
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 
 
 interface FragmentArgs<TFragment : Fragment> : Parcelable
@@ -18,10 +19,18 @@ inline fun <reified TFragment : ArgsFragment<TArgs>, TArgs : FragmentArgs<TFragm
         .apply { arguments = bundleOf(ArgsFragment.ARGUMENTS_KEY to this@toFragment) }
 }
 
-fun Router.navigateToFragment(f: Fragment) {
+fun Router.navigateToFragment(fragment: Fragment) {
     navigateTo(
-        object : SupportAppScreen() {
-            override fun getFragment(): Fragment = f
-        }
+        FragmentScreen(
+            screenKey = fragment::class.java.simpleName,
+            createFragment = { fragment }
+        )
+    )
+}
+
+fun Fragment.toScreen(): Screen {
+    return FragmentScreen(
+        screenKey = this::class.java.simpleName,
+        createFragment = { this }
     )
 }

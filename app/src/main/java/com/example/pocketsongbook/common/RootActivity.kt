@@ -5,16 +5,16 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.feature.search.SearchFragment
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.terrakok.cicerone.Cicerone
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import javax.inject.Inject
 
 class RootActivity : AppCompatActivity(), HasAndroidInjector {
@@ -28,7 +28,10 @@ class RootActivity : AppCompatActivity(), HasAndroidInjector {
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
     private val navigator by lazy {
-        SupportAppNavigator(this, supportFragmentManager, R.id.rootContainer)
+        AppNavigator(
+            activity = this,
+            containerId = R.id.rootContainer
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +40,7 @@ class RootActivity : AppCompatActivity(), HasAndroidInjector {
         setContentView(R.layout.activity_main)
 
 
-        cicerone.router.newRootScreen(
-            object : SupportAppScreen() {
-                override fun getFragment(): Fragment = SearchFragment()
-            }
-        )
+        cicerone.router.newRootScreen(SearchFragment().toScreen())
 
     }
 
@@ -55,11 +54,11 @@ class RootActivity : AppCompatActivity(), HasAndroidInjector {
 
     override fun onPause() {
         super.onPause()
-        cicerone.navigatorHolder.removeNavigator()
+        cicerone.getNavigatorHolder().removeNavigator()
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        cicerone.navigatorHolder.setNavigator(navigator)
+        cicerone.getNavigatorHolder().setNavigator(navigator)
     }
 }

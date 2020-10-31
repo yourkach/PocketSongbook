@@ -5,7 +5,7 @@ import com.example.pocketsongbook.data.models.SongSearchItem
 
 interface WebsitesManager {
 
-    val selectedWebsitePosition : Int
+    val selectedWebsiteName: String
 
     /**
      * returns list of website names
@@ -15,10 +15,10 @@ interface WebsitesManager {
     /**
      * returns true if switch successful
      */
-    fun switchToWebsite(position: Int): Boolean
+    fun selectByName(websiteName: String): Boolean
 
-    suspend fun getSearchResults(query: String): List<SongSearchItem>?
+    suspend fun getSearchResults(query: String): List<SongSearchItem>
 
-    suspend fun getSong( songSearchItem: SongSearchItem): Song?
+    suspend fun getSong(songSearchItem: SongSearchItem): Song?
 
 }

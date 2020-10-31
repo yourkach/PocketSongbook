@@ -9,10 +9,13 @@ abstract class BasePresenter<TView : BaseView> : MvpPresenter<TView>(), Coroutin
 
     private val job = SupervisorJob()
 
+    private val errorHandler = CoroutineExceptionHandler { _, e ->
+        e.printStackTrace()
+        onFailure(e)
+    }
+
     override val coroutineContext: CoroutineContext =
-        Dispatchers.Main + job + CoroutineExceptionHandler { _, e ->
-            onFailure(e)
-        }
+        Dispatchers.Main + job + errorHandler
 
 
     open fun onFailure(e: Throwable) = Unit

@@ -1,39 +1,32 @@
 package com.example.pocketsongbook.data.network
 
-import com.example.pocketsongbook.data.network.websites_api.SongsWebsiteParser
+import com.example.pocketsongbook.data.network.website_parsers.SongsWebsiteParser
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 
-// TODO: 24.08.20 переписать
 
-class WebsitesManagerImpl(vararg songParsers: SongsWebsiteParser) :
+class WebsitesManagerImpl(vararg websiteParsers: SongsWebsiteParser) :
     WebsitesManager {
 
-    private val songsWebsitesParser: List<SongsWebsiteParser> = songParsers.toList()
+    private val websiteParsers: List<SongsWebsiteParser> = websiteParsers.toList()
 
-    override fun getWebsiteNames(): List<String> = songsWebsitesParser.map { it.websiteName }
+    override fun getWebsiteNames(): List<String> = websiteParsers.map { it.websiteName }
 
-    private val defaultWebsiteIndex = 0
+    private var currentParser = websiteParsers.first()
 
-    override var selectedWebsitePosition = defaultWebsiteIndex
-        private set
+    override val selectedWebsiteName: String
+        get() = currentParser.websiteName
 
-    override fun switchToWebsite(position: Int): Boolean {
-        return when {
-            position !in songsWebsitesParser.indices -> {
-                throw IndexOutOfBoundsException()
-            }
-            selectedWebsitePosition != position -> {
-                selectedWebsitePosition = position
-                true
-            }
-            else -> false
-        }
+
+    override fun selectByName(websiteName: String): Boolean {
+        return kotlin.runCatching {
+            currentParser = websiteParsers.first { it.websiteName == websiteName }
+        }.isSuccess
     }
 
-    override suspend fun getSearchResults(query: String): List<SongSearchItem>? =
-        songsWebsitesParser[selectedWebsitePosition].getSearchResults(query)
+    override suspend fun getSearchResults(query: String): List<SongSearchItem> =
+        currentParser.getSearchResults(query)
 
-    override suspend fun getSong(songSearchItem: SongSearchItem): Song? =
-        songsWebsitesParser[selectedWebsitePosition].getSong(songSearchItem)
+    override suspend fun getSong(songSearchItem: SongSearchItem): Song =
+        currentParser.getSong(songSearchItem)
 }

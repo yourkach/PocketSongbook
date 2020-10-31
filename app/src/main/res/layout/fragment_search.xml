@@ -61,7 +61,7 @@
             android:id="@+id/websiteSelectorContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
+            android:background="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchToolbarContainer">
@@ -70,8 +70,6 @@
                 android:id="@+id/searchWebsiteSelector"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@color/colorPrimary"
                 android:clipToPadding="false"
                 android:layoutDirection="rtl"
                 android:orientation="horizontal"
@@ -103,7 +101,7 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <TextView
-        android:id="@+id/searchNothingFoundLabel"
+        android:id="@+id/nothingFoundStub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/nothing_found"

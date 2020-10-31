@@ -11,9 +11,9 @@ class GetWebsiteNamesUseCase @Inject constructor(
     override suspend fun execute(param: Unit): Response {
         return Response(
             websitesManager.getWebsiteNames(),
-            websitesManager.selectedWebsitePosition
+            websitesManager.selectedWebsiteName
         )
     }
 
-    data class Response(val websiteNames: List<String>, val selectedWebsitePosition: Int)
+    data class Response(val websiteNames: List<String>, val selectedWebsiteName: String)
 }

@@ -12,22 +12,21 @@ import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.search.list.SearchAdapter
-import com.example.pocketsongbook.feature.search.list.WebsitesAdapter
+import com.example.pocketsongbook.feature.search.list.SelectableItemsAdapter
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.common.navigation.*
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.example.pocketsongbook.utils.hideKeyboard
+import com.github.terrakok.cicerone.Router
 import kotlinx.android.synthetic.main.fragment_search.*
 import moxy.ktx.moxyPresenter
-import ru.terrakok.cicerone.Router
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // TODO: 18.07.20 сделать пагинацию для результатов поиска
 // TODO: 18.07.20 добавить поле для отображения количества найденных песен
 // TODO: 18.07.20 сделать FavouriteSongsRepository, хранить Url'ы в префсах для быстрой проверки
+
 class SearchFragment : BaseFragment(R.layout.fragment_search),
-    SearchSongView, AdapterView.OnItemSelectedListener {
+    SearchSongView {
 
     @Inject
     lateinit var searchPresenter: SearchPresenter
@@ -37,14 +36,18 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     private val presenter by moxyPresenter { searchPresenter }
 
-    private lateinit var searchItemsAdapter: SearchAdapter
-
-    private val websitesAdapter = WebsitesAdapter { clickedPosition ->
-        presenter.onWebsiteItemSelected(clickedPosition)
+    private val searchItemsAdapter by lazy {
+        SearchAdapter { item ->
+            searchViewMain.hideKeyboard()
+            presenter.onSongClicked(item)
+        }
     }
 
-    // TODO: 08.07.20 сделать реализацию поиска с debounce на Coroutines Flow вместо RxJava
-    private val searchQuerySubject = PublishSubject.create<String>()
+    private val websitesAdapter by lazy {
+        SelectableItemsAdapter { websiteName ->
+            presenter.onWebsiteItemSelected(websiteName)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,47 +68,43 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                 object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         if (!query.isNullOrEmpty()) {
-                            searchQuerySubject.onNext(query)
-                            cleanSearchBarFocus()
+                            presenter.onQueryTextChange(query)
+                            searchViewMain.hideKeyboard()
                         }
                         return true
                     }
 
                     override fun onQueryTextChange(newText: String?): Boolean {
                         if (!newText.isNullOrEmpty()) {
-                            searchQuerySubject.onNext(newText)
+                            presenter.onQueryTextChange(newText)
                         }
                         return true
                     }
                 }
             )
         }
+    }
 
-        searchQuerySubject
-            .distinctUntilChanged()
-            .filter { !it.isNullOrEmpty() }
-            .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-            .subscribe { query ->
-                presenter.onQueryTextSubmit(query)
-            }
+    override fun showLoading() {
+        super.showLoading()
+        nothingFoundStub.isVisible = false
     }
 
     override fun navigateToSongView(song: Song) {
-        router.navigateToFragment(SongFragment.SongArgs(song).toFragment())
+        router.navigateTo(
+            SongFragment.SongArgs(song).toFragment().toScreen(),
+            clearContainer = false
+        )
     }
 
     override fun navigateToFavourites() {
-        router.navigateToFragment(FavouritesFragment())
+        router.navigateTo(FavouritesFragment().toScreen(), clearContainer = false)
     }
 
 
     private fun initRecyclerView() {
         searchRv.apply {
             layoutManager = LinearLayoutManager(context)
-            searchItemsAdapter =
-                SearchAdapter { position ->
-                    presenter.onSongClicked(position)
-                }
             adapter = searchItemsAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
@@ -118,29 +117,20 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         }
     }
 
-    override fun setWebsites(websiteNames: List<String>, selectedWebsitePosition: Int) {
-        websitesAdapter.setWebsiteNames(websiteNames, selectedWebsitePosition)
+
+    override fun setWebsites(websiteNames: List<String>) {
+        websitesAdapter.setWebsiteNames(websiteNames)
     }
 
-    override fun setWebsiteSelected(selectedWebsitePosition: Int) {
-        websitesAdapter.setSelectedPosition(selectedWebsitePosition)
-    }
-
-    private fun cleanSearchBarFocus() {
-        searchViewMain.clearFocus()
+    override fun setWebsiteSelected(websiteName: String) {
+        websitesAdapter.setSelectedByName(websiteName)
     }
 
     override fun updateRecyclerItems(newItems: List<SongSearchItem>) {
-        searchNothingFoundLabel.isVisible = newItems.isEmpty()
+        nothingFoundStub.isVisible = newItems.isEmpty()
         searchItemsAdapter.apply {
             setList(newItems)
         }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        presenter.onWebsiteItemSelected(position)
     }
 
 }

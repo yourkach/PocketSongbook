@@ -7,6 +7,7 @@ import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.common.navigation.ArgsFragment
@@ -30,15 +31,7 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
 
     private val chordsAdapter by lazy { ChordsAdapter() }
 
-    // TODO: 18.07.20 переделать на Handler и postDelayed
-    private var scrollJob: Job? = null
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-//        song = SongFragmentArgs.fromBundle(requireArguments()).song
-        AndroidSupportInjection.inject(this)
-        super.onCreate(savedInstanceState)
-    }
+    override val enterTransitionRes: Int? = R.transition.slide_right
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,18 +39,6 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         setUpChordsRecycler()
         setUpSeekBar()
     }
-
-    /*
-    override fun onCreate(savedInstanceState: Bundle?) {
-        song = intent.getParcelableExtra(SONG_KEY)!!
-        App.appComponent.inject(this)
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_song_view)
-        setOnClickListeners()
-        setUpChordsRecycler()
-        setUpSeekBar()
-    }
-    */
 
     private fun setUpSeekBar() {
         songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -76,26 +57,26 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
 
+    // TODO: 18.07.20 переделать с использованием Handler и postDelayed
+    private var scrollJob: Job? by setAndCancelJob()
+
     /**
      * [speed] must be in 0..30 range
      */
-
-
     fun setAutoScrollSpeed(speed: Int) {
-        scrollJob?.cancel()
         if (speed != 0) {
-            val newJob = CoroutineScope(Dispatchers.Main).launch {
+            scrollJob = CoroutineScope(Dispatchers.Main).launch {
                 coroutineTimer(repeatMillis = (35 - speed).toLong(),
                     action = {
                         songScrollView.smoothScrollBy(0, 1)
                         songLinearLayout.measuredHeight > (songScrollView.scrollY + songScrollView.height)
                     }
                 )
+            }.apply {
+                invokeOnCompletion {
+                    if (it !is CancellationException) songScrollSb.progress = 0
+                }
             }
-            newJob.invokeOnCompletion {
-                if (it !is CancellationException) songScrollSb.progress = 0
-            }
-            scrollJob = newJob
         }
     }
 
@@ -205,8 +186,8 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
     override fun onDestroy() {
+        scrollJob?.cancel("onDestroy")
         super.onDestroy()
-        scrollJob?.cancel("")
     }
 
 

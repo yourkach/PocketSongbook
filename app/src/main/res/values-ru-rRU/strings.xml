@@ -5,7 +5,7 @@
     <string name="song_key_default">тон</string>
     <string name="song_font_default">шрифт</string>
     <string name="menu_item_search">Поиск</string>
-    <string name="toast_error_connection">Ошибка соединения</string>
+    <string name="error_connection">Ошибка соединения</string>
     <string name="toast_no_results">Ничего не найдено</string>
     <string name="toast_empty_request">Пустой запрос</string>
     <string name="toast_download_fail">Ошибка скачивания</string>

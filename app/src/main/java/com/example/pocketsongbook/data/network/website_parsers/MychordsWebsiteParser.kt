@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.data.network.websites_api
+package com.example.pocketsongbook.data.network.website_parsers
 
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document
 import java.io.IOException
 import javax.inject.Inject
 
-class MychordsWebsiteParser @Inject constructor() : SongsWebsiteParser {
+class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
     override val websiteName: String = "MyChords.ru"
 
@@ -15,21 +15,11 @@ class MychordsWebsiteParser @Inject constructor() : SongsWebsiteParser {
 
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 
-    private fun buildSearchURL(searchQuery: String): String {
+    override fun buildSearchURL(searchQuery: String): String {
         return baseUrl + searchQuery.replace(' ', '+') + searchSettings
     }
 
-    override suspend fun getSearchResults(searchRequest: String): List<SongSearchItem>? {
-        return try {
-            val document = Jsoup.connect(buildSearchURL(searchRequest)).get()
-            parseSearchPage(document)
-        } catch (e: IOException) {
-            null
-        }
-    }
-
-
-    private fun parseSearchPage(pageContent: Document): List<SongSearchItem> {
+    override fun parseSearchPage(pageContent: Document): List<SongSearchItem> {
         val elements = pageContent.select("ul.b-listing") //[class=b-listing]
             .eq(0)
             .select("li[class=b-listing__item]")
@@ -59,19 +49,7 @@ class MychordsWebsiteParser @Inject constructor() : SongsWebsiteParser {
         return songItems
     }
 
-    override suspend fun getSong(songSearchItem: SongSearchItem): Song? {
-        return try {
-            val document = Jsoup.connect(songSearchItem.link).get()
-            val lyrics = parseLyricsPage(document)
-                .replace("\n", "<br>\n")
-                .replace(" ", "&nbsp;")
-            Song(songSearchItem, lyrics)
-        } catch (e: IOException) {
-            null
-        }
-    }
-
-    private fun parseLyricsPage(pageContent: Document): String {
+    override fun parseLyricsPage(pageContent: Document): String {
         var text = pageContent.select("pre.w-words__text")
             .eq(0).html().toString()
         text = text.replace("</a></span>", "</b>")

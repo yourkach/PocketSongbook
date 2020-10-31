@@ -1,7 +1,9 @@
 package com.example.pocketsongbook.utils
 
+import android.app.Activity
 import android.os.SystemClock
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 
 
 class SafeClickListener(val interval: Int = 1000, val safeClick: (View) -> Unit) : View.OnClickListener {
@@ -24,3 +26,10 @@ fun View.setOnSafeClickListener(interval: Int = 1000, onSafeClick: (View) -> Uni
     setOnClickListener(safeClickListener)
 }
 
+
+fun View.hideKeyboard() {
+    val inputManager =
+        context.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+    inputManager?.hideSoftInputFromWindow(this.windowToken, 0)
+    this.clearFocus()
+}

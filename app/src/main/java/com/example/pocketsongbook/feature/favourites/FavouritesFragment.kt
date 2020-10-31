@@ -7,8 +7,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
+import com.example.pocketsongbook.common.navigation.toFragment
+import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.database.SongEntity
 import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.feature.song.SongFragment
+import com.github.terrakok.cicerone.Router
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*
 import moxy.MvpAppCompatFragment
@@ -21,6 +25,8 @@ import javax.inject.Inject
 class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), FavouritesView,
     SearchView.OnQueryTextListener {
 
+    @Inject
+    lateinit var router: Router
 
     @Inject
     lateinit var favouritesPresenter: FavouritesPresenter
@@ -53,9 +59,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     }
 
     private fun setUpToolbar() {
-        favouritesGoBackIv.setOnClickListener {
-//            findNavController().popBackStack()
-        }
+        favouritesGoBackIv.setOnClickListener { router.exit() }
         searchViewFavourites.setOnQueryTextListener(this)
     }
 
@@ -64,10 +68,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     }
 
     override fun navigateToSong(song: Song) {
-        TODO("navigation not yet implemented")
-//        findNavController().navigate(
-//            FavouritesFragmentDirections.actionFavouritesFragmentToSongFragment(song)
-//        )
+        router.navigateTo(SongFragment.SongArgs(song).toFragment().toScreen())
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
