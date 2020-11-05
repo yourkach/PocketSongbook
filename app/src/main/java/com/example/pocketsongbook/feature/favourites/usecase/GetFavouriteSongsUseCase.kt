@@ -3,19 +3,21 @@ package com.example.pocketsongbook.feature.favourites.usecase
 import com.example.pocketsongbook.common.BaseUseCase
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.database.SongEntity
+import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
+import com.example.pocketsongbook.data.models.Song
 import javax.inject.Inject
 
 class GetFavouriteSongsUseCase @Inject constructor(
-    private val favouriteSongsDao: FavouriteSongsDao
-) : BaseUseCase<GetFavouriteSongsUseCase.Param, List<SongEntity>>() {
+    private val favouriteSongsRepo: FavouriteSongsRepo
+) : BaseUseCase<GetFavouriteSongsUseCase.Param, List<Song>>() {
 
-    override suspend fun execute(param: Param): List<SongEntity> {
+    override suspend fun execute(param: Param): List<Song> {
         return when (param) {
             is Param.ByQuery -> {
-                favouriteSongsDao.findByName(param.query)
+                favouriteSongsRepo.getSongsByQuery(param.query)
             }
             is Param.All -> {
-                favouriteSongsDao.getAll()
+                favouriteSongsRepo.getAllFavourites()
             }
         }
     }

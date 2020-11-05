@@ -6,6 +6,7 @@ import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
+import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
 import com.example.pocketsongbook.data.network.WebsitesManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -49,7 +50,8 @@ class SearchPresenter @Inject constructor(
 //    private val switchToWebSiteUseCase: SwitchToWebSiteUseCase,
 //    private val getSearchResultsUseCase: GetSearchResultsUseCase,
 //    private val getSongUseCase: GetSongUseCase
-    private val websitesManager: WebsitesManager
+    private val websitesManager: WebsitesManager,
+    private val favouriteSongsRepo: FavouriteSongsRepo
 ) : BasePresenter<SearchSongView>() {
 
     private var lastSearchQuery: String? = null
@@ -93,8 +95,10 @@ class SearchPresenter @Inject constructor(
         searchJob = launch {
             try {
                 viewState.showLoading()
+                // TODO: 05.11.20 вынести в юзкейс
                 val searchResult = withContext(Dispatchers.IO) {
                     websitesManager.getSearchResults(query)
+                        .map { it.copy(isFavourite = favouriteSongsRepo.containsSong(it.url)) }
                 }
                 viewState.updateRecyclerItems(searchResult)
             } finally {

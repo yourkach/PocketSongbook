@@ -1,12 +1,9 @@
 package com.example.pocketsongbook.data.network.website_parsers
 
-import androidx.core.net.toUri
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
-import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.io.File
 
 abstract class BaseWebsiteParser : SongsWebsiteParser {
 
@@ -20,10 +17,8 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
     protected abstract fun parseSearchPage(pageContent: Document): List<SongSearchItem>
 
     override suspend fun getSong(songSearchItem: SongSearchItem): Song {
-        val document = Jsoup.connect(songSearchItem.link).get()
+        val document = Jsoup.connect(songSearchItem.url).get()
         val lyrics = parseLyricsPage(document)
-            .replace("\n", "<br>\n")
-            .replace(" ", "&nbsp;")
         return Song(songSearchItem, lyrics)
     }
 

@@ -63,7 +63,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
         searchViewFavourites.setOnQueryTextListener(this)
     }
 
-    override fun updateItems(newItems: List<SongEntity>) {
+    override fun updateItems(newItems: List<Song>) {
         favouritesAdapter.setList(newItems)
     }
 

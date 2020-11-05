@@ -13,12 +13,12 @@ interface FavouriteSongsDao {
     @Query("SELECT * FROM songs WHERE artist LIKE :name || '%' OR title LIKE :name || '%' ORDER BY time_added DESC")
     fun findByName(name: String): List<SongEntity>
 
-    @Query("SELECT * FROM songs WHERE link = :url")
+    @Query("SELECT * FROM songs WHERE url = :url")
     fun findByUrl(url: String): List<SongEntity>
 
     @Insert
     fun insert(song: SongEntity)
 
-    @Query("DELETE FROM songs WHERE link = :url")
+    @Query("DELETE FROM songs WHERE url = :url")
     fun deleteByUrl(url: String)
 }

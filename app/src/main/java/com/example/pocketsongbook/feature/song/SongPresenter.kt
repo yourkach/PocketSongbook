@@ -1,64 +1,43 @@
 package com.example.pocketsongbook.feature.song
 
-import com.example.pocketsongbook.utils.ChordsTransponder
-import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.database.SongEntity
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
-import com.example.pocketsongbook.feature.song.usecase.ChangeFontSizeUseCase
-import com.example.pocketsongbook.feature.song.usecase.CheckSongFavouriteStatusUseCase
-import com.example.pocketsongbook.feature.song.usecase.GetChordsUseCase
-import com.example.pocketsongbook.feature.song.usecase.GetTransposedLyricsUseCase
+import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
+import com.example.pocketsongbook.feature.song.domain.*
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moxy.InjectViewState
-import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
-import java.util.regex.Pattern
 
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SongView : BaseView {
 
-    // TODO: 18.07.20 переработать методы (объединить, убрать лишние)
-
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setKeyLabelText(text: String = "")
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setKeyLabelText(resId: Int)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setFontSizeLabelText(text: String = "")
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setFontSizeLabelText(resId: Int)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setArtistLabelText(text: String)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setTitleLabelText(text: String)
+    fun setSongInfo(artist: String, title: String)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setSongLyrics(lyricsHtml: String)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setLyricsFontSize(fontSize: Float)
+    fun setKeyText(chordsKeyText: String, isDefault: Boolean)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun updateLyricsFontSize(newSize: Int, isDefault: Boolean = false)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setFavouritesButtonFilled(filled: Boolean)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun loadChords(chords: List<Chord>)
+    fun setChords(chords: List<Chord>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun openChordBar()
@@ -67,204 +46,149 @@ interface SongView : BaseView {
     fun closeChordBar()
 }
 
+enum class ChangeType {
+    Increment, Decrement, SetDefault
+}
+
 @InjectViewState
 class SongPresenter @AssistedInject constructor(
     @Assisted private val song: Song,
-    private val changeFontSizeUseCase: ChangeFontSizeUseCase,
-    private val checkSongFavouriteStatusUseCase: CheckSongFavouriteStatusUseCase,
-    private val getTransposedLyricsUseCase: GetTransposedLyricsUseCase,
-    private val getChordsUseCase: GetChordsUseCase,
-    private val favouriteSongsDao: FavouriteSongsDao
-) : BasePresenter<SongView>() {
+    private val favouriteSongsRepo: FavouriteSongsRepo
+) : BasePresenter<SongView>(), SongHolder.SongChangesListener {
 
-    private lateinit var chordsSet: Set<String>
-    private var transposedChordsList: List<String>
-    private var transposedLyrics: String = ""
+    private val songHolder = SongHolder(song)
+
     private var isFavourite: Boolean = false
-    private var chordsKey: Int = 0
+        set(value) {
+            field = value
+            viewState.setFavouritesButtonFilled(value)
+        }
     private var currentFontSize: Float =
         FONT_SIZE_DEFAULT
     private var chordsBarOpened = false
 
-    init {
-        // TODO: 27.10.20 подумать как сделать более красиво
-        initChordsSet()
-        transposedChordsList = chordsSet.toList()
+    override fun onSongStateChanged(newState: SongHolder.SongState) {
+        viewState.setSongLyrics(lyricsHtml = newState.formattedSongHtmlText)
+        viewState.setKeyText(
+            chordsKeyText = newState.chordsKey.toString(),
+            isDefault = newState.chordsKey == 0
+        )
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        if (transposedLyrics == "") transposedLyrics = getTransposedLyrics(chordsKey)
-        updateViewAfterTransposing()
-        viewState.setArtistLabelText(song.artist)
-        viewState.setTitleLabelText(song.title)
-        updateChordsImages()
+
+        viewState.setSongInfo(
+            artist = song.artist,
+            title = song.title
+        )
+
+        songHolder.subscribe(listener = this)
 
         launch {
             withContext(Dispatchers.IO) {
-                isFavourite = favouriteSongsDao.findByUrl(song.link).isNotEmpty()
+                isFavourite = favouriteSongsRepo.containsSong(song.url)
             }
-            viewState.setFavouritesButtonFilled(isFavourite)
         }
     }
 
-    private fun initChordsSet() {
-        val chordPattern =
-            Pattern.compile("<b>(.*?)</b>")
-        val matcher = chordPattern.matcher(song.lyrics)
-        val chordsFound = mutableListOf<String>()
-        while (matcher.find()) {
-            val chord = matcher.group(1)
-            if (chord != null) chordsFound.add(chord)
-        }
-        chordsSet = chordsFound.toSet()
-    }
-
-    private fun changeFontSize(increase: Boolean = true, setDefaultSize: Boolean = false) {
-        val newFontSize = when {
-            setDefaultSize -> {
+    private fun changeFontSize(changeType: ChangeType) {
+        val newFontSize = when (changeType) {
+            ChangeType.SetDefault -> {
                 FONT_SIZE_DEFAULT
             }
-            else -> {
-                currentFontSize + if (increase) FONT_CHANGE_AMOUNT else (-FONT_CHANGE_AMOUNT)
+            ChangeType.Increment, ChangeType.Decrement -> {
+                currentFontSize + FONT_CHANGE_AMOUNT * if (changeType == ChangeType.Increment) 1 else -1
             }
         }
-        if (newFontSize in FONT_SIZE_MIN..FONT_SIZE_MAX) {
-            currentFontSize = newFontSize
-            viewState.setLyricsFontSize(newFontSize)
+        currentFontSize = newFontSize.coerceIn(FONT_SIZE_MIN..FONT_SIZE_MAX)
+        viewState.updateLyricsFontSize(
+            currentFontSize.toInt(),
+            currentFontSize == FONT_SIZE_DEFAULT
+        )
+    }
 
-            if (currentFontSize == FONT_SIZE_DEFAULT) {
-                viewState.setFontSizeLabelText(R.string.song_font_default)
-            } else {
-                viewState.setFontSizeLabelText(currentFontSize.toInt().toString())
-            }
+    fun onKeyPlusClick() {
+        launch {
+            songHolder.changeChordsKey(ChangeType.Increment)
         }
     }
 
-    fun onFontPlusClicked() {
-        changeFontSize(increase = true)
+    fun onKeyMinusClick() {
+        launch {
+            songHolder.changeChordsKey(ChangeType.Decrement)
+        }
     }
 
-    fun onFontLabelClicked() {
-        changeFontSize(setDefaultSize = true)
+    fun onKeyLabelClick() {
+        launch {
+            songHolder.changeChordsKey(ChangeType.SetDefault)
+        }
     }
 
-    fun onFontMinusClicked() {
-        changeFontSize(increase = false)
+    fun onFontPlusClick() {
+        changeFontSize(ChangeType.Increment)
     }
 
-    fun onKeyUpClicked() {
-        chordsKey = (chordsKey + 1) % 12
-        transposedLyrics = getTransposedLyrics(chordsKey)
-        updateViewAfterTransposing()
+    fun onFontMinusClick() {
+        changeFontSize(ChangeType.Decrement)
     }
 
-    fun onKeyLabelClicked() {
-        chordsKey = 0
-        transposedLyrics = getTransposedLyrics(chordsKey)
-        updateViewAfterTransposing()
+    fun onFontLabelClick() {
+        changeFontSize(ChangeType.SetDefault)
     }
 
-    fun onKeyDownClicked() {
-        chordsKey = (chordsKey - 1) % 12
-        transposedLyrics = getTransposedLyrics(chordsKey)
-        updateViewAfterTransposing()
-    }
-
-    private fun updateViewAfterTransposing() {
-        viewState.setSongLyrics(transposedLyrics)
-        updateKeyLabel()
-        updateChordsImages()
-    }
-
-    fun onFavouritesButtonClicked() {
+    fun onFavouritesButtonClick() {
         if (isFavourite) {
             removeFromFavourites()
-            viewState.setFavouritesButtonFilled(false)
         } else {
             addToFavourites()
-            viewState.setFavouritesButtonFilled(true)
         }
     }
 
-    fun onFloatingButtonClicked() {
+    fun onOpenChordsClick() {
         if (chordsBarOpened) {
             viewState.closeChordBar()
         } else {
             viewState.openChordBar()
+            updateChordsImages()
         }
         chordsBarOpened = !chordsBarOpened
     }
 
+    // TODO: 05.11.20 вынести в юзкейсы
     private fun addToFavourites() {
-        CoroutineScope(Dispatchers.IO).launch {
-            favouriteSongsDao.insert(SongEntity(song))
+        launch {
+            withContext(Dispatchers.IO) {
+                favouriteSongsRepo.addSong(song)
+            }
         }
         isFavourite = true
     }
 
     private fun removeFromFavourites() {
-        CoroutineScope(Dispatchers.IO).launch {
-            favouriteSongsDao.deleteByUrl(song.link)
+        launch {
+            withContext(Dispatchers.IO) {
+                favouriteSongsRepo.removeSong(song)
+            }
         }
         isFavourite = false
     }
 
-    private fun getTransposedLyrics(amount: Int): String {
-        return if (amount != 0) {
-            val newTransposed = mutableListOf<String>()
-            val transposedChords = mutableMapOf<String, String>()
-            chordsSet.forEach {
-                val newChord = ChordsTransponder.transposeChord(
-                    it,
-                    amount
-                )
-                transposedChords[it] = newChord
-                newTransposed.add(newChord)
-            }
-            transposedChordsList = newTransposed
-            val lyrics = song.lyrics
-            val newTextBuilder = StringBuilder()
-            var chordStartIndex = lyrics.indexOf("<b>")
-            var prevChordEnd = 0
-            while (chordStartIndex != -1) {
-                val chordEnd = lyrics.indexOf("</b>", chordStartIndex + 3)
-                val chord =
-                    lyrics.substring(
-                        chordStartIndex + 3,
-                        chordEnd
-                    )
-                newTextBuilder.append(lyrics.substring(prevChordEnd, chordStartIndex + 3))
-                newTextBuilder.append(transposedChords[chord])
-                newTextBuilder.append("</b>")
-                prevChordEnd = chordEnd + 4
-                chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
-            }
-            newTextBuilder.append(lyrics.substring(prevChordEnd))
-            newTextBuilder.toString()
-        } else {
-            transposedChordsList = chordsSet.toList()
-            song.lyrics
-        }
-    }
-
-    private fun updateKeyLabel() {
-        if (chordsKey == 0) {
-            viewState.setKeyLabelText(R.string.song_key_default)
-        } else {
-            viewState.setKeyLabelText(chordsKey.toString())
-        }
-    }
 
     private fun updateChordsImages() {
-        val newChords = transposedChordsList.map {
+        val newChords = songHolder.currentState.chordsList.map {
             Chord(
                 it,
-                //"https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
+                "https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
+            )
+        } + songHolder.currentState.chordsList.map {
+            Chord(
+                it,
                 "https://amdm.ru/images/chords/${it.replace("#", "w")}_0.gif"
             )
         }
-        viewState.loadChords(newChords)
+        viewState.setChords(newChords)
     }
 
     @AssistedInject.Factory

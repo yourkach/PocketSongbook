@@ -5,8 +5,8 @@ import com.example.pocketsongbook.data.database.SongEntity
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Song(val artist: String, val title: String, val lyrics: String, val link: String) :
+data class Song(val artist: String, val title: String, val lyrics: String, val url: String) :
     Parcelable {
-    constructor(s: SongSearchItem, lyrics: String) : this(s.artist, s.title, lyrics, s.link)
-    constructor(s: SongEntity) : this(s.artist, s.title, s.lyrics, s.link)
+    constructor(s: SongSearchItem, lyrics: String) : this(s.artist, s.title, lyrics, s.url)
+    constructor(s: SongEntity) : this(s.artist, s.title, s.lyrics, s.url)
 }

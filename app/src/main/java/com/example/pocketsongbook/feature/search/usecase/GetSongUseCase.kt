@@ -13,7 +13,7 @@ class GetSongUseCase @Inject constructor(
 ) : BaseUseCase<SongSearchItem, Song?>() {
 
     override suspend fun execute(param: SongSearchItem): Song? {
-        return favouriteSongsDao.findByUrl(param.link)
+        return favouriteSongsDao.findByUrl(param.url)
             .firstOrNull()?.let { Song(it) }
             ?: websitesManager.getSong(param)
     }

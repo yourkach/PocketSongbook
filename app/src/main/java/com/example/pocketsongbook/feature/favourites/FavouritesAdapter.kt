@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.database.SongEntity
+import com.example.pocketsongbook.data.models.Song
 import kotlinx.android.synthetic.main.item_search_song.view.*
 
-class FavouritesAdapter(private val onItemClickResponse: (song: SongEntity) -> Unit) :
+class FavouritesAdapter(private val onItemClickResponse: (song: Song) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items: List<SongEntity> = listOf()
+    private var items: List<Song> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(
@@ -33,14 +34,14 @@ class FavouritesAdapter(private val onItemClickResponse: (song: SongEntity) -> U
 
     override fun getItemCount(): Int = items.size
 
-    fun setList(newItems: List<SongEntity>) {
+    fun setList(newItems: List<Song>) {
         items = newItems
         notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(song: SongEntity) {
+        fun bind(song: Song) {
             itemView.apply {
                 songTitleTv.text = song.title
                 songArtistTv.text = song.artist

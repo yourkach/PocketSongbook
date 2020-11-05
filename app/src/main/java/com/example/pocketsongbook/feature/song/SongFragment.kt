@@ -1,6 +1,8 @@
 package com.example.pocketsongbook.feature.song
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
@@ -12,7 +14,6 @@ import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.common.navigation.ArgsFragment
 import com.example.pocketsongbook.common.navigation.FragmentArgs
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
@@ -43,21 +44,28 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     private fun setUpSeekBar() {
         songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                setAutoScrollSpeed(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                songScrollSb.alpha = 1.0f
+                songScrollSb.animate().apply {
+                    alpha(1.0f)
+                    duration = 200
+                    start()
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                songScrollSb.alpha = 0.3f
+                seekBar?.progress?.let(::setAutoScrollSpeed)
+                songScrollSb.animate().apply {
+                    alpha(0.3f)
+                    duration = 200
+                    start()
+                }
             }
         })
     }
 
 
-    // TODO: 18.07.20 переделать с использованием Handler и postDelayed
     private var scrollJob: Job? by setAndCancelJob()
 
     /**
@@ -77,6 +85,8 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
                     if (it !is CancellationException) songScrollSb.progress = 0
                 }
             }
+        } else {
+            scrollJob?.cancel()
         }
     }
 
@@ -104,28 +114,28 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
 
     private fun setOnClickListeners() {
         songKeyUpBtn.setOnClickListener {
-            presenter.onKeyUpClicked()
+            presenter.onKeyPlusClick()
         }
         songKeyDownBtn.setOnClickListener {
-            presenter.onKeyDownClicked()
+            presenter.onKeyMinusClick()
         }
         songKeyAmountTv.setOnClickListener {
-            presenter.onKeyLabelClicked()
+            presenter.onKeyLabelClick()
         }
         songFontPlusBtn.setOnClickListener {
-            presenter.onFontPlusClicked()
+            presenter.onFontPlusClick()
         }
         songFontMinusBtn.setOnClickListener {
-            presenter.onFontMinusClicked()
+            presenter.onFontMinusClick()
         }
         songFontSizeTv.setOnClickListener {
-            presenter.onFontLabelClicked()
+            presenter.onFontLabelClick()
         }
         songAddToFavouriteIv.setOnClickListener {
-            presenter.onFavouritesButtonClicked()
+            presenter.onFavouritesButtonClick()
         }
         songOpenChordsFb.setOnClickListener {
-            presenter.onFloatingButtonClicked()
+            presenter.onOpenChordsClick()
         }
         songScrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY - oldScrollY < 0) {
@@ -136,36 +146,24 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         }
     }
 
-    override fun setKeyLabelText(text: String) {
-        songKeyAmountTv.text = text
+    override fun setSongInfo(artist: String, title: String) {
+        songArtistTv.text = artist
+        songTitleTv.text = title
     }
 
-    override fun setKeyLabelText(resId: Int) {
-        songKeyAmountTv.text = getString(resId)
+    override fun setKeyText(chordsKeyText: String, isDefault: Boolean) {
+        songKeyAmountTv.text =
+            if (isDefault) getString(R.string.song_key_default) else chordsKeyText
     }
 
-    override fun setFontSizeLabelText(text: String) {
-        songFontSizeTv.text = text
-    }
-
-    override fun setFontSizeLabelText(resId: Int) {
-        songFontSizeTv.text = getString(resId)
-    }
-
-    override fun setArtistLabelText(text: String) {
-        songArtistTv.text = text
-    }
-
-    override fun setTitleLabelText(text: String) {
-        songTitleTv.text = text
+    override fun updateLyricsFontSize(newSize: Int, isDefault: Boolean) {
+        songFontSizeTv.text =
+            if (isDefault) getString(R.string.song_font_default) else newSize.toString()
+        songLyricsTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, newSize.toFloat())
     }
 
     override fun setSongLyrics(lyricsHtml: String) {
         songLyricsTv.text = HtmlCompat.fromHtml(lyricsHtml, HtmlCompat.FROM_HTML_MODE_COMPACT)
-    }
-
-    override fun setLyricsFontSize(fontSize: Float) {
-        songLyricsTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize)
     }
 
     override fun setFavouritesButtonFilled(filled: Boolean) {
@@ -173,7 +171,7 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         else songAddToFavouriteIv.setImageResource(R.drawable.ic_star_border_white_36dp)
     }
 
-    override fun loadChords(chords: List<Chord>) {
+    override fun setChords(chords: List<Chord>) {
         chordsAdapter.setChords(chords)
     }
 
@@ -186,10 +184,9 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
     override fun onDestroy() {
-        scrollJob?.cancel("onDestroy")
+        scrollJob?.cancel()
         super.onDestroy()
     }
-
 
     @Parcelize
     data class SongArgs(val song: Song) : FragmentArgs<SongFragment>

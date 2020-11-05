@@ -10,14 +10,14 @@ data class SongEntity(
     val artist: String,
     val title: String,
     val lyrics: String,
-    @PrimaryKey val link: String,
+    @PrimaryKey val url: String,
     @ColumnInfo(name = "time_added") val timeAdded: Long
 ) {
     constructor(s: Song) : this(
         s.artist,
         s.title,
         s.lyrics,
-        s.link,
+        s.url,
         System.currentTimeMillis() / 1000
     )
 }
