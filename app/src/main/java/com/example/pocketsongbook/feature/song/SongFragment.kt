@@ -1,8 +1,6 @@
 package com.example.pocketsongbook.feature.song
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
@@ -32,7 +30,7 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
 
     private val chordsAdapter by lazy { ChordsAdapter() }
 
-    override val enterTransitionRes: Int? = R.transition.slide_right
+    override val enterTransitionRes: Int = R.transition.slide_right
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,8 +74,8 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
             scrollJob = CoroutineScope(Dispatchers.Main).launch {
                 coroutineTimer(repeatMillis = (35 - speed).toLong(),
                     action = {
-                        songScrollView.smoothScrollBy(0, 1)
-                        songLinearLayout.measuredHeight > (songScrollView.scrollY + songScrollView.height)
+                        svSongLyrics.smoothScrollBy(0, 1)
+                        songLinearLayout.measuredHeight > (svSongLyrics.scrollY + svSongLyrics.height)
                     }
                 )
             }.apply {
@@ -137,7 +135,7 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         songOpenChordsFb.setOnClickListener {
             presenter.onOpenChordsClick()
         }
-        songScrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+        svSongLyrics.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY - oldScrollY < 0) {
                 songOpenChordsFb.show()
             } else {
@@ -147,8 +145,8 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
     override fun setSongInfo(artist: String, title: String) {
-        songArtistTv.text = artist
-        songTitleTv.text = title
+        tvSongArtist.text = artist
+        tvSongTitle.text = title
     }
 
     override fun setKeyText(chordsKeyText: String, isDefault: Boolean) {

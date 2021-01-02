@@ -3,22 +3,22 @@ package com.example.pocketsongbook.data.network
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 
-interface WebsitesManager {
+interface WebsiteParsersManager {
 
     val selectedWebsiteName: String
 
     /**
      * returns list of website names
      */
-    fun getWebsiteNames(): List<String>
+    val websiteNames: List<String>
 
     /**
      * returns true if switch successful
      */
-    fun selectByName(websiteName: String): Boolean
+    fun selectWebsiteByName(websiteName: String): Boolean
 
-    suspend fun getSearchResults(query: String): List<SongSearchItem>
+    suspend fun loadSearchResults(query: String): List<SongSearchItem>
 
-    suspend fun getSong(songSearchItem: SongSearchItem): Song?
+    suspend fun loadSong(songSearchItem: SongSearchItem): Song?
 
 }

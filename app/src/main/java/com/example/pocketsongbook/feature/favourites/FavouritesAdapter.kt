@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.database.SongEntity
 import com.example.pocketsongbook.data.models.Song
 import kotlinx.android.synthetic.main.item_search_song.view.*
 
@@ -43,8 +42,8 @@ class FavouritesAdapter(private val onItemClickResponse: (song: Song) -> Unit) :
 
         fun bind(song: Song) {
             itemView.apply {
-                songTitleTv.text = song.title
-                songArtistTv.text = song.artist
+                tvSongArtist.text = song.title
+                tvSongTitle.text = song.artist
                 setOnClickListener {
                     onItemClickResponse(song)
                 }

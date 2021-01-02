@@ -104,7 +104,7 @@
         android:id="@+id/nothingFoundStub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nothing_found"
+        android:text="@string/message_nothing_found"
         android:textSize="22sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/searchContainer"

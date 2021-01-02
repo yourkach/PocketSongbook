@@ -1,12 +1,15 @@
 package com.example.pocketsongbook.feature.song.domain
 
+import android.util.Log
 import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.feature.song.ChangeType
 import com.example.pocketsongbook.utils.ChordsTransponder
+import com.example.pocketsongbook.utils.logDebug
 import java.util.regex.Pattern
 
 class SongHolder(
-    private val song: Song
+    private val song: Song,
+    private val onSongStateChanged: (SongState) -> Unit
 ) {
 
     private val chordsSet: Set<String> = parseSongChords()
@@ -14,32 +17,20 @@ class SongHolder(
     var currentState: SongState = evaluateSongState()
         private set(value) {
             field = value
-            listener?.onSongStateChanged(field)
+            onSongStateChanged(value)
         }
 
     private var chordsKey: Int = 0
 
-    private var listener: SongChangesListener? = null
-
-    fun subscribe(listener: SongChangesListener) {
-        this.listener = listener
-        listener.onSongStateChanged(currentState)
+    init {
+        onSongStateChanged(currentState)
     }
 
     private fun parseSongChords(): Set<String> {
-        val chordPattern =
-            Pattern.compile("<b>(.*?)</b>")
-        val matcher = chordPattern.matcher(song.lyrics)
-        val chordsFound = mutableListOf<String>()
-        while (matcher.find()) {
-            val chord = matcher.group(1)
-            if (chord != null) chordsFound.add(chord)
-        }
-        val chordMatches = Regex("<b>(.*?)</b>") // TODO: 05.11.20 потестить работу
+        return Regex("<b>(.*?)</b>")
             .findAll(song.lyrics)
             .mapNotNull { it.groups[1]?.value }
             .toSet()
-        return chordsFound.toSet()
     }
 
     private fun getLyricsWithChords(keyValue: Int): Pair<String, List<String>> {
@@ -65,20 +56,22 @@ class SongHolder(
                         chordStartIndex + 3,
                         chordEnd
                     )
-                newTextBuilder.append(lyrics.substring(prevChordEnd, chordStartIndex + 3))
-                newTextBuilder.append(chordsMap[chord])
-                newTextBuilder.append("</b>")
+                newTextBuilder.apply {
+                    append(lyrics.substring(prevChordEnd, chordStartIndex + 3))
+                    append(chordsMap[chord])
+                    append("</b>")
+                }
                 prevChordEnd = chordEnd + 4
                 chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
             }
-            newTextBuilder.append(lyrics.substring(prevChordEnd))
+            newTextBuilder.append(lyrics.substring(startIndex = prevChordEnd))
             newTextBuilder.toString() to newTransposedChords
         } else {
             song.lyrics to chordsSet.toList()
         }
     }
 
-    fun changeChordsKey(changeType : ChangeType){
+    fun changeChordsKey(changeType: ChangeType) {
         chordsKey = when (changeType) {
             ChangeType.Increment -> (chordsKey + 1) % 12
             ChangeType.Decrement -> (chordsKey - 1) % 12
@@ -98,12 +91,8 @@ class SongHolder(
         )
     }
 
-    interface SongChangesListener {
-        fun onSongStateChanged(newState: SongState)
-    }
-
     data class SongState(
-        val formattedSongHtmlText: String,
+        val formattedHtmlLyricsText: String,
         val chordsList: List<String>,
         val chordsKey: Int
     )

@@ -4,7 +4,11 @@ import com.example.pocketsongbook.data.models.Song
 import com.example.pocketsongbook.data.models.SongSearchItem
 
 interface SongsWebsiteParser {
+
     val websiteName: String
-    suspend fun getSearchResults(searchRequest: String): List<SongSearchItem>
-    suspend fun getSong(songSearchItem: SongSearchItem): Song
+
+    suspend fun loadSearchResults(searchRequest: String): List<SongSearchItem>
+
+    suspend fun loadSong(songSearchItem: SongSearchItem): Song
+
 }

@@ -14,12 +14,12 @@
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@+id/songScrollView"
+        app:layout_constraintBottom_toBottomOf="@+id/svSongLyrics"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_chord_white" />
 
     <ScrollView
-        android:id="@+id/songScrollView"
+        android:id="@+id/svSongLyrics"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/colorWhite"
@@ -54,13 +54,13 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/label_favourites"
                     android:scaleType="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/songTitleTv"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvSongArtist"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/songArtistTv"
+                    app:layout_constraintTop_toTopOf="@+id/tvSongTitle"
                     app:srcCompat="@drawable/ic_star_border_white_36dp" />
 
                 <TextView
-                    android:id="@+id/songTitleTv"
+                    android:id="@+id/tvSongArtist"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -70,11 +70,11 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toStartOf="@+id/songAddToFavouriteIv"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/songArtistTv"
-                    tools:text="Song Title" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvSongTitle"
+                    tools:text="Artist" />
 
                 <TextView
-                    android:id="@+id/songArtistTv"
+                    android:id="@+id/tvSongTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
@@ -85,7 +85,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/songAddToFavouriteIv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Artist" />
+                    tools:text="Song Title" />
 
 
                 <LinearLayout
@@ -95,7 +95,7 @@
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/songTitleTv">
+                    app:layout_constraintTop_toBottomOf="@+id/tvSongArtist">
 
                     <Button
                         android:id="@+id/songKeyUpBtn"
@@ -113,7 +113,7 @@
                         android:id="@+id/songKeyAmountTv"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
+                        android:layout_marginHorizontal="5dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:minWidth="50dp"
@@ -161,7 +161,7 @@
                         android:id="@+id/songFontSizeTv"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
+                        android:layout_marginHorizontal="5dp"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:minWidth="60dp"
@@ -244,7 +244,7 @@
         android:rotation="90"
         app:layout_constraintBottom_toTopOf="@id/songChordsCl"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/songScrollView"
+        app:layout_constraintStart_toEndOf="@+id/svSongLyrics"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

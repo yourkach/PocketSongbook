@@ -6,8 +6,11 @@ import com.example.pocketsongbook.data.models.SongSearchItem
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
-import com.example.pocketsongbook.data.network.WebsitesManager
+import com.example.pocketsongbook.data.network.WebsiteParsersManager
+import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
+import com.example.pocketsongbook.feature.search.usecase.LoadSongUseCase
+import com.example.pocketsongbook.feature.search.usecase.GetWebsiteNamesUseCase
+import com.example.pocketsongbook.feature.search.usecase.SelectWebsiteByNameUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -27,13 +30,10 @@ import javax.inject.Singleton
 interface SearchSongView : BaseView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun updateRecyclerItems(newItems: List<SongSearchItem>)
+    fun toSongScreen(song: Song)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun navigateToSongView(song: Song)
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun navigateToFavourites()
+    fun toFavouritesScreen()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setWebsites(websiteNames: List<String>)
@@ -41,25 +41,26 @@ interface SearchSongView : BaseView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setWebsiteSelected(websiteName: String)
 
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun setSearchItems(newItems: List<SongSearchItem>)
+
 }
 
 @InjectViewState
 @Singleton
 class SearchPresenter @Inject constructor(
-//    private val getWebsiteNamesUseCase: GetWebsiteNamesUseCase,
-//    private val switchToWebSiteUseCase: SwitchToWebSiteUseCase,
-//    private val getSearchResultsUseCase: GetSearchResultsUseCase,
-//    private val getSongUseCase: GetSongUseCase
-    private val websitesManager: WebsitesManager,
-    private val favouriteSongsRepo: FavouriteSongsRepo
+    private val getWebsiteNamesUseCase: GetWebsiteNamesUseCase,
+    private val selectWebsiteByNameUseCase: SelectWebsiteByNameUseCase,
+    private val getSearchResultsUseCase: GetSearchResultsUseCase,
+    private val loadSongUseCase: LoadSongUseCase
 ) : BasePresenter<SearchSongView>() {
 
     private var lastSearchQuery: String? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        setUpWebsiteNames()
-        startCollectQuery()
+        setWebsiteNames()
+        startCollectingQuery()
     }
 
     private val searchQueryChannel = Channel<String>()
@@ -70,49 +71,47 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    private fun startCollectQuery() {
+    private fun startCollectingQuery() {
         launch {
             searchQueryChannel.consumeAsFlow()
                 .distinctUntilChanged()
                 .debounce(700)
                 .collect { query ->
-                    performSearch(query)
+                    startSearchJob(query)
                 }
         }
     }
 
-    private fun setUpWebsiteNames() {
+    private fun setWebsiteNames() {
         launch {
-            val websiteNames = websitesManager.getWebsiteNames()
-            viewState.setWebsites(websiteNames)
-            viewState.setWebsiteSelected(websitesManager.selectedWebsiteName)
+            getWebsiteNamesUseCase().let { (websiteNames, selectedWebsite) ->
+                viewState.setWebsites(websiteNames)
+                viewState.setWebsiteSelected(selectedWebsite)
+            }
         }
     }
 
 
     var searchJob: Job? by setAndCancelJob()
-    private fun performSearch(query: String) {
+    private fun startSearchJob(query: String) {
         searchJob = launch {
-            try {
-                viewState.showLoading()
-                // TODO: 05.11.20 вынести в юзкейс
+            withLoading {
+                lastSearchQuery = query
                 val searchResult = withContext(Dispatchers.IO) {
-                    websitesManager.getSearchResults(query)
-                        .map { it.copy(isFavourite = favouriteSongsRepo.containsSong(it.url)) }
+                    getSearchResultsUseCase(query)
                 }
-                viewState.updateRecyclerItems(searchResult)
-            } finally {
-                viewState.hideLoading()
+                viewState.setSearchItems(searchResult)
             }
         }
     }
 
     fun onWebsiteItemSelected(websiteName: String) {
         launch {
-            val switchSuccessful = websitesManager.selectByName(websiteName)
-            if (switchSuccessful) {
-                viewState.setWebsiteSelected(websiteName)
-                if (!lastSearchQuery.isNullOrEmpty()) performSearch(lastSearchQuery!!)
+            selectWebsiteByNameUseCase(websiteName).let { switchSuccessful ->
+                if (switchSuccessful) {
+                    viewState.setWebsiteSelected(websiteName)
+                    if (!lastSearchQuery.isNullOrEmpty()) startSearchJob(lastSearchQuery!!)
+                }
             }
         }
     }
@@ -121,18 +120,15 @@ class SearchPresenter @Inject constructor(
     fun onSongClicked(searchItem: SongSearchItem) {
         if (loadSongJob?.isActive != true) {
             loadSongJob = launch {
-                try {
-                    viewState.showLoading()
+                withLoading {
                     val song = withContext(Dispatchers.IO) {
-                        websitesManager.getSong(searchItem)
+                        loadSongUseCase(searchItem)
                     }
                     if (song != null) {
-                        viewState.navigateToSongView(song)
+                        viewState.toSongScreen(song)
                     } else {
-                        viewState.showMessage(R.string.toast_download_fail)
+                        viewState.showMessage(R.string.error_failed_to_load_song)
                     }
-                } finally {
-                    viewState.hideLoading()
                 }
             }
         }
@@ -140,10 +136,10 @@ class SearchPresenter @Inject constructor(
 
     override fun onFailure(e: Throwable) {
         super.onFailure(e)
-        viewState.showMessage(R.string.error_connection)
+        viewState.showMessage(R.string.error_no_connection)
     }
 
     fun onFavouritesClicked() {
-        viewState.navigateToFavourites()
+        viewState.toFavouritesScreen()
     }
 }

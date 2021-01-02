@@ -90,14 +90,14 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         nothingFoundStub.isVisible = false
     }
 
-    override fun navigateToSongView(song: Song) {
+    override fun toSongScreen(song: Song) {
         router.navigateTo(
             SongFragment.SongArgs(song).toFragment().toScreen(),
             clearContainer = false
         )
     }
 
-    override fun navigateToFavourites() {
+    override fun toFavouritesScreen() {
         router.navigateTo(FavouritesFragment().toScreen(), clearContainer = false)
     }
 
@@ -126,11 +126,9 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         websitesAdapter.setSelectedByName(websiteName)
     }
 
-    override fun updateRecyclerItems(newItems: List<SongSearchItem>) {
+    override fun setSearchItems(newItems: List<SongSearchItem>) {
         nothingFoundStub.isVisible = newItems.isEmpty()
-        searchItemsAdapter.apply {
-            setList(newItems)
-        }
+        searchItemsAdapter.setList(newItems)
     }
 
 }

@@ -18,18 +18,30 @@ abstract class BasePresenter<TView : BaseView> : MvpPresenter<TView>(), Coroutin
         Dispatchers.Main + job + errorHandler
 
 
-    open fun onFailure(e: Throwable) = Unit
+    open fun onFailure(e: Throwable) {
+        viewState.showError("error: ${e.message}")
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
 
-    suspend operator fun <P,R> BaseUseCase<P,R>.invoke(param : P) : R {
+    suspend operator fun <P, R> BaseUseCase<P, R>.invoke(param: P): R {
         return this.execute(param)
     }
 
-    suspend operator fun <R> BaseUseCase<Unit,R>.invoke() : R {
+    suspend operator fun <R> BaseUseCase<Unit, R>.invoke(): R {
         return this.execute(Unit)
     }
+
+    suspend fun withLoading(block: suspend () -> Unit) {
+        viewState.showLoading()
+        try {
+            block()
+        } finally {
+            viewState.hideLoading()
+        }
+    }
+
 }

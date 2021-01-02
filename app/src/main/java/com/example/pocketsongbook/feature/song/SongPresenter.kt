@@ -1,9 +1,7 @@
 package com.example.pocketsongbook.feature.song
 
-import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.data.database.SongEntity
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
@@ -54,21 +52,25 @@ enum class ChangeType {
 class SongPresenter @AssistedInject constructor(
     @Assisted private val song: Song,
     private val favouriteSongsRepo: FavouriteSongsRepo
-) : BasePresenter<SongView>(), SongHolder.SongChangesListener {
+) : BasePresenter<SongView>() {
 
-    private val songHolder = SongHolder(song)
+    private val songHolder = SongHolder(
+        song = song,
+        onSongStateChanged = ::onSongStateChanged
+    )
 
     private var isFavourite: Boolean = false
         set(value) {
             field = value
             viewState.setFavouritesButtonFilled(value)
         }
-    private var currentFontSize: Float =
-        FONT_SIZE_DEFAULT
+
+    private var currentFontSize: Int = FONT_SIZE_DEFAULT
+
     private var chordsBarOpened = false
 
-    override fun onSongStateChanged(newState: SongHolder.SongState) {
-        viewState.setSongLyrics(lyricsHtml = newState.formattedSongHtmlText)
+    private fun onSongStateChanged(newState: SongHolder.SongState) {
+        viewState.setSongLyrics(lyricsHtml = newState.formattedHtmlLyricsText)
         viewState.setKeyText(
             chordsKeyText = newState.chordsKey.toString(),
             isDefault = newState.chordsKey == 0
@@ -83,8 +85,6 @@ class SongPresenter @AssistedInject constructor(
             title = song.title
         )
 
-        songHolder.subscribe(listener = this)
-
         launch {
             withContext(Dispatchers.IO) {
                 isFavourite = favouriteSongsRepo.containsSong(song.url)
@@ -97,14 +97,15 @@ class SongPresenter @AssistedInject constructor(
             ChangeType.SetDefault -> {
                 FONT_SIZE_DEFAULT
             }
-            ChangeType.Increment, ChangeType.Decrement -> {
+            ChangeType.Increment,
+            ChangeType.Decrement -> {
                 currentFontSize + FONT_CHANGE_AMOUNT * if (changeType == ChangeType.Increment) 1 else -1
             }
         }
         currentFontSize = newFontSize.coerceIn(FONT_SIZE_MIN..FONT_SIZE_MAX)
         viewState.updateLyricsFontSize(
-            currentFontSize.toInt(),
-            currentFontSize == FONT_SIZE_DEFAULT
+            newSize = currentFontSize,
+            isDefault = currentFontSize == FONT_SIZE_DEFAULT
         )
     }
 
@@ -197,9 +198,9 @@ class SongPresenter @AssistedInject constructor(
     }
 
     companion object {
-        private const val FONT_CHANGE_AMOUNT: Float = 2.0F
-        const val FONT_SIZE_DEFAULT: Float = 16.0F
-        const val FONT_SIZE_MIN: Float = 8.0F
-        const val FONT_SIZE_MAX: Float = 36.0F
+        private const val FONT_CHANGE_AMOUNT: Int = 2
+        const val FONT_SIZE_DEFAULT: Int = 16
+        const val FONT_SIZE_MIN: Int = 8
+        const val FONT_SIZE_MAX: Int = 36
     }
 }

@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">Pocket Songbook</string>
     <string name="search_hint">Song or performer name</string>
+
+    <string name="menu_item_search">Search</string>
+
+    <string name="message_no_results">Nothing found</string>
+    <string name="message_empty_request">Empty search request</string>
+    <string name="message_nothing_found">Nothing found</string>
+
+    <string name="error_no_connection">Internet connection error</string>
+    <string name="error_failed_to_load_song">Failed to load song</string>
+
+    <string name="label_favourites">Favourites</string>
+
     <string name="song_key_default">key</string>
     <string name="song_font_default">font</string>
-    <string name="menu_item_search">Search</string>
-    <string name="error_connection">Connection error</string>
-    <string name="toast_no_results">Nothing found</string>
-    <string name="toast_empty_request">Empty search request</string>
-    <string name="toast_download_fail">Failed to download</string>
-    <string name="label_favourites">Favourites</string>
-    <string name="nothing_found">Nothing found</string>
 </resources>

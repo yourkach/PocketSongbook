@@ -1,16 +1,16 @@
 package com.example.pocketsongbook.feature.search.usecase
 
 import com.example.pocketsongbook.common.BaseUseCase
-import com.example.pocketsongbook.data.network.WebsitesManager
+import com.example.pocketsongbook.data.network.WebsiteParsersManager
 import javax.inject.Inject
 
 class GetWebsiteNamesUseCase @Inject constructor(
-    private val websitesManager: WebsitesManager
+    private val websitesManager: WebsiteParsersManager
 ) : BaseUseCase<Unit, GetWebsiteNamesUseCase.Response>() {
 
     override suspend fun execute(param: Unit): Response {
         return Response(
-            websitesManager.getWebsiteNames(),
+            websitesManager.websiteNames,
             websitesManager.selectedWebsiteName
         )
     }
