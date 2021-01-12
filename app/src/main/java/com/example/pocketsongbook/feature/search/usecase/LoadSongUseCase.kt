@@ -10,15 +10,17 @@ import javax.inject.Inject
 
 class LoadSongUseCase @Inject constructor(
     private val websitesManager: WebsiteParsersManager,
-    private val favouriteSongsDao: FavouriteSongsDao
+    private val favouriteSongsRepo: FavouriteSongsRepo
 ) : BaseUseCase<SongSearchItem, Song?>() {
 
     override suspend fun execute(param: SongSearchItem): Song? {
-        return if (param.isFavourite) {
-            /** TODO: 02.01.2021 переписать с использованием [FavouriteSongsRepo] */
-            favouriteSongsDao.findByUrl(param.url)
-                .firstOrNull()
-                ?.let { Song(it) }
-        } else websitesManager.loadSong(param)
+        return param.isFavourite
+            .takeIf { it }
+            ?.let {
+                favouriteSongsRepo.findSongByUrl(param.url)?.toSong()
+            }
+            ?: let {
+                websitesManager.loadSong(param)
+            }
     }
 }

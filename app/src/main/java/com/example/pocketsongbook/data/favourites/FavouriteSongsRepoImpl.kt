@@ -12,15 +12,24 @@ class FavouriteSongsRepoImpl(
 
     private val favouriteSongUrls by stringSetPref()
 
-    override suspend fun getAllFavourites(): List<Song> {
-        val songs = favouriteSongsDao.getAll().map(::Song)
+    override suspend fun getAllFavourites(): List<SongEntity> {
+        val songs = favouriteSongsDao.getAll()
         favouriteSongUrls.clear()
         favouriteSongUrls.addAll(songs.map { it.url })
         return songs
     }
 
-    override suspend fun getSongsByQuery(query: String): List<Song> {
-        return favouriteSongsDao.findByName(query).map(::Song)
+    override suspend fun getSongsByQuery(query: String): List<SongEntity> {
+        return favouriteSongsDao.findByName(query)
+    }
+
+    override suspend fun findSongByUrl(url: String): SongEntity? {
+        return favouriteSongsDao.findByUrl(url).firstOrNull()
+    }
+
+    override suspend fun removeSongByUrl(url: String) {
+        favouriteSongsDao.deleteByUrl(url)
+        favouriteSongUrls.remove(url)
     }
 
     override suspend fun addSong(song: Song) {

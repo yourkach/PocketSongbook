@@ -20,4 +20,6 @@ data class SongEntity(
         s.url,
         System.currentTimeMillis() / 1000
     )
+
+    fun toSong(): Song = Song(artist, title, lyrics, url)
 }

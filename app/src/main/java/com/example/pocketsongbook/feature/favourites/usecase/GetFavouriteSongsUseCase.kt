@@ -20,6 +20,10 @@ class GetFavouriteSongsUseCase @Inject constructor(
                 favouriteSongsRepo.getAllFavourites()
             }
         }
+            .sortedByDescending {
+                it.timeAdded
+            }
+            .map(SongEntity::toSong)
     }
 
     sealed class Param {

@@ -10,7 +10,7 @@ interface FavouriteSongsDao {
     @Query("SELECT * FROM songs ORDER BY time_added DESC")
     fun getAll(): List<SongEntity>
 
-    @Query("SELECT * FROM songs WHERE artist LIKE :name || '%' OR title LIKE :name || '%' ORDER BY time_added DESC")
+    @Query("SELECT * FROM songs WHERE artist LIKE :name || '%' OR title LIKE :name")
     fun findByName(name: String): List<SongEntity>
 
     @Query("SELECT * FROM songs WHERE url = :url")
