@@ -100,6 +100,17 @@
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabOpenTuner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_chord_stub"
+        android:tint="@color/colorWhite"
+        />
+
     <TextView
         android:id="@+id/nothingFoundStub"
         android:layout_width="wrap_content"

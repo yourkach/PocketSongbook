@@ -4,6 +4,7 @@ import com.example.pocketsongbook.di.FragmentScope
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.search.SearchFragment
 import com.example.pocketsongbook.feature.song.SongFragment
+import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -22,5 +23,9 @@ abstract class FragmentsModule {
     @ContributesAndroidInjector
     @FragmentScope
     abstract fun favourites(): FavouritesFragment
+
+    @ContributesAndroidInjector
+    @FragmentScope
+    abstract fun tuner(): TunerFragment
 
 }
