@@ -67,6 +67,8 @@ dependencies {
     implementation "com.github.moxy-community:moxy-ktx:$moxy_version"
     kapt "com.github.moxy-community:moxy-compiler:$moxy_version"
 
+    // Charts
+    implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
 
     // Dagger
     def dagger_version = '2.27'

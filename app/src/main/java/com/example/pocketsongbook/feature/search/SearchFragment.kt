@@ -15,6 +15,7 @@ import com.example.pocketsongbook.feature.search.list.SearchAdapter
 import com.example.pocketsongbook.feature.search.list.SelectableItemsAdapter
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.common.navigation.*
+import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
 import com.example.pocketsongbook.utils.hideKeyboard
 import com.github.terrakok.cicerone.Router
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -23,7 +24,6 @@ import javax.inject.Inject
 
 // TODO: 18.07.20 сделать пагинацию для результатов поиска
 // TODO: 18.07.20 добавить поле для отображения количества найденных песен
-// TODO: 18.07.20 сделать FavouriteSongsRepository, хранить Url'ы в префсах для быстрой проверки
 
 class SearchFragment : BaseFragment(R.layout.fragment_search),
     SearchSongView {
@@ -57,6 +57,9 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
         searchOpenFavouritesIv.setOnClickListener {
             presenter.onFavouritesClicked()
+        }
+        fabOpenTuner.setOnClickListener {
+            router.navigateTo(TunerFragment().toScreen())
         }
     }
 
