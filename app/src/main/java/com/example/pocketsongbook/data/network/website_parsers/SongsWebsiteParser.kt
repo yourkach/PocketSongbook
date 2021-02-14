@@ -10,6 +10,6 @@ interface SongsWebsiteParser {
 
     suspend fun loadSearchResults(searchRequest: String): List<FoundSongModel>
 
-    suspend fun loadSong(songSearchItem: FoundSongModel): SongModel
+    suspend fun loadSong(foundSong: FoundSongModel): SongModel
 
 }

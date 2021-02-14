@@ -11,7 +11,7 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
     override val website = SongsWebsite.MyChords
 
-    private val baseUrl = "https://mychords.net/search?q="
+    private val baseUrl = "https://hm6.ru/search?q="
 
     private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
 

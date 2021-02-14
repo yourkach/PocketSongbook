@@ -20,12 +20,12 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
 
     protected abstract fun parseSearchPage(pageContent: Document): List<FoundSongModel>
 
-    override suspend fun loadSong(songSearchItem: FoundSongModel): SongModel {
+    override suspend fun loadSong(foundSong: FoundSongModel): SongModel {
         val lyrics = withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(songSearchItem.url).get()
+            val document = Jsoup.connect(foundSong.url).get()
             parseLyricsPage(document)
         }
-        return SongModel.create(foundSong = songSearchItem, lyrics = lyrics)
+        return SongModel.create(foundSong = foundSong, lyrics = lyrics)
     }
 
     protected abstract fun parseLyricsPage(pageContent: Document): String

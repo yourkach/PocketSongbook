@@ -60,10 +60,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         }
     }
 
-    private val searchLayoutManager by lazy { SearchLayoutManager(requireContext()) }
     private fun initRecyclerView() {
         searchRv.apply {
-            layoutManager = searchLayoutManager
+            layoutManager = SearchLayoutManager(requireContext()).apply {
+                isScrollingEnabled = false
+            }
             adapter = searchItemsAdapter
         }
     }
@@ -100,7 +101,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     override fun showSearchItemsLoading() {
         nothingFoundStub.isVisible = false
         searchItemsAdapter.setLoadingItemsList()
-        searchLayoutManager.isScrollingEnabled = false
+        setScrollingEnabled(false)
+    }
+
+    private fun setScrollingEnabled(isEnabled:Boolean){
+        (searchRv.layoutManager as? SearchLayoutManager)?.isScrollingEnabled = isEnabled
     }
 
     override fun showSearchFailedError() {
@@ -152,7 +157,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     override fun setSearchItems(newItems: List<FoundSongModel>) {
         val isEmpty = newItems.isEmpty()
         nothingFoundStub.isVisible = isEmpty
-        searchLayoutManager.isScrollingEnabled = !isEmpty
+        setScrollingEnabled(!isEmpty)
         searchRv.isNestedScrollingEnabled = !isEmpty
         searchItemsAdapter.setLoadedSongs(newItems)
     }
