@@ -52,7 +52,6 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
         favouritesRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = favouritesAdapter
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
     }
 

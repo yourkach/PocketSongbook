@@ -7,6 +7,8 @@ import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.domain.SongsWebsite
+import com.example.pocketsongbook.domain.event_bus.Event
+import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
 import kotlinx.coroutines.*
@@ -42,28 +44,65 @@ interface SearchSongView : BaseView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun dismissWebsitesSelector()
 
+    @StateStrategyType(SkipStrategy::class)
+    fun showSearchItemsLoading()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showSearchFailedError()
+
 }
 
 @InjectViewState
-@Singleton
 class SearchPresenter @Inject constructor(
     private val getSearchResultsUseCase: GetSearchResultsUseCase,
-    private val loadSongModelUseCase: LoadSongModelUseCase
+    private val loadSongModelUseCase: LoadSongModelUseCase,
+    private val subscribeToEventsUseCase: SubscribeToEventsUseCase
 ) : BasePresenter<SearchSongView>() {
 
     private var lastSearchQuery: String? = null
     private var selectedWebsite: SongsWebsite = SongsWebsite.AmDm
-    set(value) {
-        if(field == value) return
-        field = value
-        viewState.setWebsiteSelected(field)
-        lastSearchQuery?.let(::startSearchJob)
-    }
+        set(value) {
+            if (field == value) return
+            field = value
+            viewState.setWebsiteSelected(field)
+            lastSearchQuery?.let(::startSearchJob)
+        }
+
+    // TODO: 14.02.21 убрать сеттер, по обновлению избранных вызывать метод view,
+    //  в котором передаётся payload в адаптер
+    private var loadedItems: List<FoundSongModel> = listOf()
+        private set(value) {
+            field = value
+            viewState.setSearchItems(loadedItems)
+        }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         startCollectingQuery()
+        subscribeToEvents()
         viewState.setWebsiteSelected(selectedWebsite)
+    }
+
+    private fun subscribeToEvents() {
+        launch {
+            subscribeToEventsUseCase { event ->
+                when (event) {
+                    is Event.FavoritesChange -> {
+                        withContext(Dispatchers.Default) {
+                            if (loadedItems.any { it.url == event.url }) {
+                                loadedItems.map { songModel ->
+                                    if (songModel.url == event.url) {
+                                        songModel.copy(isFavourite = event.isAdded)
+                                    } else songModel
+                                }
+                            } else null
+                        }?.let { updatedItems ->
+                            loadedItems = updatedItems
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private val searchQueryFlow = MutableSharedFlow<String>()
@@ -85,14 +124,17 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-
-    var searchJob: Job? by setAndCancelJob()
+    private var searchJob: Job? by setAndCancelJob()
     private fun startSearchJob(query: String) {
         searchJob = launch {
-            withLoading {
-                lastSearchQuery = query
-                val searchResult = getSearchResultsUseCase(selectedWebsite, query)
-                viewState.setSearchItems(searchResult)
+            viewState.showSearchItemsLoading()
+            lastSearchQuery = query
+            runCatching {
+                getSearchResultsUseCase(selectedWebsite, query)
+            }.getOrNull()?.let { newItems ->
+                loadedItems = newItems
+            } ?: let {
+                viewState.showSearchFailedError()
             }
         }
     }

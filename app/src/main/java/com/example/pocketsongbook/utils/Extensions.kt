@@ -3,8 +3,11 @@ package com.example.pocketsongbook.utils
 import android.app.Activity
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.LayoutRes
 
 
 class SafeClickListener(val interval: Int = 1000, val safeClick: (View) -> Unit) :
@@ -34,6 +37,10 @@ fun View.hideKeyboard() {
         context.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
     inputManager?.hideSoftInputFromWindow(this.windowToken, 0)
     this.clearFocus()
+}
+
+fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
+    return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 }
 
 fun Any.logDebug(text: String) {

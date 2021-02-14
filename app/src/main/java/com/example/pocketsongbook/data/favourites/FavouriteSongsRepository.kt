@@ -3,7 +3,7 @@ package com.example.pocketsongbook.data.favourites
 import com.example.pocketsongbook.data.database.entities.SongEntity
 import com.example.pocketsongbook.data.models.SongModel
 
-interface FavouriteSongsRepo {
+interface FavouriteSongsRepository {
     suspend fun getAllFavourites(): List<SongEntity>
 
     suspend fun getSongsByQuery(query: String): List<SongEntity>

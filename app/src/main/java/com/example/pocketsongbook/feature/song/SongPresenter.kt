@@ -4,14 +4,16 @@ import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
-import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
+import com.example.pocketsongbook.domain.event_bus.Event
+import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
+import com.example.pocketsongbook.domain.favorites.AddToFavoritesUseCase
+import com.example.pocketsongbook.domain.favorites.CheckIsFavoriteUseCase
+import com.example.pocketsongbook.domain.favorites.RemoveFromFavoritesUseCase
 import com.example.pocketsongbook.feature.song.domain.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -52,7 +54,10 @@ enum class ChangeType {
 @InjectViewState
 class SongPresenter @AssistedInject constructor(
     @Assisted private val song: SongModel,
-    private val favouriteSongsRepo: FavouriteSongsRepo
+    private val addToFavoritesUseCase: AddToFavoritesUseCase,
+    private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
+    private val checkIsFavoriteUseCase: CheckIsFavoriteUseCase,
+    private val subscribeToEventsUseCase: SubscribeToEventsUseCase
 ) : BasePresenter<SongView>() {
 
     @AssistedFactory
@@ -91,9 +96,21 @@ class SongPresenter @AssistedInject constructor(
             title = song.title
         )
 
+        subscribeToEvents()
+
         launch {
-            withContext(Dispatchers.IO) {
-                isFavourite = favouriteSongsRepo.containsSong(song.url)
+            isFavourite = checkIsFavoriteUseCase(song)
+        }
+    }
+
+    private fun subscribeToEvents() {
+        launch {
+            subscribeToEventsUseCase { event ->
+                when (event) {
+                    is Event.FavoritesChange -> {
+                        if (event.url == song.url) isFavourite = event.isAdded
+                    }
+                }
             }
         }
     }
@@ -163,23 +180,18 @@ class SongPresenter @AssistedInject constructor(
         chordsBarOpened = !chordsBarOpened
     }
 
-    // TODO: 05.11.20 вынести в юзкейсы
     private fun addToFavourites() {
         launch {
-            withContext(Dispatchers.IO) {
-                favouriteSongsRepo.addSong(song)
-            }
+            addToFavoritesUseCase(song)
+            isFavourite = true
         }
-        isFavourite = true
     }
 
     private fun removeFromFavourites() {
         launch {
-            withContext(Dispatchers.IO) {
-                favouriteSongsRepo.removeSong(song)
-            }
+            removeFromFavoritesUseCase(song)
+            isFavourite = false
         }
-        isFavourite = false
     }
 
 

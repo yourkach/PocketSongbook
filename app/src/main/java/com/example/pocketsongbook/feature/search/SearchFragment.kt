@@ -18,6 +18,7 @@ import com.example.pocketsongbook.common.navigation.*
 import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
+import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
 import com.github.terrakok.cicerone.Router
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -59,11 +60,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         }
     }
 
+    private val searchLayoutManager by lazy { SearchLayoutManager(requireContext()) }
     private fun initRecyclerView() {
         searchRv.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = searchLayoutManager
             adapter = searchItemsAdapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 
@@ -94,6 +95,18 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     override fun dismissWebsitesSelector() {
         websitesListPopup.dismiss()
+    }
+
+    override fun showSearchItemsLoading() {
+        nothingFoundStub.isVisible = false
+        searchItemsAdapter.setLoadingItemsList()
+        searchLayoutManager.isScrollingEnabled = false
+    }
+
+    override fun showSearchFailedError() {
+        // TODO: 14.02.21 сделать нормальную ошибку
+        val error = getString(R.string.error_no_connection)
+        showError(error)
     }
 
     private fun initSearchView() {
@@ -137,8 +150,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     override fun setSearchItems(newItems: List<FoundSongModel>) {
-        nothingFoundStub.isVisible = newItems.isEmpty()
-        searchItemsAdapter.setList(newItems)
+        val isEmpty = newItems.isEmpty()
+        nothingFoundStub.isVisible = isEmpty
+        searchLayoutManager.isScrollingEnabled = !isEmpty
+        searchRv.isNestedScrollingEnabled = !isEmpty
+        searchItemsAdapter.setLoadedSongs(newItems)
     }
 
     override fun showFailedToLoadSongError() {

@@ -33,9 +33,7 @@ class FavouritesPresenter @Inject constructor(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         launch {
-            val items = withContext(Dispatchers.IO) {
-                getFavouriteSongsUseCase(GetFavouriteSongsUseCase.Param.All)
-            }
+            val items = getFavouriteSongsUseCase(GetFavouriteSongsUseCase.Param.All)
             viewState.updateItems(items)
         }
     }
@@ -46,12 +44,10 @@ class FavouritesPresenter @Inject constructor(
 
     fun onQueryTextChanged(newText: String) {
         launch {
-            val items = withContext(Dispatchers.IO) {
-                getFavouriteSongsUseCase(
-                    if (newText.isNotEmpty()) GetFavouriteSongsUseCase.Param.ByQuery(newText)
-                    else GetFavouriteSongsUseCase.Param.All
-                )
-            }
+            val items = getFavouriteSongsUseCase(
+                if (newText.isNotEmpty()) GetFavouriteSongsUseCase.Param.ByQuery(newText)
+                else GetFavouriteSongsUseCase.Param.All
+            )
             viewState.updateItems(items)
         }
     }

@@ -7,10 +7,10 @@ import com.example.pocketsongbook.data.models.SongModel
 
 @Entity(tableName = "songs")
 data class SongEntity(
-    @PrimaryKey val url: String,
     val artist: String,
     val title: String,
     val lyrics: String,
+    @PrimaryKey val url: String,
     @ColumnInfo(name = "time_added") val timeAdded: Long
 ) {
 
@@ -24,10 +24,10 @@ data class SongEntity(
     companion object {
         fun create(songModel: SongModel) : SongEntity {
             return SongEntity(
-                url = songModel.artist,
-                artist = songModel.title,
-                title = songModel.lyrics,
-                lyrics = songModel.url,
+                artist = songModel.artist,
+                title = songModel.title,
+                lyrics = songModel.lyrics,
+                url = songModel.url,
                 timeAdded = System.currentTimeMillis() / 1000
             )
         }

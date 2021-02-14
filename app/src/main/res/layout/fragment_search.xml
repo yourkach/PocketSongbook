@@ -80,6 +80,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@color/colorWhite"
                 android:textSize="22sp"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:drawableEndCompat="@drawable/ic_chord_white"
                 tools:text="AmDm.ru" />
 
@@ -95,6 +96,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:splitMotionEvents="false"
+                android:paddingTop="4dp"
+                android:clipToPadding="false"
+                tools:listitem="@layout/item_search_song"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
