@@ -9,13 +9,11 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.data.database.SongEntity
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.github.terrakok.cicerone.Router
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
@@ -63,11 +61,11 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
         searchViewFavourites.setOnQueryTextListener(this)
     }
 
-    override fun updateItems(newItems: List<Song>) {
+    override fun updateItems(newItems: List<SongModel>) {
         favouritesAdapter.setList(newItems)
     }
 
-    override fun navigateToSong(song: Song) {
+    override fun navigateToSong(song: SongModel) {
         router.navigateTo(SongFragment.SongArgs(song).toFragment().toScreen())
     }
 

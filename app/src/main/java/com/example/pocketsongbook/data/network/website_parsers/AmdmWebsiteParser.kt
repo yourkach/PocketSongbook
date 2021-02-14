@@ -1,15 +1,13 @@
 package com.example.pocketsongbook.data.network.website_parsers
 
-import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.data.models.SongSearchItem
-import org.jsoup.Jsoup
+import com.example.pocketsongbook.data.models.FoundSongModel
+import com.example.pocketsongbook.domain.SongsWebsite
 import org.jsoup.nodes.Document
-import java.io.IOException
 import javax.inject.Inject
 
 class AmdmWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
-    override val websiteName: String = "AmDm.ru"
+    override val website = SongsWebsite.AmDm
 
     private val baseUrl = "https://amdm.ru/search/?q="
 
@@ -17,11 +15,11 @@ class AmdmWebsiteParser @Inject constructor() : BaseWebsiteParser() {
         return baseUrl + searchQuery.replace(' ', '+')
     }
 
-    override fun parseSearchPage(pageContent: Document): List<SongSearchItem> {
+    override fun parseSearchPage(pageContent: Document): List<FoundSongModel> {
         val elements = pageContent.select("table[class=items]")
             .eq(0)
             .select("td.artist_name")
-        val songItems = mutableListOf<SongSearchItem>()
+        val songItems = mutableListOf<FoundSongModel>()
         elements.forEach { element ->
             val artist = element.select("a[class=artist]")
                 .eq(0)
@@ -33,10 +31,11 @@ class AmdmWebsiteParser @Inject constructor() : BaseWebsiteParser() {
                 .eq(1)
                 .attr("href")
             songItems.add(
-                SongSearchItem(
-                    artist,
-                    title,
-                    link
+                FoundSongModel(
+                    artist = artist,
+                    title = title,
+                    url = link,
+                    website = website
                 )
             )
         }

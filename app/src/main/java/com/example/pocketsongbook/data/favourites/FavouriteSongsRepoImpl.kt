@@ -2,8 +2,8 @@ package com.example.pocketsongbook.data.favourites
 
 import com.chibatching.kotpref.KotprefModel
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
-import com.example.pocketsongbook.data.database.SongEntity
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.database.entities.SongEntity
+import com.example.pocketsongbook.data.models.SongModel
 
 
 class FavouriteSongsRepoImpl(
@@ -32,12 +32,12 @@ class FavouriteSongsRepoImpl(
         favouriteSongUrls.remove(url)
     }
 
-    override suspend fun addSong(song: Song) {
-        favouriteSongsDao.insert(SongEntity(song))
+    override suspend fun addSong(song: SongModel) {
+        favouriteSongsDao.insert(SongEntity.create(songModel = song))
         favouriteSongUrls.add(song.url)
     }
 
-    override suspend fun removeSong(song: Song) {
+    override suspend fun removeSong(song: SongModel) {
         favouriteSongsDao.deleteByUrl(song.url)
         favouriteSongUrls.remove(song.url)
     }

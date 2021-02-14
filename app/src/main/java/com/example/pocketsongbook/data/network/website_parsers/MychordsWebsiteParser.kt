@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.data.network.website_parsers
 
-import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.data.models.SongSearchItem
+import com.example.pocketsongbook.data.models.FoundSongModel
+import com.example.pocketsongbook.domain.SongsWebsite
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
-    override val websiteName: String = "MyChords.ru"
+    override val website = SongsWebsite.MyChords
 
     private val baseUrl = "https://mychords.net/search?q="
 
@@ -19,11 +19,11 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
         return baseUrl + searchQuery.replace(' ', '+') + searchSettings
     }
 
-    override fun parseSearchPage(pageContent: Document): List<SongSearchItem> {
+    override fun parseSearchPage(pageContent: Document): List<FoundSongModel> {
         val elements = pageContent.select("ul.b-listing") //[class=b-listing]
             .eq(0)
             .select("li[class=b-listing__item]")
-        val songItems = ArrayList<SongSearchItem>()
+        val songItems = ArrayList<FoundSongModel>()
         elements.forEach { element ->
             val songItem = element.select("a[class=b-listing__item__link]").eq(0)
             val itemText = songItem.text()
@@ -39,10 +39,11 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
             val title = itemText.substring(splitIndex)
             val link = "https://mychords.net/" + songItem.attr("href")
             songItems.add(
-                SongSearchItem(
-                    artist,
-                    title,
-                    link
+                FoundSongModel(
+                    artist = artist,
+                    title = title,
+                    url = link,
+                    website = website
                 )
             )
         }

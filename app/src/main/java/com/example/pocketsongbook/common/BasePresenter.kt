@@ -27,14 +27,6 @@ abstract class BasePresenter<TView : BaseView> : MvpPresenter<TView>(), Coroutin
         job.cancel()
     }
 
-    suspend operator fun <P, R> BaseUseCase<P, R>.invoke(param: P): R {
-        return this.execute(param)
-    }
-
-    suspend operator fun <R> BaseUseCase<Unit, R>.invoke(): R {
-        return this.execute(Unit)
-    }
-
     suspend fun withLoading(block: suspend () -> Unit) {
         viewState.showLoading()
         try {

@@ -1,5 +1,6 @@
 package com.example.pocketsongbook.common
 
+import android.content.Context
 import android.os.Bundle
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
@@ -23,8 +24,12 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
 
     open val returnTransitionRes: Int? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initTransitions()
     }
@@ -51,11 +56,10 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
     }
 
     override fun showError(message: String) {
-        // TODO: 31.10.20 сделать цвет для сообщений об ошибке
-        showInfoSnackBar(message)
+        showInfoSnackBar(message, R.color.colorErrorBackground)
     }
 
-    protected fun showInfoSnackBar(
+    private fun showInfoSnackBar(
         text: String,
         @ColorRes backgroundColorId: Int? = null
     ): Snackbar {

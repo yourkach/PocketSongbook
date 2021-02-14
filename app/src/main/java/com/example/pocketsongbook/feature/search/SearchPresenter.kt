@@ -1,23 +1,18 @@
 package com.example.pocketsongbook.feature.search
 
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.models.Song
-import com.example.pocketsongbook.data.models.SongSearchItem
+import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.data.models.FoundSongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.network.WebsiteParsersManager
+import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
-import com.example.pocketsongbook.feature.search.usecase.LoadSongUseCase
-import com.example.pocketsongbook.feature.search.usecase.GetWebsiteNamesUseCase
-import com.example.pocketsongbook.feature.search.usecase.SelectWebsiteByNameUseCase
+import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.*
 import moxy.InjectViewState
+import moxy.presenterScope
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.SkipStrategy
@@ -30,64 +25,63 @@ import javax.inject.Singleton
 interface SearchSongView : BaseView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun toSongScreen(song: Song)
+    fun toSongScreen(song: SongModel)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun toFavouritesScreen()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setWebsites(websiteNames: List<String>)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setWebsiteSelected(websiteName: String)
+    fun setWebsiteSelected(website: SongsWebsite)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun setSearchItems(newItems: List<SongSearchItem>)
+    fun setSearchItems(newItems: List<FoundSongModel>)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showFailedToLoadSongError()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun dismissWebsitesSelector()
 
 }
 
 @InjectViewState
 @Singleton
 class SearchPresenter @Inject constructor(
-    private val getWebsiteNamesUseCase: GetWebsiteNamesUseCase,
-    private val selectWebsiteByNameUseCase: SelectWebsiteByNameUseCase,
     private val getSearchResultsUseCase: GetSearchResultsUseCase,
-    private val loadSongUseCase: LoadSongUseCase
+    private val loadSongModelUseCase: LoadSongModelUseCase
 ) : BasePresenter<SearchSongView>() {
 
     private var lastSearchQuery: String? = null
+    private var selectedWebsite: SongsWebsite = SongsWebsite.AmDm
+    set(value) {
+        if(field == value) return
+        field = value
+        viewState.setWebsiteSelected(field)
+        lastSearchQuery?.let(::startSearchJob)
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        setWebsiteNames()
         startCollectingQuery()
+        viewState.setWebsiteSelected(selectedWebsite)
     }
 
-    private val searchQueryChannel = Channel<String>()
+    private val searchQueryFlow = MutableSharedFlow<String>()
 
     fun onQueryTextChange(newText: String) {
-        launch {
-            searchQueryChannel.send(newText)
+        presenterScope.launch {
+            searchQueryFlow.emit(newText)
         }
     }
 
     private fun startCollectingQuery() {
         launch {
-            searchQueryChannel.consumeAsFlow()
+            searchQueryFlow
                 .distinctUntilChanged()
                 .debounce(700)
                 .collect { query ->
                     startSearchJob(query)
                 }
-        }
-    }
-
-    private fun setWebsiteNames() {
-        launch {
-            getWebsiteNamesUseCase().let { (websiteNames, selectedWebsite) ->
-                viewState.setWebsites(websiteNames)
-                viewState.setWebsiteSelected(selectedWebsite)
-            }
         }
     }
 
@@ -97,37 +91,29 @@ class SearchPresenter @Inject constructor(
         searchJob = launch {
             withLoading {
                 lastSearchQuery = query
-                val searchResult = withContext(Dispatchers.IO) {
-                    getSearchResultsUseCase(query)
-                }
+                val searchResult = getSearchResultsUseCase(selectedWebsite, query)
                 viewState.setSearchItems(searchResult)
             }
         }
     }
 
-    fun onWebsiteItemSelected(websiteName: String) {
+    fun onWebsiteSelected(website: SongsWebsite) {
+        selectedWebsite = website
         launch {
-            selectWebsiteByNameUseCase(websiteName).let { switchSuccessful ->
-                if (switchSuccessful) {
-                    viewState.setWebsiteSelected(websiteName)
-                    if (!lastSearchQuery.isNullOrEmpty()) startSearchJob(lastSearchQuery!!)
-                }
-            }
+            delay(100)
+            viewState.dismissWebsitesSelector()
         }
     }
 
     private var loadSongJob: Job? = null
-    fun onSongClicked(searchItem: SongSearchItem) {
+    fun onSongClicked(searchItem: FoundSongModel) {
         if (loadSongJob?.isActive != true) {
             loadSongJob = launch {
                 withLoading {
-                    val song = withContext(Dispatchers.IO) {
-                        loadSongUseCase(searchItem)
-                    }
-                    if (song != null) {
+                    loadSongModelUseCase(searchItem)?.let { song ->
                         viewState.toSongScreen(song)
-                    } else {
-                        viewState.showMessage(R.string.error_failed_to_load_song)
+                    } ?: let {
+                        viewState.showFailedToLoadSongError()
                     }
                 }
             }
@@ -135,7 +121,6 @@ class SearchPresenter @Inject constructor(
     }
 
     override fun onFailure(e: Throwable) {
-        super.onFailure(e)
         viewState.showMessage(R.string.error_no_connection)
     }
 

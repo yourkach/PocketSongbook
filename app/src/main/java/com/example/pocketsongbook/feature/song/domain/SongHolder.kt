@@ -1,14 +1,11 @@
 package com.example.pocketsongbook.feature.song.domain
 
-import android.util.Log
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.feature.song.ChangeType
 import com.example.pocketsongbook.utils.ChordsTransponder
-import com.example.pocketsongbook.utils.logDebug
-import java.util.regex.Pattern
 
 class SongHolder(
-    private val song: Song,
+    private val song: SongModel,
     private val onSongStateChanged: (SongState) -> Unit
 ) {
 

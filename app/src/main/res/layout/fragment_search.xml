@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/searchOpenFavouritesIv"
+        android:id="@+id/ivOpenFavorites"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
@@ -26,18 +26,18 @@
 
 
     <FrameLayout
-        android:id="@+id/catalogSearchCl"
+        android:id="@+id/searchViewContainer"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@id/searchToolbarContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/searchOpenFavouritesIv"
+        app:layout_constraintStart_toEndOf="@id/ivOpenFavorites"
         app:layout_constraintTop_toTopOf="@id/searchToolbarContainer">
 
         <SearchView
-            android:id="@+id/searchViewMain"
+            android:id="@+id/songsSearchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:closeIcon="@drawable/ic_close_24"
@@ -66,20 +66,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchToolbarContainer">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/searchWebsiteSelector"
+            <TextView
+                android:id="@+id/tvSelectedWebsite"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:layoutDirection="rtl"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                android:paddingVertical="5dp"
-                android:visibility="visible"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_scrollFlags="scroll|enterAlways"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_website" />
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:drawablePadding="12dp"
+                android:focusable="true"
+                android:paddingHorizontal="22dp"
+                android:paddingVertical="12dp"
+                android:textAlignment="viewEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@color/colorWhite"
+                android:textSize="22sp"
+                app:drawableEndCompat="@drawable/ic_chord_white"
+                tools:text="AmDm.ru" />
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
@@ -104,12 +107,12 @@
         android:id="@+id/fabOpenTuner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp"
         android:src="@drawable/ic_chord_stub"
         android:tint="@color/colorWhite"
-        />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/nothingFoundStub"

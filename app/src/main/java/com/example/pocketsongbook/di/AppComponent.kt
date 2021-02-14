@@ -1,12 +1,12 @@
 package com.example.pocketsongbook.di
 
 import android.app.Application
-import android.content.Context
-import com.example.pocketsongbook.common.App
+import com.example.pocketsongbook.common.SongbookApplication
 import com.example.pocketsongbook.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
+import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
@@ -15,26 +15,21 @@ import javax.inject.Singleton
     modules = [
         AppModule::class,
         NavigationModule::class,
-        WebsitesModule::class,
+        NetworkModule::class,
         RoomModule::class,
         FavouritesModule::class,
-        AssistantInjectModule::class,
         AndroidInjectionModule::class,
         AndroidSupportInjectionModule::class,
-        MainUIModule::class
+        ActivityInjectionModule::class
     ]
 )
-interface AppComponent {
+interface AppComponent : AndroidInjector<SongbookApplication> {
 
-    @Component.Builder
+    @Component.Factory
     interface Builder {
-        @BindsInstance
-        fun application(app : Application) : Builder
-        fun build(): AppComponent
+        fun create(
+            @BindsInstance app: Application
+        ): AppComponent
     }
-
-    val appContext: Context
-
-    fun inject(app: App)
 
 }

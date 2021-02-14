@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.feature.favourites
 
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.feature.favourites.usecase.GetFavouriteSongsUseCase
@@ -18,10 +18,10 @@ import javax.inject.Inject
 interface FavouritesView : BaseView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun updateItems(newItems: List<Song>)
+    fun updateItems(newItems: List<SongModel>)
 
     @StateStrategyType(SkipStrategy::class)
-    fun navigateToSong(song: Song)
+    fun navigateToSong(song: SongModel)
 }
 
 
@@ -40,7 +40,7 @@ class FavouritesPresenter @Inject constructor(
         }
     }
 
-    fun onSongClicked(song: Song) {
+    fun onSongClicked(song: SongModel) {
         viewState.navigateToSong(song)
     }
 

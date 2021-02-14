@@ -9,12 +9,11 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-abstract class FragmentsModule {
+abstract class FragmentsInjectionModule {
 
     @ContributesAndroidInjector
     @FragmentScope
     abstract fun search(): SearchFragment
-
 
     @ContributesAndroidInjector
     @FragmentScope

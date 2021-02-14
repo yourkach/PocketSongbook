@@ -13,17 +13,24 @@
         android:layout_height="match_parent" />
 
 
-    <ProgressBar
-        android:id="@+id/loadingProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateDrawable="@drawable/circular_progress_bar"
+    <FrameLayout
+        android:id="@+id/loadingStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#83979797"
         android:visibility="gone"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/circular_progress_bar" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

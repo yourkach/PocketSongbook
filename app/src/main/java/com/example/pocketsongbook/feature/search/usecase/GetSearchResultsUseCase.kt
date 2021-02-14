@@ -1,18 +1,18 @@
 package com.example.pocketsongbook.feature.search.usecase
 
-import com.example.pocketsongbook.common.BaseUseCase
 import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
-import com.example.pocketsongbook.data.network.WebsiteParsersManager
-import com.example.pocketsongbook.data.models.SongSearchItem
+import com.example.pocketsongbook.domain.WebSongsRepository
+import com.example.pocketsongbook.data.models.FoundSongModel
+import com.example.pocketsongbook.domain.SongsWebsite
 import javax.inject.Inject
 
 class GetSearchResultsUseCase @Inject constructor(
-    private val websitesManager: WebsiteParsersManager,
+    private val websitesManager: WebSongsRepository,
     private val favouriteSongsRepo: FavouriteSongsRepo
-) : BaseUseCase<String, List<SongSearchItem>>() {
+) {
 
-    override suspend fun execute(param: String): List<SongSearchItem> {
-        return websitesManager.loadSearchResults(param).onEach {
+    suspend operator fun invoke(website: SongsWebsite, query: String): List<FoundSongModel> {
+        return websitesManager.loadSearchResults(website, query).onEach {
             it.isFavourite = favouriteSongsRepo.containsSong(it.url)
         }
     }

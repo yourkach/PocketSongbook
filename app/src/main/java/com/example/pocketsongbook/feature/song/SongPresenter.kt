@@ -1,13 +1,14 @@
 package com.example.pocketsongbook.feature.song
 
 import com.example.pocketsongbook.data.models.Chord
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.data.favourites.FavouriteSongsRepo
 import com.example.pocketsongbook.feature.song.domain.*
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,9 +51,14 @@ enum class ChangeType {
 
 @InjectViewState
 class SongPresenter @AssistedInject constructor(
-    @Assisted private val song: Song,
+    @Assisted private val song: SongModel,
     private val favouriteSongsRepo: FavouriteSongsRepo
 ) : BasePresenter<SongView>() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(song: SongModel): SongPresenter
+    }
 
     private val songHolder = SongHolder(
         song = song,
@@ -190,11 +196,6 @@ class SongPresenter @AssistedInject constructor(
             )
         }
         viewState.setChords(newChords)
-    }
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(song: Song): SongPresenter
     }
 
     companion object {

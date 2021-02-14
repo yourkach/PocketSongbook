@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.data.favourites
 
-import com.example.pocketsongbook.data.database.SongEntity
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.database.entities.SongEntity
+import com.example.pocketsongbook.data.models.SongModel
 
 interface FavouriteSongsRepo {
     suspend fun getAllFavourites(): List<SongEntity>
@@ -12,9 +12,9 @@ interface FavouriteSongsRepo {
 
     suspend fun containsSong(url: String) : Boolean
 
-    suspend fun addSong(song: Song)
+    suspend fun addSong(song: SongModel)
 
-    suspend fun removeSong(song: Song)
+    suspend fun removeSong(song: SongModel)
 
     suspend fun removeSongByUrl(url: String)
 }

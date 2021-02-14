@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.data.models.Chord
-import com.example.pocketsongbook.data.models.Song
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.navigation.ArgsFragment
 import com.example.pocketsongbook.common.navigation.FragmentArgs
 import kotlinx.android.parcel.Parcelize
@@ -18,6 +18,7 @@ import kotlinx.coroutines.*
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
+// TODO: 14.02.21 загружать песню на этом экране, показывать шиммер
 class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song), SongView {
 
 
@@ -72,12 +73,10 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     fun setAutoScrollSpeed(speed: Int) {
         if (speed != 0) {
             scrollJob = CoroutineScope(Dispatchers.Main).launch {
-                coroutineTimer(repeatMillis = (35 - speed).toLong(),
-                    action = {
-                        svSongLyrics.smoothScrollBy(0, 1)
-                        songLinearLayout.measuredHeight > (svSongLyrics.scrollY + svSongLyrics.height)
-                    }
-                )
+                coroutineTimer(repeatMillis = (35 - speed).toLong()) {
+                    svSongLyrics.smoothScrollBy(0, 1)
+                    songLinearLayout.measuredHeight > (svSongLyrics.scrollY + svSongLyrics.height)
+                }
             }.apply {
                 invokeOnCompletion {
                     if (it !is CancellationException) songScrollSb.progress = 0
@@ -187,6 +186,6 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
     @Parcelize
-    data class SongArgs(val song: Song) : FragmentArgs<SongFragment>
+    data class SongArgs(val song: SongModel) : FragmentArgs<SongFragment>
 
 }
