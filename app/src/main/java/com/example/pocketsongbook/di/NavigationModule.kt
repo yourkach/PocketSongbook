@@ -12,10 +12,10 @@ class NavigationModule {
 
     @Provides
     @Singleton
-    fun cicerone(): Cicerone<Router> = Cicerone.create()
+    fun provideGlobalCicerone(): Cicerone<Router> = Cicerone.create()
 
     @Provides
     @Singleton
-    fun provideRouter(cicerone: Cicerone<Router>) : Router = cicerone.router
+    fun provideGlobalRouter(cicerone: Cicerone<Router>) : Router = cicerone.router
 
 }

@@ -16,4 +16,7 @@
 
     <string name="song_key_default">тон</string>
     <string name="song_font_default">шрифт</string>
+    <string name="nav_favourites">Избранное</string>
+    <string name="nav_search">Поиск</string>
+    <string name="nav_tuner">Тюнер</string>
 </resources>

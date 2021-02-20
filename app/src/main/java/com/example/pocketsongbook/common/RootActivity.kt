@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.common.navigation.RouterProvider
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.feature.search.SearchFragment
 import dagger.android.AndroidInjection
@@ -14,9 +15,13 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import moxy.MvpAppCompatActivity
 import javax.inject.Inject
 
-class RootActivity : AppCompatActivity(), HasAndroidInjector {
+class RootActivity : MvpAppCompatActivity(), HasAndroidInjector, RouterProvider {
+
+    override val router: Router
+        get() = cicerone.router
 
     @Inject
     lateinit var cicerone: Cicerone<Router>
