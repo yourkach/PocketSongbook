@@ -4,6 +4,7 @@ import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.feature.song.ChangeType
 import com.example.pocketsongbook.utils.ChordsTransponder
 
+// TODO: 20.02.2021 отрефакторить, такой холдер с подписками - бредовое решение
 class SongHolder(
     private val song: SongModel,
     private val onSongStateChanged: (SongState) -> Unit
