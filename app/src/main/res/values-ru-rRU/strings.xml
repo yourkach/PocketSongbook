@@ -19,4 +19,5 @@
     <string name="nav_favourites">Избранное</string>
     <string name="nav_search">Поиск</string>
     <string name="nav_tuner">Тюнер</string>
+    <string name="saved_at">Сохранено в %1$s</string>
 </resources>

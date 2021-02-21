@@ -25,7 +25,7 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
 
     open val returnTransitionRes: Int? = null
 
-    open val hideBottomNavigationBar: Boolean = true
+    open val hideBottomNavigationBar: Boolean = false
 
     protected val router: Router
         get() = (parentFragment as BaseTabContainerFragment).router

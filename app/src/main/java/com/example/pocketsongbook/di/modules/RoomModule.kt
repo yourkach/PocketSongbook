@@ -15,7 +15,7 @@ class RoomModule {
     @Singleton
     fun provideDatabase(context: Context): AppDatabase = Room.databaseBuilder(
         context,
-        AppDatabase::class.java, "songs_database"
+        AppDatabase::class.java, "songbook_database"
     ).build()
 
     @Provides

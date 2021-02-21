@@ -17,7 +17,7 @@ import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
-import com.example.pocketsongbook.feature.search.list.SearchAdapter
+import com.example.pocketsongbook.feature.search.list.SongItemsAdapter
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
@@ -37,7 +37,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     private val presenter by moxyPresenter { searchPresenterProvider.get() }
 
     private val searchItemsAdapter by lazy {
-        SearchAdapter { item ->
+        SongItemsAdapter { item ->
             songsSearchView.hideKeyboard()
             presenter.onSongClicked(item)
         }

@@ -1,18 +1,21 @@
 package com.example.pocketsongbook.feature.search
 
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.models.SongModel
-import com.example.pocketsongbook.data.models.FoundSongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
+import com.example.pocketsongbook.data.models.FoundSongModel
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import moxy.InjectViewState
 import moxy.presenterScope
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -20,7 +23,6 @@ import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 @StateStrategyType(SkipStrategy::class)
@@ -68,8 +70,6 @@ class SearchPresenter @Inject constructor(
             lastSearchQuery?.let(::startSearchJob)
         }
 
-    // TODO: 14.02.21 убрать сеттер, по обновлению избранных вызывать метод view,
-    //  в котором передаётся payload в адаптер
     private var loadedItems: List<FoundSongModel> = listOf()
         private set(value) {
             field = value

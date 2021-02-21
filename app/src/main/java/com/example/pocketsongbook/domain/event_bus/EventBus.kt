@@ -1,9 +1,8 @@
 package com.example.pocketsongbook.domain.event_bus
 
-import android.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +14,7 @@ class EventBus @Inject constructor() {
     val eventsFlow: SharedFlow<Event> = _eventsFlow
 
     suspend fun postEvent(event: Event) {
-        Log.d(this::class.simpleName,"Posted event: $event")
+        Timber.d("Posted event: $event")
         _eventsFlow.emit(event)
     }
 

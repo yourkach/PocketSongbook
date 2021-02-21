@@ -45,6 +45,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             navigationHelper.switchToTab(NavigationTab.Search)

@@ -1,6 +1,5 @@
 package com.example.pocketsongbook.domain.favorites
 
-import com.example.pocketsongbook.data.favourites.FavouriteSongsRepository
 import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.EventBus
@@ -12,7 +11,7 @@ class RemoveFromFavoritesUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(song: SongModel) {
-        favoritesRepository.removeSong(song)
+        favoritesRepository.removeSongByUrl(song.url)
         eventBus.postEvent(Event.FavoritesChange(url = song.url, isAdded = false))
     }
 }

@@ -1,9 +1,9 @@
 package com.example.pocketsongbook.di.modules
 
-import com.example.pocketsongbook.domain.WebSongsRepository
+import com.example.pocketsongbook.data.network.SongsRemoteRepositoryImpl
 import com.example.pocketsongbook.data.network.website_parsers.AmdmWebsiteParser
 import com.example.pocketsongbook.data.network.website_parsers.MychordsWebsiteParser
-import com.example.pocketsongbook.domain.impl.WebSongsRepositoryImpl
+import com.example.pocketsongbook.domain.SongsRemoteRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,7 +16,7 @@ class NetworkModule {
     fun provideWebSongsRepository(
         amdm: AmdmWebsiteParser,
         myChords: MychordsWebsiteParser
-    ): WebSongsRepository {
-        return WebSongsRepositoryImpl(amdm, myChords)
+    ): SongsRemoteRepository {
+        return SongsRemoteRepositoryImpl(amdm, myChords)
     }
 }

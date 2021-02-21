@@ -18,4 +18,5 @@
     <string name="nav_favourites">Favorites</string>
     <string name="nav_search">Search</string>
     <string name="nav_tuner">Tuner</string>
+    <string name="saved_at">Saved at %1$s</string>
 </resources>

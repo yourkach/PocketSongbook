@@ -8,6 +8,7 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import dagger.android.support.AndroidSupportInjection
@@ -26,8 +27,8 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
 
     private val presenter by moxyPresenter { favouritesPresenter }
 
-    private val favouritesAdapter =
-        FavouritesAdapter(
+    private val favoriteSongItemsAdapter =
+        FavoriteSongsAdapter(
             onItemClickResponse = {
                 presenter.onSongClicked(it)
             })
@@ -46,7 +47,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     private fun setUpRecycler() {
         favouritesRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = favouritesAdapter
+            adapter = favoriteSongItemsAdapter
         }
     }
 
@@ -54,8 +55,8 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
         searchViewFavourites.setOnQueryTextListener(this)
     }
 
-    override fun updateItems(newItems: List<SongModel>) {
-        favouritesAdapter.setList(newItems)
+    override fun updateItems(newItems: List<FavoriteSongModel>) {
+        favoriteSongItemsAdapter.submitList(newItems)
     }
 
     override fun navigateToSong(song: SongModel) {

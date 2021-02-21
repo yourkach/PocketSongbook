@@ -14,9 +14,9 @@ import kotlinx.android.synthetic.main.item_search_song.view.*
 import kotlinx.android.synthetic.main.item_search_song.view.tvSongTitle
 import kotlinx.android.synthetic.main.item_search_song_skeleton.view.*
 
-class SearchAdapter(
+class SongItemsAdapter(
     private val onItemClick: (searchItem: FoundSongModel) -> Unit
-) : ListAdapter<SearchItem, SearchAdapter.ViewHolder>(
+) : ListAdapter<SearchItem, SongItemsAdapter.ViewHolder>(
     EqualsDiffCallback<SearchItem> { a, b ->
         a is SearchItem.LoadedItem && b is SearchItem.LoadedItem
                 && a.song.url == b.song.url
@@ -74,8 +74,8 @@ class SearchAdapter(
     inner class ItemHolder(itemView: View) : ViewHolder(itemView) {
         fun bind(searchItem: FoundSongModel) {
             itemView.apply {
-                tvSongArtist.text = searchItem.title
-                tvSongTitle.text = searchItem.artist
+                tvSongArtist.text = searchItem.artist
+                tvSongTitle.text = searchItem.title
                 songFavoriteIv.isVisible = searchItem.isFavourite
                 clItemContainer.setOnSafeClickListener {
                     onItemClick(searchItem)

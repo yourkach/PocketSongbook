@@ -29,7 +29,7 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         songPresenterFactory.create(args.song)
     }
 
-    override val hideBottomNavigationBar: Boolean = false
+    override val hideBottomNavigationBar: Boolean = true
 
     private val chordsAdapter by lazy { ChordsAdapter() }
 

@@ -2,9 +2,9 @@ package com.example.pocketsongbook.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.pocketsongbook.data.database.entities.SongEntity
+import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
 
-@Database(entities = [SongEntity::class], version = 1)
+@Database(entities = [FavoriteSongEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favouriteSongsDao() : FavouriteSongsDao
 }

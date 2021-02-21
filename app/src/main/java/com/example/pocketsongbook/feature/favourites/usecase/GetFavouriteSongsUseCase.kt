@@ -1,31 +1,26 @@
 package com.example.pocketsongbook.feature.favourites.usecase
 
-import com.example.pocketsongbook.data.database.entities.SongEntity
-import com.example.pocketsongbook.data.favourites.FavouriteSongsRepository
-import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.data.favorites.FavoriteSongModel
+import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
+import com.example.pocketsongbook.feature.favourites.ObtainSongsOption
 import javax.inject.Inject
 
 class GetFavouriteSongsUseCase @Inject constructor(
     private val favouriteSongsRepository: FavouriteSongsRepository
 ) {
 
-    suspend operator fun invoke(param: Param): List<SongModel> {
-        return when (param) {
-            is Param.ByQuery -> {
-                favouriteSongsRepository.getSongsByQuery(param.query)
+    suspend operator fun invoke(option: ObtainSongsOption): List<FavoriteSongModel> {
+        return when (option) {
+            is ObtainSongsOption.ByQuery -> {
+                favouriteSongsRepository.getSongsByQuery(option.query)
             }
-            is Param.All -> {
+            is ObtainSongsOption.All -> {
                 favouriteSongsRepository.getAllFavourites()
             }
         }
             .sortedByDescending {
                 it.timeAdded
             }
-            .map(SongEntity::toSong)
     }
 
-    sealed class Param {
-        data class ByQuery(val query: String) : Param()
-        object All : Param()
-    }
 }
