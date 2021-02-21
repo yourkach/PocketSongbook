@@ -24,9 +24,6 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     SearchView.OnQueryTextListener {
 
     @Inject
-    lateinit var router: Router
-
-    @Inject
     lateinit var favouritesPresenter: FavouritesPresenter
 
     private val presenter by moxyPresenter { favouritesPresenter }

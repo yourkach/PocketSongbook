@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_bar_height"
+    android:background="@color/colorInterfaceDefault"
+    android:elevation="15dp"
+    tools:ignore="ContentDescription">
+
+    <!--    Favorites   -->
+    <ImageView
+        android:id="@+id/navIvFavoritesIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/nav_item_margin_vertical"
+        android:src="@drawable/ic_star_border_black"
+        app:layout_constraintBottom_toTopOf="@id/navTvFavoritesLabel"
+        app:layout_constraintEnd_toEndOf="@id/navFavoritesFrame"
+        app:layout_constraintStart_toStartOf="@id/navFavoritesFrame"
+        app:layout_constraintTop_toTopOf="@id/navFavoritesFrame"
+        app:tint="@color/colorNavItemUnselected" />
+
+    <TextView
+        android:id="@+id/navTvFavoritesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/nav_item_margin_vertical"
+        android:text="@string/nav_favourites"
+        android:textColor="@color/colorNavItemUnselected"
+        app:layout_constraintBottom_toBottomOf="@id/navFavoritesFrame"
+        app:layout_constraintEnd_toEndOf="@id/navFavoritesFrame"
+        app:layout_constraintStart_toStartOf="@id/navFavoritesFrame"
+        app:layout_constraintTop_toBottomOf="@id/navIvFavoritesIcon" />
+
+    <FrameLayout
+        android:id="@+id/navFavoritesFrame"
+        android:layout_width="@dimen/nav_item_width"
+        android:layout_height="0dp"
+        android:background="@drawable/ripple_transparent_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingVertical="@dimen/nav_item_margin_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navSearchFrame"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    Search   -->
+    <ImageView
+        android:id="@+id/navIvSearchIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/nav_item_margin_vertical"
+        android:src="@drawable/ic_search_24_white"
+        app:layout_constraintBottom_toTopOf="@id/navTvSearchLabel"
+        app:layout_constraintEnd_toEndOf="@id/navSearchFrame"
+        app:layout_constraintStart_toStartOf="@id/navSearchFrame"
+        app:layout_constraintTop_toTopOf="@id/navSearchFrame"
+        app:tint="@color/colorNavItemUnselected" />
+
+    <TextView
+        android:id="@+id/navTvSearchLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/nav_item_margin_vertical"
+        android:text="@string/nav_search"
+        android:textColor="@color/colorNavItemUnselected"
+        app:layout_constraintBottom_toBottomOf="@id/navSearchFrame"
+        app:layout_constraintEnd_toEndOf="@id/navSearchFrame"
+        app:layout_constraintStart_toStartOf="@id/navSearchFrame"
+        app:layout_constraintTop_toBottomOf="@id/navIvSearchIcon" />
+
+    <FrameLayout
+        android:id="@+id/navSearchFrame"
+        android:layout_width="@dimen/nav_item_width"
+        android:layout_height="0dp"
+        android:background="@drawable/ripple_transparent_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navTunerFrame"
+        app:layout_constraintStart_toEndOf="@id/navFavoritesFrame"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    Tuner   -->
+    <ImageView
+        android:id="@+id/navIvTunerIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/nav_item_margin_vertical"
+        android:src="@drawable/ic_chord_stub"
+        app:layout_constraintBottom_toTopOf="@id/navTvTunerLabel"
+        app:layout_constraintEnd_toEndOf="@id/navTunerFrame"
+        app:layout_constraintStart_toStartOf="@id/navTunerFrame"
+        app:layout_constraintTop_toTopOf="@id/navTunerFrame"
+        app:tint="@color/colorNavItemUnselected" />
+
+    <TextView
+        android:id="@+id/navTvTunerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/nav_item_margin_vertical"
+        android:text="@string/nav_tuner"
+        android:textColor="@color/colorNavItemUnselected"
+        app:layout_constraintBottom_toBottomOf="@id/navTunerFrame"
+        app:layout_constraintEnd_toEndOf="@id/navTunerFrame"
+        app:layout_constraintStart_toStartOf="@id/navTunerFrame"
+        app:layout_constraintTop_toBottomOf="@id/navIvTunerIcon" />
+
+    <FrameLayout
+        android:id="@+id/navTunerFrame"
+        android:layout_width="@dimen/nav_item_width"
+        android:layout_height="0dp"
+        android:background="@drawable/ripple_transparent_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navSearchFrame"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,10 @@
 package com.example.pocketsongbook.di
 
+import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
+import com.example.pocketsongbook.common.navigation.impl.TabCiceronesHolderImpl
 import dagger.Module
 import dagger.Provides
 import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import javax.inject.Singleton
 
@@ -12,10 +13,10 @@ class NavigationModule {
 
     @Provides
     @Singleton
-    fun cicerone(): Cicerone<Router> = Cicerone.create()
+    fun provideGlobalCicerone(): Cicerone<Router> = Cicerone.create()
 
     @Provides
     @Singleton
-    fun provideRouter(cicerone: Cicerone<Router>) : Router = cicerone.router
+    fun provideTabCiceronesHolder(): TabCiceronesHolder = TabCiceronesHolderImpl()
 
 }

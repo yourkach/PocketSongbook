@@ -7,5 +7,9 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorErrorBackground">#434343</color>
     <color name="colorSkeleton">#ececec</color>
+    <color name="colorLightGrey">#737373</color>
     <color name="transparent">#00000000</color>
+    <color name="colorInterfaceDefault">#FAFAFA</color>
+    <color name="colorNavItemSelected">@color/colorAccent</color>
+    <color name="colorNavItemUnselected">@color/colorLightGrey</color>
 </resources>
