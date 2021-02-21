@@ -25,6 +25,8 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
 
     open val returnTransitionRes: Int? = null
 
+    open val hideBottomNavigationBar: Boolean = true
+
     protected val router: Router
         get() = (parentFragment as BaseTabContainerFragment).router
 
@@ -43,6 +45,16 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
             enterTransitionRes?.let { enterTransition = inflateTransition(it) }
             returnTransitionRes?.let { returnTransition = inflateTransition(it) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (hideBottomNavigationBar) (activity as? RootActivity)?.setNavigationBarVisible(false)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (hideBottomNavigationBar) (activity as? RootActivity)?.setNavigationBarVisible(true)
     }
 
     override fun androidInjector(): AndroidInjector<Any> = androidInjector

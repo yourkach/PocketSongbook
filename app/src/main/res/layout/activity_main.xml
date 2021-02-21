@@ -2,12 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clRootContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".common.RootActivity">
 
     <include
-        android:id="@+id/bottomNavigationLayout"
+        android:id="@+id/bottomNavigationBar"
         layout="@layout/bottom_navigation_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_bar_height"
@@ -20,7 +22,7 @@
         android:id="@+id/rootContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationLayout"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

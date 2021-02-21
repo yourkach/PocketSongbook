@@ -8,10 +8,10 @@ import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.models.Chord
-import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.navigation.ArgsFragment
 import com.example.pocketsongbook.common.navigation.FragmentArgs
+import com.example.pocketsongbook.data.models.Chord
+import com.example.pocketsongbook.data.models.SongModel
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
@@ -28,6 +28,8 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     private val presenter: SongPresenter by moxyPresenter {
         songPresenterFactory.create(args.song)
     }
+
+    override val hideBottomNavigationBar: Boolean = false
 
     private val chordsAdapter by lazy { ChordsAdapter() }
 

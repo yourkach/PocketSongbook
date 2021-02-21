@@ -9,39 +9,17 @@
     <FrameLayout
         android:id="@+id/favouritesToolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/favouritesGoBackIv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/circle_ripple_background"
-        android:scaleType="center"
-        app:layout_constraintBottom_toBottomOf="@+id/favouritesToolbar"
-        app:layout_constraintStart_toStartOf="@+id/favouritesToolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_back_24_white" />
-
-
-    <FrameLayout
-        android:id="@+id/searchViewContainer"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/favouritesToolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/favouritesGoBackIv"
-        app:layout_constraintTop_toTopOf="@id/favouritesToolbar">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <SearchView
             android:id="@+id/searchViewFavourites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:closeIcon="@drawable/ic_close_24"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="8dp"
             android:fadingEdge="horizontal"
             android:goIcon="@drawable/ic_right_arrow_24"
             android:layoutDirection="rtl"

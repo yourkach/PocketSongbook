@@ -1,26 +1,26 @@
 package com.example.pocketsongbook.feature.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.ListPopupWindow
+import android.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
-import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.common.navigation.toFragment
+import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.models.FoundSongModel
-import com.example.pocketsongbook.feature.favourites.FavouritesFragment
-import com.example.pocketsongbook.feature.search.list.SearchAdapter
-import com.example.pocketsongbook.feature.song.SongFragment
-import com.example.pocketsongbook.common.navigation.*
+import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
+import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
+import com.example.pocketsongbook.feature.search.list.SearchAdapter
+import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
-import com.github.terrakok.cicerone.Router
 import kotlinx.android.synthetic.main.fragment_search.*
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -49,9 +49,6 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         initSearchView()
         initWebsitesSelector()
 
-        ivOpenFavorites.setOnClickListener {
-            presenter.onFavouritesClicked()
-        }
         fabOpenTuner.setOnClickListener {
             router.navigateTo(TunerFragment().toScreen())
         }

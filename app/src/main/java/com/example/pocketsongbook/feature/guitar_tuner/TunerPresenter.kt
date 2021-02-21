@@ -7,9 +7,6 @@ import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.feature.guitar_tuner.stream.AudioRecorderImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -48,19 +45,19 @@ class TunerPresenter @Inject constructor(
 
     fun onRecordAudioPermissionGranted() {
         viewState.setMessageText("Thx for granted")
-        launch {
-            withContext(Dispatchers.IO) {
-                val buffer = mutableListOf<Short>()
-                audioStreamProvider.startRecording().buffer(20).collect {
-                    if (buffer.size < 20000) {
-                        buffer.addAll(it.asSequence())
-                    } else {
-                        onNewAudioBufferReceived(buffer)
-                        buffer.clear()
-                    }
-                }
-            }
-        }
+//        launch {
+//            withContext(Dispatchers.IO) {
+//                val buffer = mutableListOf<Short>()
+//                audioStreamProvider.startRecording().buffer(20).collect {
+//                    if (buffer.size < 20000) {
+//                        buffer.addAll(it.asSequence())
+//                    } else {
+//                        onNewAudioBufferReceived(buffer)
+//                        buffer.clear()
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun onStopClick() {

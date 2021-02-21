@@ -3,7 +3,6 @@ package com.example.pocketsongbook.feature.favourites
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
@@ -11,7 +10,6 @@ import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
-import com.github.terrakok.cicerone.Router
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*
 import moxy.ktx.moxyPresenter
@@ -53,7 +51,6 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     }
 
     private fun setUpToolbar() {
-        favouritesGoBackIv.setOnClickListener { router.exit() }
         searchViewFavourites.setOnQueryTextListener(this)
     }
 

@@ -7,15 +7,18 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.common.navigation.*
+import com.example.pocketsongbook.common.navigation.BackPressedListener
+import com.example.pocketsongbook.common.navigation.BottomNavigationHelper
+import com.example.pocketsongbook.common.navigation.NavigationTab
+import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
 import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
-import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_main.*
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
+import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_navigation_bar_layout.*
 import moxy.MvpAppCompatActivity
 import javax.inject.Inject
@@ -87,6 +90,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     private val unselectedNavItemColor by lazy {
         ResourcesCompat.getColor(resources, R.color.colorNavItemUnselected, null)
     }
+
     private fun clearSelectedTabButton() {
         listOf<ImageView>(navIvFavoritesIcon, navIvSearchIcon, navIvTunerIcon).forEach {
             it.imageTintList = ColorStateList.valueOf(unselectedNavItemColor)
@@ -108,6 +112,10 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
 
     fun getTabCicerone(tabName: String): Cicerone<Router> {
         return holder.getCicerone(tabName)
+    }
+
+    fun setNavigationBarVisible(isVisible: Boolean) {
+        bottomNavigationBar.isVisible = isVisible
     }
 
     fun showLoading() {
