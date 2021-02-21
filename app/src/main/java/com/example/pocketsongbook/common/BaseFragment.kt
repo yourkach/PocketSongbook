@@ -5,9 +5,10 @@ import android.os.Bundle
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.transition.TransitionInflater
+import com.example.pocketsongbook.R
+import com.github.terrakok.cicerone.Router
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjector
-import com.example.pocketsongbook.R
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
@@ -23,6 +24,9 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
     open val enterTransitionRes: Int? = R.transition.fade
 
     open val returnTransitionRes: Int? = null
+
+    protected val router: Router
+        get() = (parentFragment as BaseTabContainerFragment).router
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)

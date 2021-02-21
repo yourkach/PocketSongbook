@@ -30,7 +30,7 @@ fun Router.navigateToFragment(fragment: Fragment) {
 
 fun Fragment.toScreen(): Screen {
     return FragmentScreen(
-        screenKey = this::class.java.simpleName,
+        screenKey = this::class.java.simpleName + hashCode(),
         createFragment = { this }
     )
 }

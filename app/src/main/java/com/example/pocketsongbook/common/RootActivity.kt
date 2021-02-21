@@ -1,40 +1,41 @@
 package com.example.pocketsongbook.common
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.common.navigation.RouterProvider
-import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.feature.search.SearchFragment
+import com.example.pocketsongbook.common.navigation.*
+import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import kotlinx.android.synthetic.main.bottom_navigation_bar_layout.*
 import moxy.MvpAppCompatActivity
 import javax.inject.Inject
 
-class RootActivity : MvpAppCompatActivity(), HasAndroidInjector, RouterProvider {
-
-    override val router: Router
-        get() = cicerone.router
+class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
 
     @Inject
-    lateinit var cicerone: Cicerone<Router>
+    lateinit var holder: TabCiceronesHolder
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
-    private val navigator by lazy {
-        AppNavigator(
-            activity = this,
-            containerId = R.id.rootContainer
+    private val navigationHelper by lazy {
+        BottomNavigationHelper(
+            containerViewId = R.id.rootContainer,
+            fragmentManager = supportFragmentManager,
+            tabsFactory = TabsFactoryImpl(),
+            onTabChanged = ::onTabSwitched
         )
     }
 
@@ -42,7 +43,71 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector, RouterProvider 
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        cicerone.router.newRootScreen(SearchFragment().toScreen())
+        if (savedInstanceState == null) {
+            navigationHelper.switchToTab(NavigationTab.Search)
+        } else {
+            savedInstanceState.getBundle(NAVIGATION_STATE_KEY)?.let {
+                navigationHelper.restoreState(it)
+            }
+        }
+        setNavigationButtonsListeners()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBundle(NAVIGATION_STATE_KEY, navigationHelper.saveState())
+    }
+
+    private fun setNavigationButtonsListeners() {
+        navFavoritesFrame.setOnClickListener {
+            navigationHelper.switchToTab(NavigationTab.Favorites)
+        }
+        navSearchFrame.setOnClickListener {
+            navigationHelper.switchToTab(NavigationTab.Search)
+        }
+        navTunerFrame.setOnClickListener {
+            navigationHelper.switchToTab(NavigationTab.Tuner)
+        }
+    }
+
+    private fun onTabSwitched(tab: NavigationTab) {
+        clearSelectedTabButton()
+        val (imageView: ImageView, textView: TextView) = when (tab) {
+            NavigationTab.Favorites -> navIvFavoritesIcon to navTvFavoritesLabel
+            NavigationTab.Search -> navIvSearchIcon to navTvSearchLabel
+            NavigationTab.Tuner -> navIvTunerIcon to navTvTunerLabel
+        }
+        imageView.imageTintList = ColorStateList.valueOf(selectedNavItemColor)
+        textView.setTextColor(selectedNavItemColor)
+    }
+
+    private val selectedNavItemColor by lazy {
+        ResourcesCompat.getColor(resources, R.color.colorNavItemSelected, null)
+    }
+    private val unselectedNavItemColor by lazy {
+        ResourcesCompat.getColor(resources, R.color.colorNavItemUnselected, null)
+    }
+    private fun clearSelectedTabButton() {
+        listOf<ImageView>(navIvFavoritesIcon, navIvSearchIcon, navIvTunerIcon).forEach {
+            it.imageTintList = ColorStateList.valueOf(unselectedNavItemColor)
+        }
+        listOf<TextView>(navTvFavoritesLabel, navTvSearchLabel, navTvTunerLabel).forEach {
+            it.setTextColor(unselectedNavItemColor)
+        }
+    }
+
+    override fun onBackPressed() {
+        val childrenConsumedEvent = supportFragmentManager.run {
+            (fragments.firstOrNull { it.isVisible } as? BackPressedListener)?.onBackPressed()
+                ?: false
+        }
+        if (!childrenConsumedEvent && !navigationHelper.switchTabBack()) {
+            super.onBackPressed()
+        }
+    }
+
+    fun getTabCicerone(tabName: String): Cicerone<Router> {
+        return holder.getCicerone(tabName)
     }
 
     fun showLoading() {
@@ -53,13 +118,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector, RouterProvider 
         loadingStub.isVisible = false
     }
 
-    override fun onPause() {
-        super.onPause()
-        cicerone.getNavigatorHolder().removeNavigator()
-    }
-
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        cicerone.getNavigatorHolder().setNavigator(navigator)
+    companion object {
+        private const val NAVIGATION_STATE_KEY = "NAVIGATION_STATE_KEY"
     }
 }

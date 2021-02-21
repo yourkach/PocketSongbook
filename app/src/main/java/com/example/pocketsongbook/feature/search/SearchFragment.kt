@@ -34,9 +34,6 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     @Inject
     lateinit var searchPresenterProvider: Provider<SearchPresenter>
 
-    @Inject
-    lateinit var router: Router
-
     private val presenter by moxyPresenter { searchPresenterProvider.get() }
 
     private val searchItemsAdapter by lazy {

@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="@id/navFavoritesFrame"
         app:layout_constraintStart_toStartOf="@id/navFavoritesFrame"
         app:layout_constraintTop_toTopOf="@id/navFavoritesFrame"
-        app:tint="@color/colorLightGrey" />
+        app:tint="@color/colorNavItemUnselected" />
 
     <TextView
         android:id="@+id/navTvFavoritesLabel"
@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/nav_item_margin_vertical"
         android:text="@string/nav_favourites"
+        android:textColor="@color/colorNavItemUnselected"
         app:layout_constraintBottom_toBottomOf="@id/navFavoritesFrame"
         app:layout_constraintEnd_toEndOf="@id/navFavoritesFrame"
         app:layout_constraintStart_toStartOf="@id/navFavoritesFrame"
@@ -56,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="@id/navSearchFrame"
         app:layout_constraintStart_toStartOf="@id/navSearchFrame"
         app:layout_constraintTop_toTopOf="@id/navSearchFrame"
-        app:tint="@color/colorLightGrey" />
+        app:tint="@color/colorNavItemUnselected" />
 
     <TextView
         android:id="@+id/navTvSearchLabel"
@@ -64,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/nav_item_margin_vertical"
         android:text="@string/nav_search"
+        android:textColor="@color/colorNavItemUnselected"
         app:layout_constraintBottom_toBottomOf="@id/navSearchFrame"
         app:layout_constraintEnd_toEndOf="@id/navSearchFrame"
         app:layout_constraintStart_toStartOf="@id/navSearchFrame"
@@ -92,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="@id/navTunerFrame"
         app:layout_constraintStart_toStartOf="@id/navTunerFrame"
         app:layout_constraintTop_toTopOf="@id/navTunerFrame"
-        app:tint="@color/colorLightGrey" />
+        app:tint="@color/colorNavItemUnselected" />
 
     <TextView
         android:id="@+id/navTvTunerLabel"
@@ -100,6 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/nav_item_margin_vertical"
         android:text="@string/nav_tuner"
+        android:textColor="@color/colorNavItemUnselected"
         app:layout_constraintBottom_toBottomOf="@id/navTunerFrame"
         app:layout_constraintEnd_toEndOf="@id/navTunerFrame"
         app:layout_constraintStart_toStartOf="@id/navTunerFrame"
