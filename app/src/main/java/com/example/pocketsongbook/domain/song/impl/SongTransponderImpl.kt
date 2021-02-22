@@ -6,15 +6,15 @@ import javax.inject.Inject
 
 class SongTransponderImpl @Inject constructor() : SongTransponder {
 
-    override fun transpose(lyrics: String, newKey: Int): SongTransponder.TransposingResponse {
-        return if (newKey != 0) {
+    override fun transpose(lyrics: String, key: Int): SongTransponder.TransposingResponse {
+        return if (key != 0) {
             val chordsSet = parseChords(lyrics)
             val newTransposedChords = mutableListOf<String>()
             val chordsMap = mutableMapOf<String, String>()
             chordsSet.forEach {
                 val newChord = ChordsTransponder.transposeChord(
                     it,
-                    newKey
+                    key
                 )
                 chordsMap[it] = newChord
                 newTransposedChords.add(newChord)

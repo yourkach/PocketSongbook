@@ -9,17 +9,17 @@ import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
 interface FavouriteSongsDao {
 
     @Query("SELECT * FROM favorite_songs ORDER BY time_added DESC")
-    fun getAll(): List<FavoriteSongEntity>
+    suspend fun getAll(): List<FavoriteSongEntity>
 
-    @Query("SELECT * FROM favorite_songs WHERE artist LIKE :name || '%' OR title LIKE :name")
-    fun findByName(name: String): List<FavoriteSongEntity>
+    @Query("SELECT * FROM favorite_songs WHERE artist LIKE  '%' || :query || '%' OR title LIKE '%' || :query || '%' ")
+    suspend fun findByQuery(query: String): List<FavoriteSongEntity>
 
     @Query("SELECT * FROM favorite_songs WHERE url = :url")
-    fun findByUrl(url: String): List<FavoriteSongEntity>
+    suspend fun findByUrl(url: String): List<FavoriteSongEntity>
 
     @Insert
-    fun insert(favoriteSong: FavoriteSongEntity)
+    suspend fun insert(favoriteSong: FavoriteSongEntity)
 
     @Query("DELETE FROM favorite_songs WHERE url = :url")
-    fun deleteByUrl(url: String)
+    suspend fun deleteByUrl(url: String)
 }

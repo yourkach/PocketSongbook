@@ -30,7 +30,7 @@ class FavouriteSongsRepositoryImpl(
 
     override suspend fun getSongsByQuery(query: String): List<FavoriteSongModel> {
         return withContext(Dispatchers.IO) {
-            favouriteSongsDao.findByName(query).map(FavoriteSongEntity::toFavoriteSong)
+            favouriteSongsDao.findByQuery(query).map(FavoriteSongEntity::toFavoriteSong)
         }
     }
 
