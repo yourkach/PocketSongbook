@@ -4,4 +4,5 @@
     <dimen name="nav_item_margin_vertical">4dp</dimen>
     <dimen name="nav_bar_height">56dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="song_button_size">42dp</dimen>
 </resources>

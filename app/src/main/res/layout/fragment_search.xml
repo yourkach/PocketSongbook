@@ -10,9 +10,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <SearchView
             android:id="@+id/songsSearchView"
@@ -21,8 +21,8 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="8dp"
             android:closeIcon="@drawable/ic_close_24"
-            android:fadingEdge="horizontal"
             android:elevation="4dp"
+            android:fadingEdge="horizontal"
             android:goIcon="@drawable/ic_right_arrow_24"
             android:layoutDirection="rtl"
             android:queryBackground="@drawable/bg_rounded_white"
@@ -51,7 +51,7 @@
                 android:id="@+id/tvSelectedWebsite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@drawable/ripple_transparent_background"
                 android:clickable="true"
                 android:drawablePadding="12dp"
                 android:focusable="true"
@@ -61,8 +61,8 @@
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@color/colorWhite"
                 android:textSize="22sp"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:drawableEndCompat="@drawable/ic_chord_white"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 tools:text="AmDm.ru" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -76,14 +76,14 @@
                 android:id="@+id/searchRv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:splitMotionEvents="false"
-                android:paddingTop="4dp"
                 android:clipToPadding="false"
-                tools:listitem="@layout/item_search_song"
+                android:paddingTop="4dp"
+                android:splitMotionEvents="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/websiteSelectorContainer" />
+                app:layout_constraintTop_toBottomOf="@+id/websiteSelectorContainer"
+                tools:listitem="@layout/item_search_song" />
 
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

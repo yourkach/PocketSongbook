@@ -4,18 +4,21 @@ import com.example.pocketsongbook.data.models.Chord
 import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
+import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.favorites.AddToFavoritesUseCase
 import com.example.pocketsongbook.domain.favorites.CheckIsFavoriteUseCase
 import com.example.pocketsongbook.domain.favorites.RemoveFromFavoritesUseCase
-import com.example.pocketsongbook.feature.song.domain.*
+import com.example.pocketsongbook.domain.song.EvaluateSongStateUseCase
+import com.example.pocketsongbook.domain.song.SongViewState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
+import moxy.viewstate.strategy.AddToEndSingleTagStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 
@@ -40,10 +43,10 @@ interface SongView : BaseView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setChords(chords: List<Chord>)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "chords_bar")
     fun openChordBar()
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "chords_bar")
     fun closeChordBar()
 }
 
@@ -57,7 +60,8 @@ class SongPresenter @AssistedInject constructor(
     private val addToFavoritesUseCase: AddToFavoritesUseCase,
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
     private val checkIsFavoriteUseCase: CheckIsFavoriteUseCase,
-    private val subscribeToEventsUseCase: SubscribeToEventsUseCase
+    private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
+    private val evaluateSongStateUseCase: EvaluateSongStateUseCase
 ) : BasePresenter<SongView>() {
 
     @AssistedFactory
@@ -65,28 +69,14 @@ class SongPresenter @AssistedInject constructor(
         fun create(song: SongModel): SongPresenter
     }
 
-    private val songHolder = SongHolder(
-        song = song,
-        onSongStateChanged = ::onSongStateChanged
-    )
-
     private var isFavourite: Boolean = false
         set(value) {
-            field = value
-            viewState.setFavouritesButtonFilled(value)
+            field = value.also(viewState::setFavouritesButtonFilled)
         }
 
     private var currentFontSize: Int = FONT_SIZE_DEFAULT
 
     private var chordsBarOpened = false
-
-    private fun onSongStateChanged(newState: SongHolder.SongState) {
-        viewState.setSongLyrics(lyricsHtml = newState.formattedHtmlLyricsText)
-        viewState.setKeyText(
-            chordsKeyText = newState.chordsKey.toString(),
-            isDefault = newState.chordsKey == 0
-        )
-    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -97,7 +87,11 @@ class SongPresenter @AssistedInject constructor(
         )
 
         subscribeToEvents()
+        checkForFavoriteStatus()
+        updateLyrics()
+    }
 
+    private fun checkForFavoriteStatus() {
         launch {
             isFavourite = checkIsFavoriteUseCase(song)
         }
@@ -111,6 +105,24 @@ class SongPresenter @AssistedInject constructor(
                         if (event.url == song.url) isFavourite = event.isAdded
                     }
                 }
+            }
+        }
+    }
+
+    private var changeKeyJob by setAndCancelJob()
+    private var currentSongState: SongViewState? = null
+    private fun updateLyrics(keyChangeType: ChangeType = ChangeType.SetDefault) {
+        changeKeyJob = launch {
+            val currentChordsKey = currentSongState?.chordsKey ?: 0
+            val newKey = when (keyChangeType) {
+                ChangeType.Increment -> (currentChordsKey + 1) % 12
+                ChangeType.Decrement -> (currentChordsKey - 1) % 12
+                ChangeType.SetDefault -> 0
+            }
+            currentSongState = evaluateSongStateUseCase(song, newKey).also { songState ->
+                viewState.setKeyText(newKey.toString(), newKey == 0)
+                viewState.setSongLyrics(songState.formattedLyricsText)
+                if (chordsBarOpened) updateChordsImages(songState.chordsList)
             }
         }
     }
@@ -134,19 +146,19 @@ class SongPresenter @AssistedInject constructor(
 
     fun onKeyPlusClick() {
         launch {
-            songHolder.changeChordsKey(ChangeType.Increment)
+            updateLyrics(ChangeType.Increment)
         }
     }
 
     fun onKeyMinusClick() {
         launch {
-            songHolder.changeChordsKey(ChangeType.Decrement)
+            updateLyrics(ChangeType.Decrement)
         }
     }
 
     fun onKeyLabelClick() {
         launch {
-            songHolder.changeChordsKey(ChangeType.SetDefault)
+            updateLyrics(ChangeType.SetDefault)
         }
     }
 
@@ -163,45 +175,35 @@ class SongPresenter @AssistedInject constructor(
     }
 
     fun onFavouritesButtonClick() {
-        if (isFavourite) {
-            removeFromFavourites()
-        } else {
-            addToFavourites()
+        launch {
+            if (isFavourite) {
+                removeFromFavoritesUseCase(song)
+            } else {
+                addToFavoritesUseCase(song)
+            }
         }
     }
 
     fun onOpenChordsClick() {
         if (chordsBarOpened) {
             viewState.closeChordBar()
+            chordsBarOpened = false
         } else {
-            viewState.openChordBar()
-            updateChordsImages()
-        }
-        chordsBarOpened = !chordsBarOpened
-    }
-
-    private fun addToFavourites() {
-        launch {
-            addToFavoritesUseCase(song)
-            isFavourite = true
+            currentSongState?.let {
+                viewState.openChordBar()
+                updateChordsImages(it.chordsList)
+                chordsBarOpened = true
+            }
         }
     }
 
-    private fun removeFromFavourites() {
-        launch {
-            removeFromFavoritesUseCase(song)
-            isFavourite = false
-        }
-    }
-
-
-    private fun updateChordsImages() {
-        val newChords = songHolder.currentState.chordsList.map {
+    private fun updateChordsImages(chordsList: List<String>) {
+        val newChords = /*chordsList.map {
             Chord(
                 it,
                 "https://mychords.net/i/img/akkords/${it.replace("#", "sharp")}.png"
             )
-        } + songHolder.currentState.chordsList.map {
+        } + */chordsList.map {
             Chord(
                 it,
                 "https://amdm.ru/images/chords/${it.replace("#", "w")}_0.gif"

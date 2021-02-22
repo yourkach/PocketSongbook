@@ -17,6 +17,7 @@ import javax.inject.Singleton
         NavigationModule::class,
         NetworkModule::class,
         RoomModule::class,
+        SongModule::class,
         PrefsBindingModule::class,
         FavouritesModule::class,
         AndroidInjectionModule::class,
