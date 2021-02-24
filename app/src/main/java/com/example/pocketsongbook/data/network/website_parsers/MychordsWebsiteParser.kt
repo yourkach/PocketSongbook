@@ -1,10 +1,8 @@
 package com.example.pocketsongbook.data.network.website_parsers
 
-import com.example.pocketsongbook.data.models.FoundSongModel
 import com.example.pocketsongbook.domain.SongsWebsite
-import org.jsoup.Jsoup
+import com.example.pocketsongbook.domain.models.FoundSongModel
 import org.jsoup.nodes.Document
-import java.io.IOException
 import javax.inject.Inject
 
 class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {

@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.data.network.website_parsers
 
-import com.example.pocketsongbook.data.models.SongModel
-import com.example.pocketsongbook.data.models.FoundSongModel
 import com.example.pocketsongbook.domain.SongsWebsite
+import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.example.pocketsongbook.domain.models.SongModel
 
 interface SongsWebsiteParser {
 

@@ -11,9 +11,9 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.data.models.FoundSongModel
-import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.SongsWebsite
+import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
