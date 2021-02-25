@@ -9,7 +9,7 @@ import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
-import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*

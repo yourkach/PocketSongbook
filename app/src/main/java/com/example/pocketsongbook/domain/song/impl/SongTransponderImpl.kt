@@ -1,12 +1,14 @@
 package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.song.SongTransponder
+import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.utils.ChordsTransponder
 import javax.inject.Inject
 
 class SongTransponderImpl @Inject constructor() : SongTransponder {
 
-    override fun transpose(lyrics: String, key: Int): SongTransponder.TransposingResponse {
+    override fun transpose(lyrics: String, chordsKey: ChordsKey): SongTransponder.Response {
+        val key = chordsKey.key
         return if (key != 0) {
             val chordsSet = parseChords(lyrics)
             val newTransposedChords = mutableListOf<String>()
@@ -38,14 +40,14 @@ class SongTransponderImpl @Inject constructor() : SongTransponder {
                 chordStartIndex = lyrics.indexOf("<b>", prevChordEnd)
             }
             newTextBuilder.append(lyrics.substring(startIndex = prevChordEnd))
-            SongTransponder.TransposingResponse(
+            SongTransponder.Response(
                 transposedLyrics = newTextBuilder.toString(),
-                transposedChords = newTransposedChords
+                transposedChordNames = newTransposedChords
             )
         } else {
-            SongTransponder.TransposingResponse(
+            SongTransponder.Response(
                 transposedLyrics = lyrics,
-                transposedChords = parseChords(lyrics).toList()
+                transposedChordNames = parseChords(lyrics).toList()
             )
         }
     }

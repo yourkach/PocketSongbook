@@ -4,8 +4,8 @@ import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.data.favorites.FavoriteSongsUrlsDao
-import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
+import com.example.pocketsongbook.domain.models.SongModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -4,11 +4,11 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.models.FoundSongModel
-import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
+import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
 import kotlinx.coroutines.*

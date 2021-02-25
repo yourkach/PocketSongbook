@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.data.models
+package com.example.pocketsongbook.domain.models
 
 import com.example.pocketsongbook.domain.SongsWebsite
 

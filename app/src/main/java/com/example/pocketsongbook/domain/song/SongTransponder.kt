@@ -1,10 +1,12 @@
 package com.example.pocketsongbook.domain.song
 
-interface SongTransponder {
-    fun transpose(lyrics: String, key: Int): TransposingResponse
+import com.example.pocketsongbook.domain.song.models.ChordsKey
 
-    data class TransposingResponse(
+interface SongTransponder {
+    fun transpose(lyrics: String, chordsKey: ChordsKey): Response
+
+    data class Response(
         val transposedLyrics: String,
-        val transposedChords: List<String>
+        val transposedChordNames: List<String>
     )
 }

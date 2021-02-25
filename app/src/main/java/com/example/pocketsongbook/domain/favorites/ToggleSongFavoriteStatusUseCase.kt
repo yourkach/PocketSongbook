@@ -5,14 +5,18 @@ import com.example.pocketsongbook.domain.event_bus.EventBus
 import com.example.pocketsongbook.domain.models.SongModel
 import javax.inject.Inject
 
-class AddToFavoritesUseCase @Inject constructor(
+class ToggleSongFavoriteStatusUseCase @Inject constructor(
     private val favoritesRepository: FavouriteSongsRepository,
     private val eventBus: EventBus
 ) {
-
     suspend operator fun invoke(song: SongModel) {
-        favoritesRepository.addSong(song)
-        eventBus.postEvent(Event.FavoritesChange(url = song.url, isAdded = true))
+        val isAdded = if (favoritesRepository.containsSong(song.url)) {
+            favoritesRepository.removeSongByUrl(song.url)
+            false
+        } else {
+            favoritesRepository.addSong(song)
+            true
+        }
+        eventBus.postEvent(Event.FavoritesChange(isAdded = isAdded, url = song.url))
     }
-
 }

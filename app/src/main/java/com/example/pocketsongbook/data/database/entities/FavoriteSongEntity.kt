@@ -3,8 +3,8 @@ package com.example.pocketsongbook.data.database.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
-import com.example.pocketsongbook.data.models.SongModel
 import com.example.pocketsongbook.domain.SongsWebsite
+import com.example.pocketsongbook.domain.models.SongModel
 
 @Entity(tableName = "favorite_songs")
 data class FavoriteSongEntity(

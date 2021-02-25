@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.domain
 
-import com.example.pocketsongbook.data.models.FoundSongModel
-import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.example.pocketsongbook.domain.models.SongModel
 
 interface SongsRemoteRepository {
 

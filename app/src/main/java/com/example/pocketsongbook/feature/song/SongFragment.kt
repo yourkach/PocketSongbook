@@ -5,13 +5,17 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ArgsFragment
 import com.example.pocketsongbook.common.navigation.FragmentArgs
-import com.example.pocketsongbook.data.models.Chord
-import com.example.pocketsongbook.data.models.SongModel
+import com.example.pocketsongbook.domain.models.Chord
+import com.example.pocketsongbook.domain.models.SongModel
+import com.example.pocketsongbook.domain.song.models.ChordsKey
+import com.example.pocketsongbook.domain.song.models.FontSize
+import com.example.pocketsongbook.feature.song.mvi.state_models.*
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
@@ -66,6 +70,31 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         })
     }
 
+    private var currentState: SongScreenState? = null
+    override fun applyState(state: SongScreenState) {
+        if (state != currentState) {
+            bindSongState(state.songState)
+            bindChordsBarState(state.chordsBarState)
+        }
+    }
+
+    private fun bindSongState(songState: SongViewStateModel) {
+        if (songState is SongViewStateModel.Loaded && songState != currentState?.songState) {
+            bindKeyOption(songState.chordsKeyOption)
+            bindFontSizeOption(songState.textSizeOption)
+            bindSongInfo(
+                artist = songState.songArtist,
+                title = songState.songTitle,
+                lyricsHtml = songState.formattedLyricsHtml
+            )
+            bindFavoriteButton(songState.isFavorite)
+        }
+    }
+
+    private fun bindChordsBarState(chordsBarState: ChordBarViewStateModel) {
+        setChordsBarOpened(chordsBarState.isOpened)
+        setChordsBarItems(chordsBarState.chords)
+    }
 
     private var scrollJob: Job? by setAndCancelJob()
 
@@ -113,28 +142,28 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
 
     private fun setOnClickListeners() {
         songKeyUpBtn.setOnClickListener {
-            presenter.onKeyPlusClick()
+            presenter.onChordsKeyChangeInteraction(ChangeType.Increment)
         }
         songKeyDownBtn.setOnClickListener {
-            presenter.onKeyMinusClick()
+            presenter.onChordsKeyChangeInteraction(ChangeType.Decrement)
         }
         songKeyAmountTv.setOnClickListener {
-            presenter.onKeyLabelClick()
+            presenter.onChordsKeyChangeInteraction(ChangeType.SetDefault)
         }
         songFontPlusBtn.setOnClickListener {
-            presenter.onFontPlusClick()
+            presenter.onFontSizeChangeInteraction(ChangeType.Increment)
         }
         songFontMinusBtn.setOnClickListener {
-            presenter.onFontMinusClick()
+            presenter.onFontSizeChangeInteraction(ChangeType.Decrement)
         }
         songFontSizeTv.setOnClickListener {
-            presenter.onFontLabelClick()
-        }
-        songAddToFavouriteIv.setOnClickListener {
-            presenter.onFavouritesButtonClick()
+            presenter.onFontSizeChangeInteraction(ChangeType.SetDefault)
         }
         songOpenChordsFb.setOnClickListener {
-            presenter.onOpenChordsClick()
+            presenter.onChordsBarButtonClick()
+        }
+        songAddToFavouriteIv.setOnClickListener {
+            presenter.onSongToggleFavoriteClicked()
         }
         svSongLyrics.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY - oldScrollY < 0) {
@@ -145,41 +174,50 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
         }
     }
 
-    override fun setSongInfo(artist: String, title: String) {
+    private fun bindSongInfo(artist: String, title: String, lyricsHtml: String) {
         tvSongArtist.text = artist
         tvSongTitle.text = title
-    }
-
-    override fun setKeyText(chordsKeyText: String, isDefault: Boolean) {
-        songKeyAmountTv.text =
-            if (isDefault) getString(R.string.song_key_default) else chordsKeyText
-    }
-
-    override fun updateLyricsFontSize(newSize: Int, isDefault: Boolean) {
-        songFontSizeTv.text =
-            if (isDefault) getString(R.string.song_font_default) else newSize.toString()
-        songLyricsTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, newSize.toFloat())
-    }
-
-    override fun setSongLyrics(lyricsHtml: String) {
         songLyricsTv.text = HtmlCompat.fromHtml(lyricsHtml, HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
-    override fun setFavouritesButtonFilled(filled: Boolean) {
-        if (filled) songAddToFavouriteIv.setImageResource(R.drawable.ic_star_white_36dp)
-        else songAddToFavouriteIv.setImageResource(R.drawable.ic_star_border_white_36dp)
+    private var currentKeyOption: ChangeableOption<ChordsKey>? = null
+    private fun bindKeyOption(keyOption: ChangeableOption<ChordsKey>) {
+        if (currentKeyOption == keyOption) return
+        songKeyAmountTv.text = when {
+            keyOption.isDefault -> getString(R.string.song_key_default)
+            else -> keyOption.selectedValue.key.toString()
+        }
+        currentKeyOption = keyOption
     }
 
-    override fun setChords(chords: List<Chord>) {
+    private var currentFontSizeOption: ChangeableOption<FontSize>? = null
+    private fun bindFontSizeOption(sizeOption: ChangeableOption<FontSize>) {
+        if (currentFontSizeOption == sizeOption) return
+        songFontSizeTv.text = when {
+            sizeOption.isDefault -> getString(R.string.song_font_default)
+            else -> sizeOption.selectedValue.size.toString()
+        }
+        songLyricsTv.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            sizeOption.selectedValue.size.toFloat()
+        )
+        currentFontSizeOption = sizeOption
+    }
+
+    private fun bindFavoriteButton(isFavorite: Boolean) {
+        val resource = when (isFavorite) {
+            true -> R.drawable.ic_star_white_36dp
+            else -> R.drawable.ic_star_border_white_36dp
+        }
+        songAddToFavouriteIv.setImageResource(resource)
+    }
+
+    private fun setChordsBarItems(chords: List<Chord>) {
         chordsAdapter.setChords(chords)
     }
 
-    override fun openChordBar() {
-        songChordsCl.visibility = View.VISIBLE
-    }
-
-    override fun closeChordBar() {
-        songChordsCl.visibility = View.GONE
+    private fun setChordsBarOpened(isVisible: Boolean) {
+        songChordsBarFl.isVisible = isVisible
     }
 
     override fun onDestroy() {
