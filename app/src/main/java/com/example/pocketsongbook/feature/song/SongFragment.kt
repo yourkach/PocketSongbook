@@ -1,6 +1,7 @@
 package com.example.pocketsongbook.feature.song
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
@@ -8,9 +9,9 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.common.navigation.ArgsFragment
-import com.example.pocketsongbook.common.navigation.FragmentArgs
+import com.example.pocketsongbook.common.navigation.ParcelableArgument
 import com.example.pocketsongbook.domain.models.Chord
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.song.models.ChordsKey
@@ -23,8 +24,9 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
 // TODO: 14.02.21 загружать песню на этом экране, показывать шиммер
-class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song), SongView {
+class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
 
+    private var args: Arguments by ParcelableArgument("song_args")
 
     @Inject
     lateinit var songPresenterFactory: SongPresenter.Factory
@@ -226,6 +228,15 @@ class SongFragment : ArgsFragment<SongFragment.SongArgs>(R.layout.fragment_song)
     }
 
     @Parcelize
-    data class SongArgs(val song: SongModel) : FragmentArgs<SongFragment>
+    data class Arguments(val song: SongModel) : Parcelable
+
+    companion object {
+        fun newInstance(song:SongModel) : SongFragment {
+            return SongFragment().apply {
+                args = Arguments(song)
+            }
+        }
+    }
+
 
 }

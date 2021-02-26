@@ -9,7 +9,6 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
-import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.models.FoundSongModel
@@ -140,7 +139,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     override fun toSongScreen(song: SongModel) {
         router.navigateTo(
-            SongFragment.SongArgs(song).toFragment().toScreen()
+            SongFragment.newInstance(song).toScreen()
         )
     }
 

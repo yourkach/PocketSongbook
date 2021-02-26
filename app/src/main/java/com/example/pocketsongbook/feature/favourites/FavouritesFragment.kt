@@ -6,7 +6,6 @@ import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
-import com.example.pocketsongbook.common.navigation.toFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.domain.models.SongModel
@@ -60,7 +59,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     }
 
     override fun navigateToSong(song: SongModel) {
-        router.navigateTo(SongFragment.SongArgs(song).toFragment().toScreen())
+        router.navigateTo(SongFragment.newInstance(song).toScreen())
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
