@@ -55,9 +55,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     private fun initRecyclerView() {
         searchRv.apply {
-            layoutManager = SearchLayoutManager(requireContext()).apply {
-                isScrollingEnabled = false
-            }
+            layoutManager = SearchLayoutManager(requireContext())
             adapter = searchItemsAdapter
         }
     }

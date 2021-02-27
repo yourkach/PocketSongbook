@@ -37,7 +37,7 @@ interface SearchSongView : BaseView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setWebsiteSelected(website: SongsWebsite)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setSearchItems(newItems: List<FoundSongModel>)
 
     @StateStrategyType(OneExecutionStateStrategy::class)

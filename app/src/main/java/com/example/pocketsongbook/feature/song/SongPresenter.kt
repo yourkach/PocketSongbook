@@ -110,10 +110,12 @@ class SongPresenter @AssistedInject constructor(
     fun onViewPaused() {
         GlobalScope.launch {
             (currentScreenState.songState as? SongViewStateModel.Loaded)?.let {
-                saveOrUpdateSongOptionsState(
-                    songUrl = it.songUrl,
-                    optionsState = it.optionsState
-                )
+                if (it.isFavorite) {
+                    saveOrUpdateSongOptionsState(
+                        songUrl = it.songUrl,
+                        optionsState = it.optionsState
+                    )
+                }
             }
         }
     }
