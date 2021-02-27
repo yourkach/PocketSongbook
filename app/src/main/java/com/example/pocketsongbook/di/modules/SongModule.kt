@@ -23,4 +23,6 @@ interface SongModule {
     @Binds
     fun bindChordsKeyChangeHelper(impl: ChordsKeyChangeHelperImpl): ChordsKeyChangeHelper
 
+    @Binds
+    fun bindDefaultsProvider(impl: DefaultsProviderImpl): DefaultsProvider
 }

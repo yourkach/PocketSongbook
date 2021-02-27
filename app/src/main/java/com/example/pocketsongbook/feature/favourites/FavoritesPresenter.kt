@@ -7,7 +7,7 @@ import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.EventBus
 import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.feature.favourites.usecase.GetFavouriteSongsUseCase
+import com.example.pocketsongbook.feature.favourites.usecase.GetFavoriteSongsUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
@@ -29,8 +29,8 @@ interface FavouritesView : BaseView {
 
 
 @InjectViewState
-class FavouritesPresenter @Inject constructor(
-    private val getFavouriteSongsUseCase: GetFavouriteSongsUseCase,
+class FavoritesPresenter @Inject constructor(
+    private val getFavoriteSongsUseCase: GetFavoriteSongsUseCase,
     private val eventBus: EventBus
 ) : BasePresenter<FavouritesView>() {
 
@@ -58,7 +58,7 @@ class FavouritesPresenter @Inject constructor(
     private var getSongsJob by setAndCancelJob()
     private fun getAndShowSongs(option: ObtainSongsOption) {
         getSongsJob = launch {
-            val items = getFavouriteSongsUseCase(option)
+            val items = getFavoriteSongsUseCase(option)
             lastOption = option
             viewState.updateItems(items)
         }

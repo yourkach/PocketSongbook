@@ -1,11 +1,12 @@
 package com.example.pocketsongbook.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "song_settings",
+    tableName = "song_options",
     foreignKeys = [
         ForeignKey(
             entity = FavoriteSongEntity::class,
@@ -15,9 +16,11 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class SongSettingsEntity(
+data class SongOptionsEntity(
     @PrimaryKey
     val song_url: String,
+    @ColumnInfo(name = "chords_key")
     val chords_key: Int,
-    val text_size: Int
+    @ColumnInfo(name = "font_size")
+    val font_size: Int
 )

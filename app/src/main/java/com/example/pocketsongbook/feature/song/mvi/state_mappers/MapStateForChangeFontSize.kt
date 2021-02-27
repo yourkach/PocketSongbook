@@ -16,11 +16,15 @@ class MapStateForChangeFontSize @Inject constructor(
     ): SongScreenState {
         return (currentState.songState as? SongViewStateModel.Loaded)?.let { songState ->
             val newSizeOption = fontSizeChangeHelper.changeFontSizeOption(
-                currentSize = songState.textSizeOption.selectedValue,
+                currentSize = songState.optionsState.fontOption.selectedValue,
                 changeType = event.changeType
             )
             currentState.copy(
-                songState = songState.copy(textSizeOption = newSizeOption)
+                songState = songState.copy(
+                    optionsState = songState.optionsState.copy(
+                        fontOption = newSizeOption
+                    )
+                )
             )
         } ?: currentState
     }

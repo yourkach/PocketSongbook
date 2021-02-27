@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.feature.song.mvi.state_mappers
 
 import com.example.pocketsongbook.domain.song.ChordsKeyChangeHelper
-import com.example.pocketsongbook.domain.song.TransposeLyricsUseCase
+import com.example.pocketsongbook.domain.song.GetLyricsStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.SongStateByEventMapper
 import com.example.pocketsongbook.feature.song.mvi.state_models.SongScreenInteractionEvent
 import com.example.pocketsongbook.feature.song.mvi.state_models.SongScreenState
@@ -9,7 +9,7 @@ import com.example.pocketsongbook.feature.song.mvi.state_models.SongViewStateMod
 import javax.inject.Inject
 
 class MapStateForChangeChordsKey @Inject constructor(
-    private val transposeLyricsUseCase: TransposeLyricsUseCase,
+    private val getLyricsStateUseCase: GetLyricsStateUseCase,
     private val chordsKeyChangeHelper: ChordsKeyChangeHelper
 ) : SongStateByEventMapper<SongScreenInteractionEvent.ChangeChordsKey>() {
     override suspend operator fun invoke(
@@ -17,18 +17,20 @@ class MapStateForChangeChordsKey @Inject constructor(
         event: SongScreenInteractionEvent.ChangeChordsKey
     ): SongScreenState {
         return (currentState.songState as? SongViewStateModel.Loaded)?.let { songState ->
-            val newKeyOption = chordsKeyChangeHelper.changeChordsKeyOption(
-                songState.chordsKeyOption.selectedValue,
+            val newChordsKeyOption = chordsKeyChangeHelper.changeChordsKeyOption(
+                songState.optionsState.chordsOption.selectedValue,
                 event.changeType
             )
-            val transposeLyricsResponse = transposeLyricsUseCase(
+            val transposeLyricsResponse = getLyricsStateUseCase(
                 songState.rawLyrics,
-                newKeyOption.selectedValue
+                newChordsKeyOption.selectedValue
             )
             currentState.copy(
                 songState = songState.copy(
                     formattedLyricsHtml = transposeLyricsResponse.formattedLyricsHtml,
-                    chordsKeyOption = newKeyOption
+                    optionsState = songState.optionsState.copy(
+                        chordsOption = newChordsKeyOption
+                    )
                 ),
                 chordsBarState = currentState.chordsBarState.copy(
                     chords = transposeLyricsResponse.chordsList

@@ -2,31 +2,32 @@ package com.example.pocketsongbook.feature.song.mvi
 
 import com.example.pocketsongbook.domain.favorites.CheckIsFavoriteUseCase
 import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.domain.song.FontSizeChangeHelper
-import com.example.pocketsongbook.domain.song.TransposeLyricsUseCase
-import com.example.pocketsongbook.domain.song.models.ChordsKey
-import com.example.pocketsongbook.domain.song.models.FontSize
-import com.example.pocketsongbook.feature.song.mvi.state_models.*
+import com.example.pocketsongbook.domain.song.GetLyricsStateUseCase
+import com.example.pocketsongbook.domain.song_settings.usecase.GetSongSettingsUseCase
+import com.example.pocketsongbook.feature.song.mvi.state_models.ChordBarViewStateModel
+import com.example.pocketsongbook.feature.song.mvi.state_models.SongScreenState
+import com.example.pocketsongbook.feature.song.mvi.state_models.SongViewStateModel
 import javax.inject.Inject
 
 class GetInitialSongStateUseCase @Inject constructor(
     private val checkIsFavoriteUseCase: CheckIsFavoriteUseCase,
-    private val transposeLyricsUseCase: TransposeLyricsUseCase,
-    private val fontSizeChangeHelper: FontSizeChangeHelper
+    private val getLyricsStateUseCase: GetLyricsStateUseCase,
+    private val getSongOptionsUseCase: GetSongSettingsUseCase
 ) {
 
-    suspend operator fun invoke(song: SongModel): SongScreenState {
-        val lyricsState = transposeLyricsUseCase(
-            rawLyrics = song.lyrics,
-            transposingKey = ChordsKey(key = 0)
+    suspend operator fun invoke(songModel: SongModel): SongScreenState {
+        val optionsState = getSongOptionsUseCase(songModel)
+        val lyricsState = getLyricsStateUseCase(
+            rawLyrics = songModel.lyrics,
+            transposingKey = optionsState.chordsOption.selectedValue
         )
         val songState = SongViewStateModel.Loaded(
-            songTitle = song.title,
-            songArtist = song.artist,
-            rawLyrics = song.lyrics,
-            isFavorite = checkIsFavoriteUseCase(song),
-            chordsKeyOption = ChangeableOption(lyricsState.chordsKey, isDefault = true),
-            textSizeOption = fontSizeChangeHelper.changeFontSizeOption(FontSize(0), ChangeType.SetDefault),
+            songUrl = songModel.url,
+            songTitle = songModel.title,
+            songArtist = songModel.artist,
+            rawLyrics = songModel.lyrics,
+            isFavorite = checkIsFavoriteUseCase(songModel),
+            optionsState = optionsState,
             formattedLyricsHtml = lyricsState.formattedLyricsHtml
         )
         val chordsBarState = ChordBarViewStateModel(

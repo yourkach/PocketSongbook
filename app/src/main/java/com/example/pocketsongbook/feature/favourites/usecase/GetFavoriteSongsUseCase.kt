@@ -5,7 +5,7 @@ import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
 import com.example.pocketsongbook.feature.favourites.ObtainSongsOption
 import javax.inject.Inject
 
-class GetFavouriteSongsUseCase @Inject constructor(
+class GetFavoriteSongsUseCase @Inject constructor(
     private val favouriteSongsRepository: FavouriteSongsRepository
 ) {
 

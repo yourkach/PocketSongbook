@@ -22,9 +22,9 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     SearchView.OnQueryTextListener {
 
     @Inject
-    lateinit var favouritesPresenter: FavouritesPresenter
+    lateinit var favoritesPresenter: FavoritesPresenter
 
-    private val presenter by moxyPresenter { favouritesPresenter }
+    private val presenter by moxyPresenter { favoritesPresenter }
 
     private val favoriteSongItemsAdapter =
         FavoriteSongsAdapter(

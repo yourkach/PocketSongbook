@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.example.pocketsongbook.data.database.AppDatabase
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
+import com.example.pocketsongbook.data.database.SongsOptionsDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class RoomModule {
+class DatabaseModule {
 
     @Provides
     @Singleton
@@ -22,4 +23,9 @@ class RoomModule {
     @Singleton
     fun provideFavouriteSongsDao(database: AppDatabase): FavouriteSongsDao =
         database.favouriteSongsDao()
+
+    @Provides
+    @Singleton
+    fun provideSettingsDao(database: AppDatabase): SongsOptionsDao =
+        database.songsSettingsDao()
 }

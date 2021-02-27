@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class TransposeLyricsUseCase @Inject constructor(
+class GetLyricsStateUseCase @Inject constructor(
     private val songTransponder: SongTransponder,
     private val lyricsFormatter: SongLyricsFormatter,
     private val chordsMapper: ChordsMapper

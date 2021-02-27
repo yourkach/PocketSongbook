@@ -2,6 +2,7 @@ package com.example.pocketsongbook.data.database
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
 
@@ -17,7 +18,7 @@ interface FavouriteSongsDao {
     @Query("SELECT * FROM favorite_songs WHERE url = :url")
     suspend fun findByUrl(url: String): List<FavoriteSongEntity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(favoriteSong: FavoriteSongEntity)
 
     @Query("DELETE FROM favorite_songs WHERE url = :url")

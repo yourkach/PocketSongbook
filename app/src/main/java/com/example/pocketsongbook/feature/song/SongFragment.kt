@@ -48,6 +48,11 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
         setUpSeekBar()
     }
 
+    override fun onPause() {
+        super.onPause()
+        presenter.onViewPaused()
+    }
+
     private fun setUpSeekBar() {
         songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -82,8 +87,8 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
 
     private fun bindSongState(songState: SongViewStateModel) {
         if (songState is SongViewStateModel.Loaded && songState != currentState?.songState) {
-            bindKeyOption(songState.chordsKeyOption)
-            bindFontSizeOption(songState.textSizeOption)
+            bindKeyOption(songState.optionsState.chordsOption)
+            bindFontSizeOption(songState.optionsState.fontOption)
             bindSongInfo(
                 artist = songState.songArtist,
                 title = songState.songTitle,

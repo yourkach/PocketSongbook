@@ -7,12 +7,14 @@ import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.favorites.ToggleSongFavoriteStatusUseCase
 import com.example.pocketsongbook.domain.models.SongModel
+import com.example.pocketsongbook.domain.song_settings.usecase.SaveOrUpdateSongOptionsState
 import com.example.pocketsongbook.feature.song.mvi.GetInitialSongStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.GetUpdatedStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -33,7 +35,8 @@ class SongPresenter @AssistedInject constructor(
     private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
     private val getInitialSongStateUseCase: GetInitialSongStateUseCase,
     private val getUpdatedStateUseCase: GetUpdatedStateUseCase,
-    private val toggleSongFavoriteStatusUseCase: ToggleSongFavoriteStatusUseCase
+    private val toggleSongFavoriteStatusUseCase: ToggleSongFavoriteStatusUseCase,
+    private val saveOrUpdateSongOptionsState: SaveOrUpdateSongOptionsState
 ) : BasePresenter<SongView>() {
 
     @AssistedFactory
@@ -102,6 +105,17 @@ class SongPresenter @AssistedInject constructor(
 
     fun onChordsKeyChangeInteraction(changeType: ChangeType) {
         handleInteractionEvent(SongScreenInteractionEvent.ChangeChordsKey(changeType))
+    }
+
+    fun onViewPaused() {
+        GlobalScope.launch {
+            (currentScreenState.songState as? SongViewStateModel.Loaded)?.let {
+                saveOrUpdateSongOptionsState(
+                    songUrl = it.songUrl,
+                    optionsState = it.optionsState
+                )
+            }
+        }
     }
 
 }
