@@ -2,12 +2,12 @@ package com.example.pocketsongbook.utils
 
 import android.app.Activity
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
+import timber.log.Timber
 
 
 class SafeClickListener(val interval: Int = 1000, val safeClick: (View) -> Unit) :
@@ -43,6 +43,6 @@ fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false):
     return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 }
 
-fun Any.logDebug(text: String) {
-    Log.d(this::class.simpleName, text)
+fun Any.logTagged(text: String) {
+    Timber.tag(this::class.simpleName).d(text)
 }

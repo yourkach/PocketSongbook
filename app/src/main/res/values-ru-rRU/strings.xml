@@ -20,4 +20,7 @@
     <string name="nav_search">Поиск</string>
     <string name="nav_tuner">Тюнер</string>
     <string name="saved_at">Сохранено в %1$s</string>
+    <string name="microphone_permissions_rationale">Доступ к микрофону необходим для распознавания высоты тона.</string>
+    <string name="permission_was_denied">Разрешение не было получено</string>
+    <string name="settings">Настройки</string>
 </resources>

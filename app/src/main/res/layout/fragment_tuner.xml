@@ -5,35 +5,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/pbOffsetDown"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="1000"
+        tools:progress="200"
+        android:layout_marginStart="48dp"
+        android:progressDrawable="@drawable/offset_progress_drawable"
+        android:rotation="180"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvSomeText"
+        app:layout_constraintEnd_toStartOf="@id/pbOffsetUp" />
+
+    <ProgressBar
+        android:id="@+id/pbOffsetUp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="1000"
+        android:layout_marginEnd="48dp"
+        android:progressDrawable="@drawable/offset_progress_drawable"
+        app:layout_constraintStart_toEndOf="@id/pbOffsetDown"
+        app:layout_constraintTop_toTopOf="@id/pbOffsetDown"
+        app:layout_constraintBottom_toBottomOf="@id/pbOffsetDown"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
-        android:id="@+id/tvFrequencyText"
+        android:id="@+id/tvSomeText"
         android:layout_width="wrap_content"
+        android:textSize="18sp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
         tools:text="frequency" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvFrequencyText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnStop"
+        android:id="@+id/btnToggleTuner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stop"
+        android:text="Toggle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvFrequencyText" />
+        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

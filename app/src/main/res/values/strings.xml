@@ -19,4 +19,7 @@
     <string name="nav_search">Search</string>
     <string name="nav_tuner">Tuner</string>
     <string name="saved_at">Saved at %1$s</string>
+    <string name="microphone_permissions_rationale">Microphone access is required for pitch recognition.</string>
+    <string name="permission_was_denied">Permission was denied</string>
+    <string name="settings">Settings</string>
 </resources>

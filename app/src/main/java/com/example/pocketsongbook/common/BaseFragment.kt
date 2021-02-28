@@ -1,9 +1,12 @@
 package com.example.pocketsongbook.common
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.transition.TransitionInflater
 import com.example.pocketsongbook.R
 import com.github.terrakok.cicerone.Router
@@ -87,12 +90,20 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
         }
     }
 
+    protected fun isPermissionGranted(
+        permissionName: String
+    ): Boolean = ContextCompat.checkSelfPermission(
+        requireContext(),
+        permissionName
+    ) == PackageManager.PERMISSION_GRANTED
+
     protected fun showActionSnackBar(
         text: String,
         buttonText: String,
+        anchorView: CoordinatorLayout? = null,
         onButtonClick: () -> Unit
     ): Snackbar {
-        return Snackbar.make(requireView(), text, Snackbar.LENGTH_LONG).apply {
+        return Snackbar.make(anchorView ?: requireView(), text, Snackbar.LENGTH_LONG).apply {
             setAction(buttonText) { onButtonClick() }
             show()
         }

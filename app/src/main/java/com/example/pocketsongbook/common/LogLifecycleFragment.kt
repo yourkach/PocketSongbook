@@ -4,10 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.Fragment
-import moxy.MvpAppCompatFragment
 
-abstract class LogLifecycleFragment(layoutId: Int) : MvpAppCompatFragment(layoutId) {
+abstract class LogLifecycleFragment(layoutId: Int) : BaseFragment(layoutId) {
 
     private val logTag = this::class.java.simpleName + hashCode() + ":Lifecycle"
 

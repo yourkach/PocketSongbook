@@ -34,8 +34,9 @@ class SearchLayoutManager @JvmOverloads constructor(
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         (state as? Bundle)?.let { bundle ->
-            val parentState = bundle.getParcelable<Parcelable>(PARENT_SAVED_STATE_KEY)
-            super.onRestoreInstanceState(parentState)
+            bundle.getParcelable<SavedState>(PARENT_SAVED_STATE_KEY)?.let { parentState ->
+                super.onRestoreInstanceState(parentState)
+            }
             isScrollingEnabled = bundle.getBoolean(SCROLLING_ENABLED_KEY, true)
         }
     }

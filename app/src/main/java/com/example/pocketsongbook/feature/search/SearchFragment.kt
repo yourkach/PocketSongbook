@@ -15,7 +15,7 @@ import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
-import com.example.pocketsongbook.feature.guitar_tuner.TunerFragment
+import com.example.pocketsongbook.feature.guitar_tuner.tuner_screen.TunerFragment
 import com.example.pocketsongbook.feature.search.list.SongItemsAdapter
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.utils.SearchLayoutManager

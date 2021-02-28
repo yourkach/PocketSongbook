@@ -20,6 +20,7 @@ import javax.inject.Singleton
         DefaultsModule::class,
         SettingsModule::class,
         SongModule::class,
+        TunerModule::class,
         PrefsBindingModule::class,
         FavouritesModule::class,
         AndroidInjectionModule::class,
