@@ -1,5 +1,6 @@
 package com.example.pocketsongbook.common
 
+import android.content.Context
 import android.os.Bundle
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
@@ -9,10 +10,20 @@ import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import dagger.android.support.AndroidSupportInjection
 import moxy.MvpAppCompatFragment
+import javax.inject.Inject
 
 abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment_tab_container),
-    RouterProvider, BackPressedListener {
+    RouterProvider, BackPressedListener, HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector
 
     abstract val tabName: String
 
@@ -25,8 +36,15 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
         (activity as RootActivity).getTabCicerone(tabName)
     }
 
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
     fun resetContainer() {
-        router.newRootScreen(rootScreen)
+        if (childFragmentManager.backStackEntryCount > 1) {
+            router.newRootScreen(rootScreen)
+        }
     }
 
     private val navigator: Navigator by lazy {

@@ -1,11 +1,11 @@
-package com.example.pocketsongbook.di
+package com.example.pocketsongbook.di.modules
 
 import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
 import com.example.pocketsongbook.common.navigation.impl.TabCiceronesHolderImpl
-import dagger.Module
-import dagger.Provides
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
+import dagger.Module
+import dagger.Provides
 import javax.inject.Singleton
 
 @Module

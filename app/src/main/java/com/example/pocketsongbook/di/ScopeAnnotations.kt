@@ -4,4 +4,7 @@ package com.example.pocketsongbook.di
 annotation class ActivityScope
 
 @Retention(value = AnnotationRetention.RUNTIME)
+annotation class ContainerScope
+
+@Retention(value = AnnotationRetention.RUNTIME)
 annotation class FragmentScope
