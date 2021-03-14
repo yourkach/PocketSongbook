@@ -22,6 +22,7 @@ import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
 import moxy.ktx.moxyPresenter
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -87,6 +88,10 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     override fun dismissWebsitesSelector() {
         websitesListPopup.dismiss()
+    }
+
+    override fun setQuerySuggestions(suggestions: List<String>) {
+        Timber.d("Suggestions: $suggestions")
     }
 
     override fun showSearchItemsLoading() {

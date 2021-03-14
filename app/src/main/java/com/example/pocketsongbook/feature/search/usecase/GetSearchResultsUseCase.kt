@@ -8,12 +8,15 @@ import javax.inject.Inject
 
 class GetSearchResultsUseCase @Inject constructor(
     private val websitesManager: SongsRemoteRepository,
-    private val favouriteSongsRepository: FavouriteSongsRepository
+    private val favouriteSongsRepository: FavouriteSongsRepository,
+    private val saveSearchQuery: SaveSearchQueryUseCase
 ) {
 
     suspend operator fun invoke(website: SongsWebsite, query: String): List<FoundSongModel> {
         return websitesManager.loadSearchResults(website, query).onEach {
             it.isFavourite = favouriteSongsRepository.containsSong(it.url)
+        }.also { results ->
+            if (results.isNotEmpty()) saveSearchQuery(query)
         }
     }
 

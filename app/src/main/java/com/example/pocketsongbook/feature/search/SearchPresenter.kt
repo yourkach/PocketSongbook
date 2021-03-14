@@ -9,6 +9,7 @@ import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.example.pocketsongbook.feature.search.usecase.GetQuerySuggestionsUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
 import kotlinx.coroutines.*
@@ -17,11 +18,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import moxy.InjectViewState
-import moxy.presenterScope
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.OneExecutionStateStrategy
-import moxy.viewstate.strategy.SkipStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.*
 import javax.inject.Inject
 
 
@@ -37,17 +34,20 @@ interface SearchSongView : BaseView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setWebsiteSelected(website: SongsWebsite)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "search_items")
+    fun showSearchItemsLoading()
+
+    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "search_items")
     fun setSearchItems(newItems: List<FoundSongModel>)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setQuerySuggestions(suggestions: List<String>)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showFailedToLoadSongError()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun dismissWebsitesSelector()
-
-    @StateStrategyType(SkipStrategy::class)
-    fun showSearchItemsLoading()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showSearchFailedError()
@@ -58,7 +58,8 @@ interface SearchSongView : BaseView {
 class SearchPresenter @Inject constructor(
     private val getSearchResultsUseCase: GetSearchResultsUseCase,
     private val loadSongModelUseCase: LoadSongModelUseCase,
-    private val subscribeToEventsUseCase: SubscribeToEventsUseCase
+    private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
+    private val getQuerySuggestionsUseCase: GetQuerySuggestionsUseCase
 ) : BasePresenter<SearchSongView>() {
 
     private var lastSearchQuery: String? = null
@@ -106,13 +107,14 @@ class SearchPresenter @Inject constructor(
     }
 
     private val searchQueryFlow = MutableSharedFlow<String>()
-
     fun onQueryTextChange(newText: String) {
-        presenterScope.launch {
+        launch {
             searchQueryFlow.emit(newText)
         }
+        loadQuerySuggestions(queryText = newText)
     }
 
+    @FlowPreview
     private fun startCollectingQuery() {
         launch {
             searchQueryFlow
@@ -124,9 +126,17 @@ class SearchPresenter @Inject constructor(
         }
     }
 
+    private var loadSuggestionsJob by setAndCancelJob()
+    private fun loadQuerySuggestions(queryText: String) {
+        loadSuggestionsJob = launch {
+            getQuerySuggestionsUseCase(queryText).let(viewState::setQuerySuggestions)
+        }
+    }
+
     private var searchJob: Job? by setAndCancelJob()
     private fun startSearchJob(query: String) {
         searchJob = launch {
+            hideSuggestions()
             viewState.showSearchItemsLoading()
             lastSearchQuery = query
             runCatching {
@@ -137,6 +147,11 @@ class SearchPresenter @Inject constructor(
                 viewState.showSearchFailedError()
             }
         }
+    }
+
+    private fun hideSuggestions() {
+        loadSuggestionsJob?.cancel()
+        viewState.setQuerySuggestions(listOf())
     }
 
     fun onWebsiteSelected(website: SongsWebsite) {
