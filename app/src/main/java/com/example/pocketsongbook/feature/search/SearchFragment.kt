@@ -10,10 +10,10 @@ import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.domain.toSongsWebsiteOrNull
+import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.example.pocketsongbook.domain.search.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.guitar_tuner.tuner_screen.TunerFragment
 import com.example.pocketsongbook.feature.search.list.SongItemsAdapter

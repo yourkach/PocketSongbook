@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
 import com.example.pocketsongbook.data.database.entities.SavedQueryEntity
 
 @Dao
@@ -20,6 +19,6 @@ interface SavedQueriesDao {
     suspend fun clearAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(favoriteSong: FavoriteSongEntity)
+    suspend fun insert(query: SavedQueryEntity)
 
 }

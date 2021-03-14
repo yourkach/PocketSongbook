@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.domain
+package com.example.pocketsongbook.domain.search
 
 enum class SongsWebsite(val websiteName: String) {
     AmDm("AmDm.ru"),

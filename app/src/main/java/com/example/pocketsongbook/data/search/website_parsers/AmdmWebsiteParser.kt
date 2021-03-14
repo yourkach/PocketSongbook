@@ -1,7 +1,7 @@
-package com.example.pocketsongbook.data.network.website_parsers
+package com.example.pocketsongbook.data.search.website_parsers
 
-import com.example.pocketsongbook.domain.SongsWebsite
 import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.example.pocketsongbook.domain.search.SongsWebsite
 import org.jsoup.nodes.Document
 import javax.inject.Inject
 

@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.models
 
-import com.example.pocketsongbook.domain.SongsWebsite
+import com.example.pocketsongbook.domain.search.SongsWebsite
 
 data class FoundSongModel(
     val artist: String,

@@ -15,7 +15,7 @@ import javax.inject.Singleton
     modules = [
         AppModule::class,
         NavigationModule::class,
-        NetworkModule::class,
+        SearchModule::class,
         DatabaseModule::class,
         DefaultsModule::class,
         SettingsModule::class,

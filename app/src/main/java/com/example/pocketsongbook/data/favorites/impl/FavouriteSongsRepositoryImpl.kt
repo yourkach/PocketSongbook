@@ -1,57 +1,50 @@
 package com.example.pocketsongbook.data.favorites.impl
 
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
-import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
+import com.example.pocketsongbook.data.favorites.FavoriteModelMapper
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.data.favorites.FavoriteSongsUrlsDao
 import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
 import com.example.pocketsongbook.domain.models.SongModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-// TODO: 14.02.21 вынести префсы в отдельный класс
-class FavouriteSongsRepositoryImpl(
+class FavouriteSongsRepositoryImpl @Inject constructor(
     private val favouriteSongsDao: FavouriteSongsDao,
-    private val favoriteSongsUrlsDao: FavoriteSongsUrlsDao
+    private val favoriteSongsUrlsDao: FavoriteSongsUrlsDao,
+    private val modelMapper: FavoriteModelMapper
 ) : FavouriteSongsRepository {
 
     override suspend fun getAllFavourites(): List<FavoriteSongModel> {
-        return withContext(Dispatchers.IO) {
-            favouriteSongsDao.getAll().map {
-                it.toFavoriteSong()
-            }.also { songs ->
-                favoriteSongsUrlsDao.urls.apply {
-                    clear()
-                    addAll(songs.map { it.song.url })
-                }
+        return favouriteSongsDao.getAll().map(modelMapper::toModel).also { songs ->
+            favoriteSongsUrlsDao.urls.apply {
+                clear()
+                addAll(songs.map { it.song.url })
             }
         }
     }
 
     override suspend fun getSongsByQuery(query: String): List<FavoriteSongModel> {
-        return withContext(Dispatchers.IO) {
-            favouriteSongsDao.findByQuery(query).map(FavoriteSongEntity::toFavoriteSong)
-        }
+        return favouriteSongsDao.findByQuery(query).map(modelMapper::toModel)
     }
 
     override suspend fun findSongByUrl(url: String): FavoriteSongModel? {
-        return withContext(Dispatchers.IO) {
-            favouriteSongsDao.findByUrl(url).firstOrNull()?.toFavoriteSong()
-        }
+        return favouriteSongsDao.findByUrl(url).firstOrNull()?.let(modelMapper::toModel)
     }
 
     override suspend fun removeSongByUrl(url: String) {
-        withContext(Dispatchers.IO) {
-            favouriteSongsDao.deleteByUrl(url)
-            favoriteSongsUrlsDao.urls.remove(url)
-        }
+        favouriteSongsDao.deleteByUrl(url)
+        favoriteSongsUrlsDao.urls.remove(url)
     }
 
     override suspend fun addSong(song: SongModel) {
-        withContext(Dispatchers.IO) {
-            favouriteSongsDao.insert(FavoriteSongEntity.create(songModel = song))
-            favoriteSongsUrlsDao.urls.add(song.url)
-        }
+        val favoriteSongModel = FavoriteSongModel(
+            song = song,
+            timeAdded = System.currentTimeMillis()
+        )
+        favouriteSongsDao.insert(modelMapper.toEntity(favoriteSongModel))
+        favoriteSongsUrlsDao.urls.add(song.url)
     }
 
     override suspend fun containsSong(url: String): Boolean {
