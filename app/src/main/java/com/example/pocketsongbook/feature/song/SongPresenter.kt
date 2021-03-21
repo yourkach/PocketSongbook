@@ -14,7 +14,6 @@ import com.example.pocketsongbook.feature.song.mvi.state_models.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -108,7 +107,7 @@ class SongPresenter @AssistedInject constructor(
     }
 
     fun onViewPaused() {
-        GlobalScope.launch {
+        launch {
             (currentScreenState.songState as? SongViewStateModel.Loaded)?.let {
                 if (it.isFavorite) {
                     saveOrUpdateSongOptionsState(

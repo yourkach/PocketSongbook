@@ -1,6 +1,5 @@
 package com.example.pocketsongbook.di
 
-import android.app.Application
 import com.example.pocketsongbook.common.SongbookApplication
 import com.example.pocketsongbook.di.modules.*
 import dagger.BindsInstance
@@ -33,7 +32,7 @@ interface AppComponent : AndroidInjector<SongbookApplication> {
     @Component.Factory
     interface Builder {
         fun create(
-            @BindsInstance app: Application
+            @BindsInstance app: SongbookApplication
         ): AppComponent
     }
 
