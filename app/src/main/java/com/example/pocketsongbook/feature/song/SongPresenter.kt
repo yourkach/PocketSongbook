@@ -108,11 +108,11 @@ class SongPresenter @AssistedInject constructor(
 
     fun onViewPaused() {
         launch {
-            (currentScreenState.songState as? SongViewStateModel.Loaded)?.let {
-                if (it.isFavorite) {
+            currentScreenState.songState.asLoadedOrNull()?.let { songState ->
+                if (songState.isFavorite) {
                     saveOrUpdateSongOptionsState(
-                        songUrl = it.songUrl,
-                        optionsState = it.optionsState
+                        songUrl = songState.songUrl,
+                        optionsState = songState.optionsState
                     )
                 }
             }

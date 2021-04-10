@@ -14,7 +14,11 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
     override suspend fun loadSearchResults(searchRequest: String): List<FoundSongModel> {
         return withContext(Dispatchers.IO) {
             val document = Jsoup.connect(buildSearchURL(searchRequest)).get()
-            parseSearchPage(document)
+            try {
+                parseSearchPage(document)
+            } catch (e: Throwable) {
+                throw ParseSearchPageError(e)
+            }
         }
     }
 
@@ -22,8 +26,12 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
 
     override suspend fun loadSong(foundSong: FoundSongModel): SongModel {
         val lyrics = withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(foundSong.url).get()
-            parseLyricsPage(document)
+            val lyricsPageDocument = Jsoup.connect(foundSong.url).get()
+            try {
+                parseLyricsPage(lyricsPageDocument)
+            } catch (e: Throwable) {
+                throw ParseSongPageError(e)
+            }
         }
         return SongModel.create(foundSong = foundSong, lyrics = lyrics)
     }
@@ -31,3 +39,6 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
     protected abstract fun parseLyricsPage(pageContent: Document): String
 
 }
+
+class ParseSongPageError(override val cause: Throwable? = null) : Throwable()
+class ParseSearchPageError(override val cause: Throwable? = null) : Throwable()

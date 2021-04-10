@@ -7,5 +7,5 @@ data class FoundSongModel(
     val title: String,
     val url: String,
     val website: SongsWebsite,
-    var isFavourite: Boolean = false
+    val isFavourite: Boolean = false
 )

@@ -9,6 +9,7 @@
     <string name="message_nothing_found">Nothing found</string>
 
     <string name="error_no_connection">Internet connection error</string>
+    <string name="error_failed_to_get_search_results">Failed to get search results</string>
     <string name="error_failed_to_load_song">Failed to load song</string>
 
     <string name="label_favourites">Favourites</string>

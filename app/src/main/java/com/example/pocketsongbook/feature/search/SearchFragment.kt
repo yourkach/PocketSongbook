@@ -105,7 +105,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     override fun showSearchFailedError() {
-        // TODO: 14.02.21 сделать нормальную ошибку
+        val error = getString(R.string.error_failed_to_get_search_results)
+        showError(error)
+    }
+
+    override fun showInternetConnectionError() {
         val error = getString(R.string.error_no_connection)
         showError(error)
     }
@@ -118,7 +122,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                 object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         if (!query.isNullOrEmpty()) {
-                            presenter.onQueryTextChange(query)
+                            presenter.onQueryTextSubmit(query)
                             songsSearchView.hideKeyboard()
                         }
                         return true

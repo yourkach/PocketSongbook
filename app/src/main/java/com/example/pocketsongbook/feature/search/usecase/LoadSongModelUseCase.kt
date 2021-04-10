@@ -11,7 +11,7 @@ class LoadSongModelUseCase @Inject constructor(
     private val favouriteSongsRepository: FavouriteSongsRepository
 ) {
 
-    suspend operator fun invoke(foundSong: FoundSongModel): SongModel? {
+    suspend operator fun invoke(foundSong: FoundSongModel): SongModel {
         return foundSong.isFavourite
             .takeIf { it }
             ?.let {

@@ -7,6 +7,6 @@ interface SongsRemoteRepository {
 
     suspend fun loadSearchResults(website: SongsWebsite, query: String): List<FoundSongModel>
 
-    suspend fun loadSong(songSearchItem: FoundSongModel): SongModel?
+    suspend fun loadSong(songSearchItem: FoundSongModel): SongModel
 
 }

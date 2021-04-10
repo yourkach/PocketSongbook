@@ -9,12 +9,14 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
     override val website = SongsWebsite.MyChords
 
-    private val baseUrl = "https://hm6.ru/search?q="
+    private val baseUrl by lazy { "https://hm6.ru/" }
 
-    private val searchSettings = "&src=1&ch=1&sortby=news_read&resorder=desc&num=40&page=1"
+    private val searchUrl by lazy { "search?q=" }
+
+    private val searchSettings by lazy { "&src=1&sortby=news_read&resorder=desc&num=40&page=1" }
 
     override fun buildSearchURL(searchQuery: String): String {
-        return baseUrl + searchQuery.replace(' ', '+') + searchSettings
+        return baseUrl + searchUrl + searchQuery.replace(' ', '+') + searchSettings
     }
 
     override fun parseSearchPage(pageContent: Document): List<FoundSongModel> {
@@ -35,7 +37,7 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
                 splitIndex = 0
             }
             val title = itemText.substring(splitIndex)
-            val link = "https://mychords.net/" + songItem.attr("href")
+            val link = baseUrl + songItem.attr("href")
             songItems.add(
                 FoundSongModel(
                     artist = artist,
@@ -49,12 +51,13 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
     }
 
     override fun parseLyricsPage(pageContent: Document): String {
-        var text = pageContent.select("pre.w-words__text")
-            .eq(0).html().toString()
-        text = text.replace("</a></span>", "</b>")
+        val element = pageContent.select("pre[itemprop=text]")
+
+        val rawHtmlText = element.eq(0).html()
+
+        return rawHtmlText.replace("</a></span>", "</b>")
             .replace("<span class=\"b-accord__symbol\"><a\\b[^>]*>\">".toRegex(), "<b>")
             .replace("(Смотреть видео)", "")
             .replace("<a\\b[^>]*>Взято с сайта https://mychords.net</a>".toRegex(), "")
-        return text
     }
 }

@@ -13,8 +13,10 @@ class GetSearchResultsUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(website: SongsWebsite, query: String): List<FoundSongModel> {
-        return websitesManager.loadSearchResults(website, query).onEach {
-            it.isFavourite = favouriteSongsRepository.containsSong(it.url)
+        return websitesManager.loadSearchResults(website, query).onEach { foundSongModel ->
+            foundSongModel.copy(
+                isFavourite = favouriteSongsRepository.containsSong(foundSongModel.url)
+            )
         }.also { results ->
             if (results.isNotEmpty()) saveSearchQuery(query)
         }

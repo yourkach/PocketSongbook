@@ -16,3 +16,5 @@ sealed class SongViewStateModel {
     ) : SongViewStateModel()
 }
 
+fun SongViewStateModel.asLoadedOrNull() : SongViewStateModel.Loaded? =
+    (this as? SongViewStateModel.Loaded)

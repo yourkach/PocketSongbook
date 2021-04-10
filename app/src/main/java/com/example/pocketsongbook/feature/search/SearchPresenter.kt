@@ -1,9 +1,10 @@
 package com.example.pocketsongbook.feature.search
 
-import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
+import com.example.pocketsongbook.data.search.website_parsers.ParseSearchPageError
+import com.example.pocketsongbook.data.search.website_parsers.ParseSongPageError
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.models.FoundSongModel
@@ -19,6 +20,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import moxy.InjectViewState
 import moxy.viewstate.strategy.*
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 
@@ -52,6 +55,9 @@ interface SearchSongView : BaseView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showSearchFailedError()
 
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showInternetConnectionError()
+
 }
 
 @InjectViewState
@@ -79,7 +85,7 @@ class SearchPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        startCollectingQuery()
+        collectQueryChanges()
         subscribeToEvents()
         viewState.setWebsiteSelected(selectedWebsite)
     }
@@ -106,22 +112,25 @@ class SearchPresenter @Inject constructor(
         }
     }
 
-    private val searchQueryFlow = MutableSharedFlow<String>()
+    private val queryChangesFlow = MutableSharedFlow<String>()
     fun onQueryTextChange(newText: String) {
         launch {
-            searchQueryFlow.emit(newText)
+            queryChangesFlow.emit(newText)
         }
-        loadQuerySuggestions(queryText = newText)
+    }
+
+    fun onQueryTextSubmit(query: String) {
+        startSearchJob(query)
     }
 
     @FlowPreview
-    private fun startCollectingQuery() {
+    private fun collectQueryChanges() {
         launch {
-            searchQueryFlow
+            queryChangesFlow
                 .distinctUntilChanged()
-                .debounce(700)
+                .debounce(500)
                 .collect { query ->
-                    startSearchJob(query)
+                    loadQuerySuggestions(query)
                 }
         }
     }
@@ -167,10 +176,8 @@ class SearchPresenter @Inject constructor(
         if (loadSongJob?.isActive != true) {
             loadSongJob = launch {
                 withLoading {
-                    loadSongModelUseCase(searchItem)?.let { song ->
+                    loadSongModelUseCase(searchItem).let { song ->
                         viewState.toSongScreen(song)
-                    } ?: let {
-                        viewState.showFailedToLoadSongError()
                     }
                 }
             }
@@ -178,7 +185,12 @@ class SearchPresenter @Inject constructor(
     }
 
     override fun onFailure(e: Throwable) {
-        viewState.showMessage(R.string.error_no_connection)
+        when(e){
+            is ParseSearchPageError -> viewState.showSearchFailedError()
+            is ParseSongPageError -> viewState.showFailedToLoadSongError()
+            is SocketTimeoutException,
+            is UnknownHostException -> viewState.showInternetConnectionError()
+        }
     }
 
     fun onFavouritesClicked() {
