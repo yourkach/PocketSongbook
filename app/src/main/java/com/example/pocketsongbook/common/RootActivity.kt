@@ -111,8 +111,8 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
         }
     }
 
-    fun getTabCicerone(tabName: String): Cicerone<Router> {
-        return holder.getCicerone(tabName)
+    fun getTabCicerone(tab: NavigationTab): Cicerone<Router> {
+        return holder.getCicerone(tab)
     }
 
     fun setNavigationBarVisible(isVisible: Boolean) {

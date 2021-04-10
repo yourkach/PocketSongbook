@@ -4,5 +4,5 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 
 interface TabCiceronesHolder {
-    fun getCicerone(tabName: String): Cicerone<Router>
+    fun getCicerone(tab: NavigationTab): Cicerone<Router>
 }

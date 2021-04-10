@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
+import com.example.pocketsongbook.common.navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.RouterProvider
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Navigator
@@ -25,7 +26,7 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
 
     override fun androidInjector(): AndroidInjector<Any> = androidInjector
 
-    abstract val tabName: String
+    abstract val tab: NavigationTab
 
     abstract val rootScreen: Screen
 
@@ -33,7 +34,7 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
         get() = cicerone.router
 
     private val cicerone: Cicerone<Router> by lazy {
-        (activity as RootActivity).getTabCicerone(tabName)
+        (activity as RootActivity).getTabCicerone(tab)
     }
 
     override fun onAttach(context: Context) {
