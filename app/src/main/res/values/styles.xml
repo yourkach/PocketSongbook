@@ -11,8 +11,8 @@
     </style>
 
 
-    <!-- Base application theme. -->
     <style name="SplashTheme" parent="AppTheme">
+        <item name="android:statusBarColor">@color/colorInterfaceDefault</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
