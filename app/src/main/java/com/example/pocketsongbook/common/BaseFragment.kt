@@ -9,6 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.transition.TransitionInflater
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.common.navigation.BackPressedListener
 import com.github.terrakok.cicerone.Router
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjector
@@ -19,7 +20,7 @@ import moxy.MvpAppCompatFragment
 import javax.inject.Inject
 
 abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(layoutId),
-    BaseView, HasAndroidInjector {
+    BaseView, HasAndroidInjector, BackPressedListener {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -42,6 +43,8 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
         super.onCreate(savedInstanceState)
         initTransitions()
     }
+
+    override fun onBackPressed(): Boolean = false
 
     private fun initTransitions() {
         with(TransitionInflater.from(requireContext())) {

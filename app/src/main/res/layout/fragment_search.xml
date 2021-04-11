@@ -88,17 +88,6 @@
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabOpenTuner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_chord_stub"
-        android:tint="@color/colorWhite"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <TextView
         android:id="@+id/nothingFoundStub"
         android:layout_width="wrap_content"
@@ -111,4 +100,16 @@
         app:layout_constraintRight_toRightOf="@id/searchContainer"
         app:layout_constraintTop_toTopOf="@id/searchContainer"
         tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSearchSuggestions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="@color/colorInterfaceDefault"
+        app:layout_constraintTop_toBottomOf="@id/searchToolbarContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_suggestion"
+        tools:itemCount="4" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

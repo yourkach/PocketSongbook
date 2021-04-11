@@ -18,6 +18,9 @@ interface SavedQueriesDao {
     @Query("DELETE FROM saved_search_queries")
     suspend fun clearAll()
 
+    @Query("DELETE FROM saved_search_queries WHERE text = :text")
+    suspend fun deleteMatching(text: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(query: SavedQueryEntity)
 

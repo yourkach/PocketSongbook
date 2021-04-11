@@ -13,11 +13,15 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
 
     override suspend fun loadSearchResults(searchRequest: String): List<FoundSongModel> {
         return withContext(Dispatchers.IO) {
-            val document = Jsoup.connect(buildSearchURL(searchRequest)).get()
+            val document = try {
+                Jsoup.connect(buildSearchURL(searchRequest)).get()
+            } catch (e: Throwable) {
+                throw LoadSearchResultsError.ConnectionError(e)
+            }
             try {
                 parseSearchPage(document)
             } catch (e: Throwable) {
-                throw ParseSearchPageError(e)
+                throw LoadSearchResultsError.ParsingError(e)
             }
         }
     }
@@ -41,4 +45,8 @@ abstract class BaseWebsiteParser : SongsWebsiteParser {
 }
 
 class ParseSongPageError(override val cause: Throwable? = null) : Throwable()
-class ParseSearchPageError(override val cause: Throwable? = null) : Throwable()
+
+sealed class LoadSearchResultsError : Throwable() {
+    class ParsingError(override val cause: Throwable? = null) : LoadSearchResultsError()
+    class ConnectionError(override val cause: Throwable? = null) : LoadSearchResultsError()
+}

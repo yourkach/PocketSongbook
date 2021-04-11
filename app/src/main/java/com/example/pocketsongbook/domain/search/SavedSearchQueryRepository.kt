@@ -8,4 +8,6 @@ interface SavedSearchQueryRepository {
 
     suspend fun saveQuery(queryText: String)
 
+    suspend fun deleteQuery(queryText: String)
+
 }

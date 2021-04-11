@@ -8,16 +8,24 @@ import javax.inject.Inject
 class SavedSearchQueryRepositoryImpl @Inject constructor(
     private val queriesDao: SavedQueriesDao,
     private val modelMapper: QueryModelMapper
-): SavedSearchQueryRepository {
+) : SavedSearchQueryRepository {
 
 
     override suspend fun getMatchingQueries(text: String): List<SavedQueryModel> {
-        return queriesDao.getMatchingQueries(text).map(modelMapper::toModel)
+        return when (text.isNotBlank()) {
+            true -> queriesDao.getMatchingQueries(text)
+            false -> queriesDao.getAll()
+        }
+            .map(modelMapper::toModel)
     }
 
     override suspend fun saveQuery(queryText: String) {
-        val model = SavedQueryModel(queryText,System.currentTimeMillis())
+        val model = SavedQueryModel(queryText, System.currentTimeMillis())
         val entity = modelMapper.toEntity(model)
         queriesDao.insert(entity)
+    }
+
+    override suspend fun deleteQuery(queryText: String) {
+        queriesDao.deleteMatching(queryText)
     }
 }

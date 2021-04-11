@@ -6,4 +6,5 @@
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="song_button_size">42dp</dimen>
     <dimen name="chords_bar_corners_radius">12dp</dimen>
+    <dimen name="suggestion_ic_delete_size">54dp</dimen>
 </resources>

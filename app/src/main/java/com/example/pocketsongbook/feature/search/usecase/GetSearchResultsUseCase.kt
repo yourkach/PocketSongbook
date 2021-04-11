@@ -7,13 +7,13 @@ import com.example.pocketsongbook.domain.search.SongsWebsite
 import javax.inject.Inject
 
 class GetSearchResultsUseCase @Inject constructor(
-    private val websitesManager: SongsRemoteRepository,
+    private val songsRemoteRepository: SongsRemoteRepository,
     private val favouriteSongsRepository: FavouriteSongsRepository,
     private val saveSearchQuery: SaveSearchQueryUseCase
 ) {
 
     suspend operator fun invoke(website: SongsWebsite, query: String): List<FoundSongModel> {
-        return websitesManager.loadSearchResults(website, query).onEach { foundSongModel ->
+        return songsRemoteRepository.loadSearchResults(website, query).onEach { foundSongModel ->
             foundSongModel.copy(
                 isFavourite = favouriteSongsRepository.containsSong(foundSongModel.url)
             )

@@ -57,10 +57,19 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
     }
 
     override fun onBackPressed(): Boolean {
+        return childOnBackPressed() || tabOnBackPressed()
+    }
+
+    private fun tabOnBackPressed(): Boolean {
         return if (childFragmentManager.backStackEntryCount > 0) {
             childFragmentManager.popBackStack()
             true
         } else false
+    }
+
+    private fun childOnBackPressed(): Boolean {
+        return childFragmentManager.fragments.last()
+            .let { it as? BackPressedListener }?.onBackPressed() ?: false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -7,20 +7,23 @@ import android.widget.AutoCompleteTextView
 import android.widget.ListPopupWindow
 import android.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.search.SongsWebsite
 import com.example.pocketsongbook.domain.search.toSongsWebsiteOrNull
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
-import com.example.pocketsongbook.feature.guitar_tuner.tuner_screen.TunerFragment
 import com.example.pocketsongbook.feature.search.list.SongItemsAdapter
+import com.example.pocketsongbook.feature.search.list.SuggestionsAdapter
 import com.example.pocketsongbook.feature.song.SongFragment
 import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
+import com.example.pocketsongbook.utils.isViewFocused
+import com.example.pocketsongbook.utils.queryText
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.fragment_search.view.*
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,10 +51,13 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         initRecyclerView()
         initSearchView()
         initWebsitesSelector()
+    }
 
-        fabOpenTuner.setOnClickListener {
-            router.navigateTo(TunerFragment().toScreen())
-        }
+    override fun onBackPressed(): Boolean = with(songsSearchView) {
+        if (isViewFocused) {
+            clearFocus()
+            true
+        } else false
     }
 
     private fun initRecyclerView() {
@@ -59,10 +65,6 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
             layoutManager = SearchLayoutManager(requireContext())
             adapter = searchItemsAdapter
         }
-    }
-
-    override fun setWebsiteSelected(website: SongsWebsite) {
-        tvSelectedWebsite.text = website.websiteName
     }
 
     private val websitesListPopup by lazy { ListPopupWindow(requireContext()) }
@@ -79,29 +81,12 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                 websiteNames[position].toSongsWebsiteOrNull()?.let { website ->
                     presenter.onWebsiteSelected(website)
                 }
+                dismiss()
             }
         }
         tvSelectedWebsite.setOnClickListener {
             websitesListPopup.show()
         }
-    }
-
-    override fun dismissWebsitesSelector() {
-        websitesListPopup.dismiss()
-    }
-
-    override fun setQuerySuggestions(suggestions: List<String>) {
-        Timber.d("Suggestions: $suggestions")
-    }
-
-    override fun showSearchItemsLoading() {
-        nothingFoundStub.isVisible = false
-        searchItemsAdapter.setLoadingItemsList()
-        setScrollingEnabled(false)
-    }
-
-    private fun setScrollingEnabled(isEnabled:Boolean){
-        (searchRv.layoutManager as? SearchLayoutManager)?.isScrollingEnabled = isEnabled
     }
 
     override fun showSearchFailedError() {
@@ -114,28 +99,45 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         showError(error)
     }
 
+    private val suggestionsAdapter by lazy {
+        SuggestionsAdapter(
+            onSuggestionClick = presenter::onSuggestionClick,
+            onSuggestionDelete = presenter::onSuggestionDeleteClick
+        )
+    }
+
     private fun initSearchView() {
         songsSearchView.apply {
             val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
             findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
+            setOnQueryTextFocusChangeListener { v, hasFocus ->
+                presenter.onSearchFieldFocusChanged(hasFocus)
+            }
             setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
-                        if (!query.isNullOrEmpty()) {
-                            presenter.onQueryTextSubmit(query)
+                        val trimmedQuery = query.orEmpty().trim()
+                        if (trimmedQuery.isNotEmpty()) {
+                            presenter.onQueryTextSubmit(trimmedQuery)
                             songsSearchView.hideKeyboard()
                         }
                         return true
                     }
 
                     override fun onQueryTextChange(newText: String?): Boolean {
-                        if (!newText.isNullOrEmpty()) {
-                            presenter.onQueryTextChange(newText)
-                        }
+                        presenter.onQueryTextChange(
+                            query = newText?.trim().orEmpty(),
+                            isQueryFocused = songsSearchView.focusedChild != null
+                        )
                         return true
                     }
                 }
             )
+        }
+        rvSearchSuggestions.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = suggestionsAdapter
         }
     }
 
@@ -154,12 +156,58 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         router.navigateTo(FavouritesFragment().toScreen())
     }
 
-    override fun setSearchItems(newItems: List<FoundSongModel>) {
-        val isEmpty = newItems.isEmpty()
-        nothingFoundStub.isVisible = isEmpty
-        setScrollingEnabled(!isEmpty)
-        searchRv.isNestedScrollingEnabled = !isEmpty
-        searchItemsAdapter.setLoadedSongs(newItems)
+    override fun renderViewState(state: SearchViewState) {
+        Timber.d("Render state: $state")
+        renderQuerySuggestionsState(state.suggestionsState)
+        renderSearchItemsState(state.searchItemsState)
+        renderSelectedWebsite(state.selectedWebsite)
+        renderQueryState(state.searchQueryState)
+    }
+
+    private fun renderQueryState(searchQueryState: SearchQueryState) {
+        with(songsSearchView) {
+            isViewFocused = searchQueryState.isFocused
+            queryText = searchQueryState.queryText
+        }
+    }
+
+    private fun renderSelectedWebsite(website: SongsWebsite) {
+        tvSelectedWebsite.text = website.websiteName
+    }
+
+    private fun renderQuerySuggestionsState(suggestionsState: SuggestionsState) {
+        suggestionsAdapter.submitList(suggestionsState.suggestionsList)
+        rvSearchSuggestions.isVisible = suggestionsState.isVisible
+    }
+
+    private fun renderSearchItemsState(state: SearchItemsState) {
+        searchRv.isNestedScrollingEnabled = false
+        nothingFoundStub.isVisible = false
+        when (state) {
+            is SearchItemsState.SearchResult.NothingFound -> {
+                nothingFoundStub.isVisible = true
+                searchItemsAdapter.setLoadedSongs(listOf())
+            }
+            is SearchItemsState.SearchResult.Loading -> {
+                setScrollingEnabled(false)
+                searchItemsAdapter.setLoadingItemsList()
+            }
+            is SearchItemsState.Empty,
+            is SearchItemsState.SearchResult.Failed -> {
+                // TODO: 11.04.21 подумать об отображении ошибки
+                searchItemsAdapter.setLoadedSongs(listOf())
+            }
+            is SearchItemsState.SearchResult.Loaded -> {
+                searchRv.isNestedScrollingEnabled = state.items.isNotEmpty()
+                nothingFoundStub.isVisible = false
+                setScrollingEnabled(true)
+                searchItemsAdapter.setLoadedSongs(state.items)
+            }
+        }
+    }
+
+    private fun setScrollingEnabled(isEnabled: Boolean) {
+        (searchRv.layoutManager as? SearchLayoutManager)?.isScrollingEnabled = isEnabled
     }
 
     override fun showFailedToLoadSongError() {

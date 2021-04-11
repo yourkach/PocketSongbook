@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import androidx.annotation.LayoutRes
 import timber.log.Timber
 
@@ -30,6 +31,20 @@ fun View.setOnSafeClickListener(interval: Int = 1000, onSafeClick: (View) -> Uni
     val safeClickListener = SafeClickListener(interval = interval, safeClick = onSafeClick)
     setOnClickListener(safeClickListener)
 }
+
+var SearchView.isViewFocused: Boolean
+    get() = this.isFocused || this.focusedChild != null
+    set(value) {
+        if (value == this.isViewFocused) return
+        if (value) requestFocus() else clearFocus()
+    }
+
+var SearchView.queryText: String
+    get() = query.toString()
+    set(value) {
+        if (value == queryText) return
+        setQuery(value, false)
+    }
 
 
 fun View.hideKeyboard() {

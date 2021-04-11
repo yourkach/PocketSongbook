@@ -1,174 +1,137 @@
 package com.example.pocketsongbook.feature.search
 
 import com.example.pocketsongbook.common.BasePresenter
-import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.search.website_parsers.ParseSearchPageError
+import com.example.pocketsongbook.common.mvi_core.StateListener
+import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
 import com.example.pocketsongbook.data.search.website_parsers.ParseSongPageError
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.example.pocketsongbook.feature.search.mvi.SearchScreenEvent
+import com.example.pocketsongbook.feature.search.mvi.SearchScreenReducer
+import com.example.pocketsongbook.feature.search.usecase.DeleteQuerySuggestionUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetQuerySuggestionsUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import moxy.viewstate.strategy.*
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-
-@StateStrategyType(SkipStrategy::class)
-interface SearchSongView : BaseView {
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun toSongScreen(song: SongModel)
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun toFavouritesScreen()
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setWebsiteSelected(website: SongsWebsite)
-
-    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "search_items")
-    fun showSearchItemsLoading()
-
-    @StateStrategyType(AddToEndSingleTagStrategy::class, tag = "search_items")
-    fun setSearchItems(newItems: List<FoundSongModel>)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setQuerySuggestions(suggestions: List<String>)
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun showFailedToLoadSongError()
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun dismissWebsitesSelector()
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun showSearchFailedError()
-
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun showInternetConnectionError()
-
-}
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
     private val getSearchResultsUseCase: GetSearchResultsUseCase,
     private val loadSongModelUseCase: LoadSongModelUseCase,
     private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
-    private val getQuerySuggestionsUseCase: GetQuerySuggestionsUseCase
-) : BasePresenter<SearchSongView>() {
+    private val getQuerySuggestionsUseCase: GetQuerySuggestionsUseCase,
+    private val deleteQuerySuggestionUseCase: DeleteQuerySuggestionUseCase,
+    private val screenStateReducer: SearchScreenReducer
+) : BasePresenter<SearchSongView>(), StateListener<SearchViewState> {
 
-    private var lastSearchQuery: String? = null
-    private var selectedWebsite: SongsWebsite = SongsWebsite.AmDm
+    private var currentViewState: SearchViewState = SearchScreenReducer.INITIAL_STATE
         set(value) {
-            if (field == value) return
             field = value
-            viewState.setWebsiteSelected(field)
-            lastSearchQuery?.let(::startSearchJob)
-        }
-
-    private var loadedItems: List<FoundSongModel> = listOf()
-        private set(value) {
-            field = value
-            viewState.setSearchItems(loadedItems)
+            viewState.renderViewState(value)
         }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        collectQueryChanges()
         subscribeToEvents()
-        viewState.setWebsiteSelected(selectedWebsite)
+        screenStateReducer.subscribe(this)
+        getInitialSuggestions()
+    }
+
+    private fun getInitialSuggestions() {
+        launch {
+            val suggestions = getQuerySuggestionsUseCase(query = "")
+            screenStateReducer.obtainEvent(
+                SearchScreenEvent.SuggestionsChanged(
+                    targetQuery = "",
+                    suggestionsList = suggestions
+                )
+            )
+        }
+    }
+
+    override fun onNewState(state: SearchViewState) {
+        currentViewState = state
     }
 
     private fun subscribeToEvents() {
         launch {
             subscribeToEventsUseCase { event ->
-                when (event) {
-                    is Event.FavoritesChange -> {
-                        withContext(Dispatchers.Default) {
-                            if (loadedItems.any { it.url == event.url }) {
-                                loadedItems.map { songModel ->
-                                    if (songModel.url == event.url) {
-                                        songModel.copy(isFavourite = event.isAdded)
-                                    } else songModel
-                                }
-                            } else null
-                        }?.let { updatedItems ->
-                            loadedItems = updatedItems
-                        }
-                    }
+                if (event is Event.FavoritesChange) {
+                    screenStateReducer.obtainEvent(
+                        SearchScreenEvent.FavoriteChanged(
+                            url = event.url,
+                            isFavorite = event.isAdded
+                        )
+                    )
                 }
             }
         }
     }
 
-    private val queryChangesFlow = MutableSharedFlow<String>()
-    fun onQueryTextChange(newText: String) {
-        launch {
-            queryChangesFlow.emit(newText)
+    fun onSearchFieldFocusChanged(isFocused: Boolean) {
+        screenStateReducer.obtainEvent(SearchScreenEvent.QueryEvent.QueryFocusChanged(isFocused))
+    }
+
+    private var lastQueryChange: String? = null // to get distinct values
+    private var reloadSuggestionsJob by setAndCancelJob()
+    fun onQueryTextChange(query: String, isQueryFocused: Boolean) {
+        if (lastQueryChange == query) return
+        lastQueryChange = query
+        reloadSuggestionsJob = launch {
+            screenStateReducer.obtainEvent(
+                SearchScreenEvent.QueryEvent.QueryChanged(
+                    queryText = query,
+                    isFocused = isQueryFocused
+                )
+            )
+            reloadSuggestions(query)
         }
     }
 
     fun onQueryTextSubmit(query: String) {
-        startSearchJob(query)
+        if (currentViewState.wasLastSearchForQuery(query)) return
+        searchByQuery(query)
     }
 
-    @FlowPreview
-    private fun collectQueryChanges() {
-        launch {
-            queryChangesFlow
-                .distinctUntilChanged()
-                .debounce(500)
-                .collect { query ->
-                    loadQuerySuggestions(query)
-                }
-        }
-    }
-
-    private var loadSuggestionsJob by setAndCancelJob()
-    private fun loadQuerySuggestions(queryText: String) {
-        loadSuggestionsJob = launch {
-            getQuerySuggestionsUseCase(queryText).let(viewState::setQuerySuggestions)
-        }
+    private fun SearchViewState.wasLastSearchForQuery(query: String): Boolean {
+        val currentItemsState = searchItemsState as? SearchItemsState.SearchResult ?: return false
+        return currentItemsState.query == query
     }
 
     private var searchJob: Job? by setAndCancelJob()
-    private fun startSearchJob(query: String) {
+    private fun searchByQuery(query: String) {
+        if (query.isBlank()) return
         searchJob = launch {
-            hideSuggestions()
-            viewState.showSearchItemsLoading()
-            lastSearchQuery = query
-            runCatching {
-                getSearchResultsUseCase(selectedWebsite, query)
-            }.getOrNull()?.let { newItems ->
-                loadedItems = newItems
-            } ?: let {
-                viewState.showSearchFailedError()
+            val website = currentViewState.selectedWebsite
+            screenStateReducer.obtainEvent(
+                SearchScreenEvent.SearchItemsEvent.LoadingStarted(query, website)
+            )
+            try {
+                val items = getSearchResultsUseCase(website, query.trim())
+                screenStateReducer.obtainEvent(
+                    SearchScreenEvent.SearchItemsEvent.Loaded(query, website, items)
+                )
+            } catch (e: LoadSearchResultsError) {
+                screenStateReducer.obtainEvent(
+                    SearchScreenEvent.SearchItemsEvent.Failed(query, website, e)
+                )
             }
         }
     }
 
-    private fun hideSuggestions() {
-        loadSuggestionsJob?.cancel()
-        viewState.setQuerySuggestions(listOf())
-    }
-
     fun onWebsiteSelected(website: SongsWebsite) {
-        selectedWebsite = website
-        launch {
-            delay(100)
-            viewState.dismissWebsitesSelector()
-        }
+        if (currentViewState.selectedWebsite == website) return
+        screenStateReducer.obtainEvent(SearchScreenEvent.WebsiteChanged(website))
+        searchByQuery(currentViewState.searchQueryState.queryText)
     }
 
     private var loadSongJob: Job? = null
@@ -185,15 +148,37 @@ class SearchPresenter @Inject constructor(
     }
 
     override fun onFailure(e: Throwable) {
-        when(e){
-            is ParseSearchPageError -> viewState.showSearchFailedError()
+        when (e) {
+            is LoadSearchResultsError.ParsingError -> viewState.showSearchFailedError()
             is ParseSongPageError -> viewState.showFailedToLoadSongError()
+            is LoadSearchResultsError.ConnectionError,
             is SocketTimeoutException,
             is UnknownHostException -> viewState.showInternetConnectionError()
         }
     }
 
-    fun onFavouritesClicked() {
-        viewState.toFavouritesScreen()
+    fun onSuggestionClick(suggestion: String) {
+        screenStateReducer.obtainEvent(
+            SearchScreenEvent.QueryEvent.QueryChanged(queryText = suggestion, isFocused = false)
+        )
+        onQueryTextSubmit(suggestion)
     }
+
+    fun onSuggestionDeleteClick(suggestion: String) {
+        reloadSuggestionsJob = launch {
+            deleteQuerySuggestionUseCase(suggestionText = suggestion)
+            reloadSuggestions(currentViewState.searchQueryState.queryText)
+        }
+    }
+
+    private suspend fun reloadSuggestions(query: String) {
+        val suggestions = getQuerySuggestionsUseCase(query)
+        screenStateReducer.obtainEvent(
+            SearchScreenEvent.SuggestionsChanged(
+                targetQuery = query,
+                suggestionsList = suggestions
+            )
+        )
+    }
+
 }

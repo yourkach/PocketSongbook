@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/websiteName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ripple_light_background"
+    android:elevation="4dp"
+    app:drawableEndCompat="@drawable/ic_arrow_right_black">
+
+    <TextView
+        android:id="@+id/tvSuggestionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginEnd="@dimen/suggestion_ic_delete_size"
+        android:clickable="false"
+        android:ellipsize="end"
+        android:focusable="false"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="22sp"
+        tools:text="сплин выхода нет" />
+
+    <ImageView
+        android:id="@+id/ivDeleteSuggestion"
+        android:layout_width="@dimen/suggestion_ic_delete_size"
+        android:layout_height="@dimen/suggestion_ic_delete_size"
+        android:layout_gravity="end|center_vertical"
+        android:background="@drawable/circle_ripple_background"
+        android:padding="14dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_close_24" />
+
+</FrameLayout>
