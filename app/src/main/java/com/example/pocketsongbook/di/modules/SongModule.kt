@@ -2,27 +2,14 @@ package com.example.pocketsongbook.di.modules
 
 import com.example.pocketsongbook.domain.song.*
 import com.example.pocketsongbook.domain.song.impl.*
-import dagger.Binds
-import dagger.Module
+import toothpick.config.Module
 
-@Module
-interface SongModule {
-
-    @Binds
-    fun bindSongTransponder(impl: SongTransponderImpl): SongTransponder
-
-    @Binds
-    fun bindSongFormatter(impl: SongLyricsFormatterImpl): SongLyricsFormatter
-
-    @Binds
-    fun bindChordsMapper(impl: ChordsMapperImpl): ChordsMapper
-
-    @Binds
-    fun bindFontSizeChangeHelper(impl: FontSizeChangeHelperImpl): FontSizeChangeHelper
-
-    @Binds
-    fun bindChordsKeyChangeHelper(impl: ChordsKeyChangeHelperImpl): ChordsKeyChangeHelper
-
-    @Binds
-    fun bindDefaultsProvider(impl: DefaultsProviderImpl): DefaultsProvider
+class SongModule : Module() {
+    init {
+        bind(SongTransponder::class.java).to(SongTransponderImpl::class.java)
+        bind(SongLyricsFormatter::class.java).to(SongLyricsFormatterImpl::class.java)
+        bind(ChordsMapper::class.java).to(ChordsMapperImpl::class.java)
+        bind(FontSizeChangeHelper::class.java).to(FontSizeChangeHelperImpl::class.java)
+        bind(ChordsKeyChangeHelper::class.java).to(ChordsKeyChangeHelperImpl::class.java)
+    }
 }

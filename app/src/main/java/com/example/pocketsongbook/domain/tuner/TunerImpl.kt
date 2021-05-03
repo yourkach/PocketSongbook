@@ -7,12 +7,13 @@ import com.example.pocketsongbook.domain.tuner.string_detection.StringRecognizer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
 /**
  * An implementation of the [Tuner] interface.
  */
-class TunerImpl @Inject constructor(
+@InjectConstructor
+class TunerImpl(
     private val audioRecorder: AudioRecorder,
     private val detector: PitchDetector,
     private val stringRecognizer: StringRecognizer

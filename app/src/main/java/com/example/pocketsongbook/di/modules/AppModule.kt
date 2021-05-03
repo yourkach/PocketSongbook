@@ -2,27 +2,14 @@ package com.example.pocketsongbook.di.modules
 
 import android.content.Context
 import com.example.pocketsongbook.common.SongbookApplication
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Singleton
+import toothpick.config.Module
 
-@Module
-abstract class AppModule {
+class AppModule(private val application: SongbookApplication) : Module() {
 
-    @Binds
-    @Singleton
-    abstract fun provideApplicationScope(application: SongbookApplication): CoroutineScope
-
-    companion object {
-
-        @Provides
-        @JvmStatic
-        @Singleton
-        fun provideContext(application: SongbookApplication): Context {
-            return application.applicationContext
-        }
-
+    init {
+        bind(Context::class.java).toInstance(application)
+        bind(CoroutineScope::class.java).toInstance(application)
     }
+
 }

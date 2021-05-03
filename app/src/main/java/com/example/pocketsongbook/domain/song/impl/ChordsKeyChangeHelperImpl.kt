@@ -1,13 +1,14 @@
 package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.song.ChordsKeyChangeHelper
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.KeyChangeDefaults
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeType
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class ChordsKeyChangeHelperImpl @Inject constructor(
+@InjectConstructor
+class ChordsKeyChangeHelperImpl(
     private val defaults: KeyChangeDefaults
 ) : ChordsKeyChangeHelper {
     override fun changeChordsKeyOption(

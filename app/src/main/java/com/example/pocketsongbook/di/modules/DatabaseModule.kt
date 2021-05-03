@@ -1,37 +1,25 @@
 package com.example.pocketsongbook.di.modules
 
-import android.content.Context
 import androidx.room.Room
+import com.example.pocketsongbook.common.SongbookApplication
 import com.example.pocketsongbook.data.database.AppDatabase
 import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.database.SavedQueriesDao
 import com.example.pocketsongbook.data.database.SongsOptionsDao
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import toothpick.config.Module
+import toothpick.ktp.binding.bind
 
-@Module
-class DatabaseModule {
+class DatabaseModule(application: SongbookApplication) : Module() {
 
-    @Provides
-    @Singleton
-    fun provideDatabase(context: Context): AppDatabase = Room.databaseBuilder(
-        context,
-        AppDatabase::class.java, "songbook_database"
-    ).build()
+    init {
+        val database = Room.databaseBuilder(
+            application,
+            AppDatabase::class.java,
+            "songbook_database"
+        ).build()
+        bind<FavouriteSongsDao>().toInstance(database.favouriteSongsDao())
+        bind<SavedQueriesDao>().toInstance(database.savedQueriesDao())
+        bind<SongsOptionsDao>().toInstance(database.songsOptionsDao())
+    }
 
-    @Provides
-    @Singleton
-    fun provideFavouriteSongsDao(database: AppDatabase): FavouriteSongsDao =
-        database.favouriteSongsDao()
-
-    @Provides
-    @Singleton
-    fun provideQueriesDao(database: AppDatabase): SavedQueriesDao =
-        database.savedQueriesDao()
-
-    @Provides
-    @Singleton
-    fun provideSettingsDao(database: AppDatabase): SongsOptionsDao =
-        database.songsSettingsDao()
 }

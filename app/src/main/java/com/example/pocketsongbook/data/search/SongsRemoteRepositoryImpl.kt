@@ -5,13 +5,17 @@ import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.search.SongsRemoteRepository
 import com.example.pocketsongbook.domain.search.SongsWebsite
+import toothpick.InjectConstructor
+import javax.inject.Singleton
 
-
-class SongsRemoteRepositoryImpl(vararg websiteParsers: SongsWebsiteParser) :
-    SongsRemoteRepository {
+@Singleton
+@InjectConstructor
+class SongsRemoteRepositoryImpl(
+    parsersProvider: ParsersProvider
+) : SongsRemoteRepository {
 
     private val parsersByWebsites: Map<SongsWebsite, SongsWebsiteParser> =
-        websiteParsers.associateBy { it.website }
+        parsersProvider.websiteParsers.associateBy { it.website }
 
     init {
         require(parsersByWebsites.keys.containsAll(SongsWebsite.values().toList())) {

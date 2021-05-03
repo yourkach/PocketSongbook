@@ -6,25 +6,20 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
 import com.example.pocketsongbook.common.navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.RouterProvider
+import com.example.pocketsongbook.di.annotations.ActivityScope
+import com.example.pocketsongbook.di.annotations.ApplicationScope
+import com.example.pocketsongbook.di.annotations.ContainerScope
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
 import moxy.MvpAppCompatFragment
-import javax.inject.Inject
+import toothpick.ktp.KTP
+import toothpick.smoothie.lifecycle.closeOnDestroy
 
 abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment_tab_container),
-    RouterProvider, BackPressedListener, HasAndroidInjector {
-
-    @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector
+    RouterProvider, BackPressedListener {
 
     abstract val tab: NavigationTab
 
@@ -38,9 +33,16 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
     }
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
+        KTP.openScope(ApplicationScope::class.java)
+            .openSubScope(ActivityScope::class.java)
+            .openSubScope(activity)
+            .openSubScope(this)
+            .supportScopeAnnotation(ContainerScope::class.java)
+            .closeOnDestroy(this)
+            .inject(this)
         super.onAttach(context)
     }
+
 
     fun resetContainer() {
         if (childFragmentManager.backStackEntryCount > 1) {

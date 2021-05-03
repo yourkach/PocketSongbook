@@ -12,26 +12,21 @@ import com.example.pocketsongbook.common.navigation.BottomNavigationHelper
 import com.example.pocketsongbook.common.navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
 import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
+import com.example.pocketsongbook.di.annotations.ActivityScope
+import com.example.pocketsongbook.di.annotations.ApplicationScope
+import com.example.pocketsongbook.di.modules.NavigationModule
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_navigation_bar_layout.*
 import moxy.MvpAppCompatActivity
-import javax.inject.Inject
+import toothpick.ktp.KTP
+import toothpick.ktp.delegate.inject
+import toothpick.smoothie.lifecycle.closeOnDestroy
 
-class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
+class RootActivity : MvpAppCompatActivity() {
 
-    @Inject
-    lateinit var holder: TabCiceronesHolder
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
-
-    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
+    private val holder: TabCiceronesHolder by inject()
 
     private val navigationHelper by lazy {
         BottomNavigationHelper(
@@ -43,7 +38,13 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        KTP.openScope(ApplicationScope::class.java)
+            .openSubScope(ActivityScope::class.java)
+            .openSubScope(this)
+            .supportScopeAnnotation(ActivityScope::class.java)
+            .installModules(NavigationModule())
+            .closeOnDestroy(this)
+            .inject(this)
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)

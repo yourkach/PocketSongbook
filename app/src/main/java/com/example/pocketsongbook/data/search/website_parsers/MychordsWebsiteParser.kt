@@ -3,9 +3,10 @@ package com.example.pocketsongbook.data.search.website_parsers
 import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.domain.search.SongsWebsite
 import org.jsoup.nodes.Document
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
+@InjectConstructor
+class MychordsWebsiteParser : BaseWebsiteParser() {
 
     override val website = SongsWebsite.MyChords
 

@@ -12,6 +12,7 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ParcelableArgument
+import com.example.pocketsongbook.di.modules.SongModule
 import com.example.pocketsongbook.domain.models.Chord
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.song.models.ChordsKey
@@ -21,6 +22,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
 import moxy.ktx.moxyPresenter
+import toothpick.config.Module
 import javax.inject.Inject
 
 // TODO: 14.02.21 загружать песню на этом экране, показывать шиммер
@@ -34,6 +36,8 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     private val presenter: SongPresenter by moxyPresenter {
         songPresenterFactory.create(args.song)
     }
+
+    override fun getToothpickModules(): List<Module> = listOf(SongModule())
 
     override val hideBottomNavigationBar: Boolean = true
 

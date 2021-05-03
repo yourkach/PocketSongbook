@@ -3,9 +3,12 @@ package com.example.pocketsongbook.data.search.query_suggestions
 import com.example.pocketsongbook.data.database.SavedQueriesDao
 import com.example.pocketsongbook.domain.search.SavedSearchQueryRepository
 import com.example.pocketsongbook.domain.search.suggestions.SavedQueryModel
-import javax.inject.Inject
+import toothpick.InjectConstructor
+import javax.inject.Singleton
 
-class SavedSearchQueryRepositoryImpl @Inject constructor(
+@Singleton
+@InjectConstructor
+class SavedSearchQueryRepositoryImpl(
     private val queriesDao: SavedQueriesDao,
     private val modelMapper: QueryModelMapper
 ) : SavedSearchQueryRepository {

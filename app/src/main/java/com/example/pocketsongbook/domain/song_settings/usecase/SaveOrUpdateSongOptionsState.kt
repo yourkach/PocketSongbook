@@ -11,10 +11,10 @@ class SaveOrUpdateSongOptionsState @Inject constructor(
     private val applicationScope: CoroutineScope
 ) {
 
-    suspend operator fun invoke(songUrl: String, optionsState: SongOptionsState) {
+    operator fun invoke(songUrl: String, optionsState: SongOptionsState) {
         applicationScope.launch {
             songsOptionsRepository.saveOptions(songUrl, optionsState)
-        }.join()
+        }
     }
 
 }

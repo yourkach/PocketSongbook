@@ -1,9 +1,10 @@
 package com.example.pocketsongbook.domain.tuner.string_detection
 
-import javax.inject.Inject
+import toothpick.InjectConstructor
 import kotlin.math.absoluteValue
 
-class StringRecognizerImpl @Inject constructor() : StringRecognizer {
+@InjectConstructor
+class StringRecognizerImpl : StringRecognizer {
 
     private var stringToPitch: List<Pair<GuitarString, Double>> = listOf(
         GuitarString.UNDEFINED to 350.0,

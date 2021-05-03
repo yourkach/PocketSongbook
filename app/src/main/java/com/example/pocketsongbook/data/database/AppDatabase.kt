@@ -16,6 +16,6 @@ import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favouriteSongsDao(): FavouriteSongsDao
-    abstract fun songsSettingsDao(): SongsOptionsDao
+    abstract fun songsOptionsDao(): SongsOptionsDao
     abstract fun savedQueriesDao(): SavedQueriesDao
 }

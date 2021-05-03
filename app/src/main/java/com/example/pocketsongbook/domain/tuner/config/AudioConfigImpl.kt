@@ -5,9 +5,10 @@ import android.media.AudioRecord
 import android.media.AudioTrack
 import android.media.MediaRecorder
 import android.os.Build
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class AudioConfigImpl @Inject constructor() : AudioConfig {
+@InjectConstructor
+class AudioConfigImpl : AudioConfig {
 
     override val sampleRate: Int
         get() = AUDIO_SAMPLE_RATE

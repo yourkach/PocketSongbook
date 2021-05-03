@@ -10,10 +10,10 @@ import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_favourites.*
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
+import javax.inject.Provider
 
 // TODO: 18.07.20 отображать сайт сохранённой песни
 // TODO: 18.07.20 добавить возможность выбрать сортировку по времени добавления
@@ -22,20 +22,15 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     SearchView.OnQueryTextListener {
 
     @Inject
-    lateinit var favoritesPresenter: FavoritesPresenter
+    lateinit var presenterProvider: Provider<FavoritesPresenter>
 
-    private val presenter by moxyPresenter { favoritesPresenter }
+    private val presenter by moxyPresenter { presenterProvider.get() }
 
     private val favoriteSongItemsAdapter =
         FavoriteSongsAdapter(
             onItemClickResponse = {
                 presenter.onSongClicked(it)
             })
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

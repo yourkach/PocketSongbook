@@ -10,20 +10,18 @@ import androidx.core.content.ContextCompat
 import androidx.transition.TransitionInflater
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
+import com.example.pocketsongbook.di.annotations.ActivityScope
+import com.example.pocketsongbook.di.annotations.ApplicationScope
+import com.example.pocketsongbook.di.annotations.FragmentScope
 import com.github.terrakok.cicerone.Router
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
 import moxy.MvpAppCompatFragment
-import javax.inject.Inject
+import toothpick.config.Module
+import toothpick.ktp.KTP
+import toothpick.smoothie.lifecycle.closeOnDestroy
 
 abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(layoutId),
-    BaseView, HasAndroidInjector, BackPressedListener {
-
-    @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    BaseView, BackPressedListener {
 
     open val enterTransitionRes: Int? = R.transition.fade
 
@@ -34,8 +32,18 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
     protected val router: Router
         get() = (parentFragment as BaseTabContainerFragment).router
 
+    open fun getToothpickModules(): List<Module> = emptyList()
+
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
+        KTP.openScope(ApplicationScope::class.java)
+            .openSubScope(ActivityScope::class.java)
+            .openSubScope(activity)
+            .openSubScope(parentFragment)
+            .openSubScope(this)
+            .supportScopeAnnotation(FragmentScope::class.java)
+            .installModules(*getToothpickModules().toTypedArray())
+            .closeOnDestroy(this)
+            .inject(this)
         super.onAttach(context)
     }
 
@@ -62,8 +70,6 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
         super.onPause()
         if (hideBottomNavigationBar) (activity as? RootActivity)?.setNavigationBarVisible(true)
     }
-
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector
 
     override fun showLoading() {
         (activity as? RootActivity)?.showLoading()

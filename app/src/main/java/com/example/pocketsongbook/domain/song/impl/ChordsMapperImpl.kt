@@ -2,9 +2,10 @@ package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.models.Chord
 import com.example.pocketsongbook.domain.song.ChordsMapper
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class ChordsMapperImpl @Inject constructor() : ChordsMapper {
+@InjectConstructor
+class ChordsMapperImpl : ChordsMapper {
     override fun mapToChords(chordNames: List<String>): List<Chord> {
         return chordPicturePatterns.flatMap { urlPattern ->
             chordNames.map { chordName ->

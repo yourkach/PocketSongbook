@@ -8,9 +8,12 @@ import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
 import com.example.pocketsongbook.domain.models.SongModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import toothpick.InjectConstructor
+import javax.inject.Singleton
 
-class FavouriteSongsRepositoryImpl @Inject constructor(
+@Singleton
+@InjectConstructor
+class FavouriteSongsRepositoryImpl(
     private val favouriteSongsDao: FavouriteSongsDao,
     private val favoriteSongsUrlsDao: FavoriteSongsUrlsDao,
     private val modelMapper: FavoriteModelMapper

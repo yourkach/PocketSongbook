@@ -8,11 +8,13 @@ import android.view.View
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.di.modules.TunerModule
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
 import kotlinx.android.synthetic.main.fragment_tuner.*
 import moxy.ktx.moxyPresenter
+import toothpick.config.Module
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.absoluteValue
@@ -28,6 +30,9 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView {
         presenterProvider.get()
     }
 
+    override fun getToothpickModules(): List<Module> {
+        return listOf(TunerModule())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

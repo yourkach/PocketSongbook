@@ -12,31 +12,16 @@ import com.example.pocketsongbook.domain.tuner.recorder.AudioRecorder
 import com.example.pocketsongbook.domain.tuner.recorder.AudioRecorderImpl
 import com.example.pocketsongbook.domain.tuner.string_detection.StringRecognizer
 import com.example.pocketsongbook.domain.tuner.string_detection.StringRecognizerImpl
-import dagger.Binds
-import dagger.Module
+import toothpick.config.Module
 
-@Module
-interface TunerModule {
-
-    @Binds
-    fun bindAudioConfig(impl: AudioConfigImpl): AudioConfig
-
-    @Binds
-    fun bindArrayConverter(pcmArrayConverter: PCMArrayConverter): ArrayConverter
-
-    @Binds
-    fun bindPitchDetector(impl: PitchDetectorImpl): PitchDetector
-
-    @Binds
-    fun bindStringRecognizer(impl: StringRecognizerImpl): StringRecognizer
-
-    @Binds
-    fun bindAudioRecorder(impl: AudioRecorderImpl): AudioRecorder
-
-    @Binds
-    fun bindTuner(impl: TunerImpl): Tuner
-
-//    @Binds
-//    fun bindTuner(impl:TunerImpl) : Tuner
-
+class TunerModule : Module() {
+    init {
+        bind(AudioConfig::class.java).to(AudioConfigImpl::class.java)
+        bind(ArrayConverter::class.java).to(PCMArrayConverter::class.java)
+        bind(PitchDetector::class.java).to(PitchDetectorImpl::class.java)
+        bind(StringRecognizer::class.java).to(StringRecognizerImpl::class.java)
+        bind(AudioRecorder::class.java).to(AudioRecorderImpl::class.java)
+        bind(Tuner::class.java).to(TunerImpl::class.java)
+    }
 }
+

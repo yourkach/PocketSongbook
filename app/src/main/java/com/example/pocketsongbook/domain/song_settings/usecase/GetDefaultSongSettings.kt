@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.domain.song_settings.usecase
 
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.FontChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.KeyChangeDefaults
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState

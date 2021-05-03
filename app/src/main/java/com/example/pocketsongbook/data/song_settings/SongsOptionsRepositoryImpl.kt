@@ -4,9 +4,12 @@ import com.example.pocketsongbook.data.database.SongsOptionsDao
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.song_settings.SongsOptionsRepository
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
-import javax.inject.Inject
+import toothpick.InjectConstructor
+import javax.inject.Singleton
 
-class SongsOptionsRepositoryImpl @Inject constructor(
+@Singleton
+@InjectConstructor
+class SongsOptionsRepositoryImpl(
     private val songsOptionsDao: SongsOptionsDao,
     private val settingsMapper: SettingsMapper
 ) : SongsOptionsRepository {

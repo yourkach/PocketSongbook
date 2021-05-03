@@ -3,9 +3,10 @@ package com.example.pocketsongbook.domain.song.impl
 import com.example.pocketsongbook.domain.song.SongTransponder
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.utils.ChordsTransponder
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class SongTransponderImpl @Inject constructor() : SongTransponder {
+@InjectConstructor
+class SongTransponderImpl : SongTransponder {
 
     override fun transpose(lyrics: String, chordsKey: ChordsKey): SongTransponder.Response {
         val key = chordsKey.key
@@ -52,7 +53,7 @@ class SongTransponderImpl @Inject constructor() : SongTransponder {
         }
     }
 
-    private fun parseChords(lyrics: String) : Set<String> {
+    private fun parseChords(lyrics: String): Set<String> {
         return Regex("<b>(.*?)</b>")
             .findAll(lyrics)
             .mapNotNull { it.groups[1]?.value }

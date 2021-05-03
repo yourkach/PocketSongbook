@@ -1,13 +1,14 @@
 package com.example.pocketsongbook.domain.song.impl
 
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
 import com.example.pocketsongbook.domain.song.FontSizeChangeHelper
+import com.example.pocketsongbook.domain.song.defaults.FontChangeDefaults
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeType
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class FontSizeChangeHelperImpl @Inject constructor(
+@InjectConstructor
+class FontSizeChangeHelperImpl(
     private val defaults: FontChangeDefaults
 ) : FontSizeChangeHelper {
 

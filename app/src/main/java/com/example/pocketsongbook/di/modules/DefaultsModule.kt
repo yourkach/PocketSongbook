@@ -1,24 +1,15 @@
 package com.example.pocketsongbook.di.modules
 
-import com.example.pocketsongbook.domain.song.DefaultsProvider
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import com.example.pocketsongbook.domain.song.defaults.FontChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.FontChangeDefaultsProvider
+import com.example.pocketsongbook.domain.song.defaults.KeyChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.KeyChangeDefaultsProvider
+import toothpick.config.Module
 
-@Module
-class DefaultsModule {
-
-    @Provides
-    @Singleton
-    fun provideKeyDefaults(provider: DefaultsProvider): KeyChangeDefaults =
-        provider.getKeyDefaults()
-
-    @Provides
-    @Singleton
-    fun provideFontDefaults(provider: DefaultsProvider): FontChangeDefaults =
-        provider.getFontDefaults()
-
+class DefaultsModule : Module() {
+    init {
+        bind(KeyChangeDefaults::class.java).toProviderInstance(KeyChangeDefaultsProvider())
+        bind(FontChangeDefaults::class.java).toProviderInstance(FontChangeDefaultsProvider())
+    }
 }
 

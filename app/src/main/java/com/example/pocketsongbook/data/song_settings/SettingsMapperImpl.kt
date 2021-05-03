@@ -1,15 +1,16 @@
 package com.example.pocketsongbook.data.song_settings
 
 import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.FontChangeDefaults
+import com.example.pocketsongbook.domain.song.defaults.KeyChangeDefaults
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
-import javax.inject.Inject
+import toothpick.InjectConstructor
 
-class SettingsMapperImpl @Inject constructor(
+@InjectConstructor
+class SettingsMapperImpl(
     private val keyChangeDefaults: KeyChangeDefaults,
     private val fontChangeDefaults: FontChangeDefaults
 ) : SettingsMapper {

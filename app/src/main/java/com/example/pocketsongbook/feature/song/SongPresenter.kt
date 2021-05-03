@@ -11,13 +11,11 @@ import com.example.pocketsongbook.domain.song_settings.usecase.SaveOrUpdateSongO
 import com.example.pocketsongbook.feature.song.mvi.GetInitialSongStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.GetUpdatedStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import toothpick.InjectConstructor
 
 
 @StateStrategyType(AddToEndSingleStrategy::class)
@@ -29,8 +27,8 @@ interface SongView : BaseView {
 }
 
 @InjectViewState
-class SongPresenter @AssistedInject constructor(
-    @Assisted private val song: SongModel,
+class SongPresenter constructor(
+    private val song: SongModel,
     private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
     private val getInitialSongStateUseCase: GetInitialSongStateUseCase,
     private val getUpdatedStateUseCase: GetUpdatedStateUseCase,
@@ -38,9 +36,24 @@ class SongPresenter @AssistedInject constructor(
     private val saveOrUpdateSongOptionsState: SaveOrUpdateSongOptionsState
 ) : BasePresenter<SongView>() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(song: SongModel): SongPresenter
+    @InjectConstructor
+    class Factory(
+        private val subscribeToEventsUseCase: SubscribeToEventsUseCase,
+        private val getInitialSongStateUseCase: GetInitialSongStateUseCase,
+        private val getUpdatedStateUseCase: GetUpdatedStateUseCase,
+        private val toggleSongFavoriteStatusUseCase: ToggleSongFavoriteStatusUseCase,
+        private val saveOrUpdateSongOptionsState: SaveOrUpdateSongOptionsState
+    ) {
+        fun create(song: SongModel): SongPresenter {
+            return SongPresenter(
+                song = song,
+                subscribeToEventsUseCase = subscribeToEventsUseCase,
+                getInitialSongStateUseCase = getInitialSongStateUseCase,
+                getUpdatedStateUseCase = getUpdatedStateUseCase,
+                toggleSongFavoriteStatusUseCase = toggleSongFavoriteStatusUseCase,
+                saveOrUpdateSongOptionsState = saveOrUpdateSongOptionsState
+            )
+        }
     }
 
     private var currentScreenState: SongScreenState = SongScreenState(
@@ -107,14 +120,12 @@ class SongPresenter @AssistedInject constructor(
     }
 
     fun onViewPaused() {
-        launch {
-            currentScreenState.songState.asLoadedOrNull()?.let { songState ->
-                if (songState.isFavorite) {
-                    saveOrUpdateSongOptionsState(
-                        songUrl = songState.songUrl,
-                        optionsState = songState.optionsState
-                    )
-                }
+        currentScreenState.songState.asLoadedOrNull()?.let { songState ->
+            if (songState.isFavorite) {
+                saveOrUpdateSongOptionsState(
+                    songUrl = songState.songUrl,
+                    optionsState = songState.optionsState
+                )
             }
         }
     }
