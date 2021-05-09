@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.common.navigation
+package com.example.pocketsongbook.common.navigation.bottom_navigation
 
 import com.example.pocketsongbook.common.BaseTabContainerFragment
 

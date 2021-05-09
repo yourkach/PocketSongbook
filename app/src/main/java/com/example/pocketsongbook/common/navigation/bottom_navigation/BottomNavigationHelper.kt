@@ -1,12 +1,10 @@
-package com.example.pocketsongbook.common.navigation
+package com.example.pocketsongbook.common.navigation.bottom_navigation
 
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.annotation.IdRes
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.pocketsongbook.common.BaseTabContainerFragment
-import kotlinx.android.parcel.Parcelize
 
 class BottomNavigationHelper(
     @IdRes private val containerViewId: Int,
@@ -111,7 +109,3 @@ class BottomNavigationHelper(
 
 }
 
-@Parcelize
-enum class NavigationTab : Parcelable {
-    Favorites, Search, Tuner
-}

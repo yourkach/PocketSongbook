@@ -4,8 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
-import com.example.pocketsongbook.common.navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.RouterProvider
+import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
+import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.Router
@@ -19,7 +20,7 @@ import moxy.MvpAppCompatFragment
 import javax.inject.Inject
 
 abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment_tab_container),
-    RouterProvider, BackPressedListener, HasAndroidInjector {
+    RouterProvider, BackPressedListener, OnTabSwitchedListener, HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -45,6 +46,12 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
     fun resetContainer() {
         if (childFragmentManager.backStackEntryCount > 1) {
             router.newRootScreen(rootScreen)
+        }
+    }
+
+    final override fun onTabSwitched(newTab: NavigationTab) {
+        childFragmentManager.fragments.forEach { childFragment ->
+            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(newTab)
         }
     }
 

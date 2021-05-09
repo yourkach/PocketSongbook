@@ -2,15 +2,14 @@ package com.example.pocketsongbook.common
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
-import com.example.pocketsongbook.common.navigation.BottomNavigationHelper
-import com.example.pocketsongbook.common.navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
+import com.example.pocketsongbook.common.navigation.bottom_navigation.BottomNavigationHelper
+import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
+import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
@@ -74,30 +73,40 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
         }
     }
 
-    private fun onTabSwitched(tab: NavigationTab) {
-        clearSelectedTabButton()
-        val (imageView: ImageView, textView: TextView) = when (tab) {
-            NavigationTab.Favorites -> navIvFavoritesIcon to navTvFavoritesLabel
-            NavigationTab.Search -> navIvSearchIcon to navTvSearchLabel
-            NavigationTab.Tuner -> navIvTunerIcon to navTvTunerLabel
-        }
-        imageView.imageTintList = ColorStateList.valueOf(selectedNavItemColor)
-        textView.setTextColor(selectedNavItemColor)
+    private val bottomNavigationTabViews by lazy {
+        mapOf(
+            NavigationTab.Favorites to NavigationTabViews(navIvFavoritesIcon, navTvFavoritesLabel),
+            NavigationTab.Search to NavigationTabViews(navIvSearchIcon, navTvSearchLabel),
+            NavigationTab.Tuner to NavigationTabViews(navIvTunerIcon, navTvTunerLabel)
+        )
     }
 
-    private val selectedNavItemColor by lazy {
-        ResourcesCompat.getColor(resources, R.color.colorNavItemSelected, null)
-    }
-    private val unselectedNavItemColor by lazy {
-        ResourcesCompat.getColor(resources, R.color.colorNavItemUnselected, null)
-    }
 
-    private fun clearSelectedTabButton() {
-        listOf<ImageView>(navIvFavoritesIcon, navIvSearchIcon, navIvTunerIcon).forEach {
-            it.imageTintList = ColorStateList.valueOf(unselectedNavItemColor)
+    private val selectedNavItemColorStateList by lazy {
+        ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.colorNavItemSelected, null))
+    }
+    private val unselectedNavItemColorStateList by lazy {
+        ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.colorNavItemUnselected, null))
+    }
+    private fun onTabSwitched(newTab: NavigationTab) {
+        bottomNavigationTabViews.forEach { (tab, views) ->
+            val (newColor, newScale) = when (tab) {
+                newTab -> selectedNavItemColorStateList to TAB_ICON_SCALE_SELECTED
+                else -> unselectedNavItemColorStateList to 1.0f
+            }
+
+            views.tabIconView.imageTintList = newColor
+            views.tabTitleTextView.setTextColor(newColor)
+
+            views.tabIconView.animate().apply {
+                scaleX(newScale)
+                scaleY(newScale)
+                duration = TAB_ICON_ANIMATION_DURATION
+                start()
+            }
         }
-        listOf<TextView>(navTvFavoritesLabel, navTvSearchLabel, navTvTunerLabel).forEach {
-            it.setTextColor(unselectedNavItemColor)
+        supportFragmentManager.fragments.forEach { childFragment ->
+            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(newTab = newTab)
         }
     }
 
@@ -129,5 +138,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
 
     companion object {
         private const val NAVIGATION_STATE_KEY = "NAVIGATION_STATE_KEY"
+        private const val TAB_ICON_ANIMATION_DURATION = 100L
+        private const val TAB_ICON_SCALE_SELECTED = 1.2f
     }
 }
