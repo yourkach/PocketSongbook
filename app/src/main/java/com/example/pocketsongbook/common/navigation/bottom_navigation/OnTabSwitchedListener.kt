@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.common.navigation.bottom_navigation
 
-interface OnTabSwitchedListener {
+fun interface OnTabSwitchedListener {
 
-    fun onTabSwitched(newTab: NavigationTab)
+    fun onTabSwitched(oldTab:NavigationTab?, newTab: NavigationTab)
 
 }

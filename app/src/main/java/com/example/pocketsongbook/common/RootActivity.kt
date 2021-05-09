@@ -37,7 +37,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
             containerViewId = R.id.rootContainer,
             fragmentManager = supportFragmentManager,
             tabsFactory = TabsFactoryImpl(),
-            onTabChanged = ::onTabSwitched
+            onTabSwitch = ::onTabSwitched
         )
     }
 
@@ -88,7 +88,8 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     private val unselectedNavItemColorStateList by lazy {
         ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.colorNavItemUnselected, null))
     }
-    private fun onTabSwitched(newTab: NavigationTab) {
+
+    private fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
         bottomNavigationTabViews.forEach { (tab, views) ->
             val (newColor, newScale) = when (tab) {
                 newTab -> selectedNavItemColorStateList to TAB_ICON_SCALE_SELECTED
@@ -106,7 +107,7 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
             }
         }
         supportFragmentManager.fragments.forEach { childFragment ->
-            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(newTab = newTab)
+            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(oldTab, newTab)
         }
     }
 

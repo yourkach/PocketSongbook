@@ -49,9 +49,9 @@ abstract class BaseTabContainerFragment : MvpAppCompatFragment(R.layout.fragment
         }
     }
 
-    final override fun onTabSwitched(newTab: NavigationTab) {
+    override fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
         childFragmentManager.fragments.forEach { childFragment ->
-            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(newTab)
+            (childFragment as? OnTabSwitchedListener)?.onTabSwitched(oldTab, newTab)
         }
     }
 

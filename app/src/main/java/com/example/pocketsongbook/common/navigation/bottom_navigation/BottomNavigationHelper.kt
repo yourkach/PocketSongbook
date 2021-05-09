@@ -10,7 +10,7 @@ class BottomNavigationHelper(
     @IdRes private val containerViewId: Int,
     private val fragmentManager: FragmentManager,
     private val tabsFactory: TabsFactory,
-    private val onTabChanged: (newTab: NavigationTab) -> Unit
+    private val onTabSwitch: OnTabSwitchedListener
 ) {
 
     private val tabContainersMap = mutableMapOf<NavigationTab, BaseTabContainerFragment>().apply {
@@ -27,8 +27,12 @@ class BottomNavigationHelper(
     private val tabsBackStack = mutableListOf<NavigationTab>()
 
     private var currentTab: NavigationTab? = null
-        set(value) {
-            field = value?.takeIf { it != field }?.also(onTabChanged)
+        set(newTab) {
+            if (newTab == null || field == newTab) return
+            field.also { oldTab ->
+                field = newTab
+                onTabSwitch.onTabSwitched(oldTab, newTab)
+            }
         }
 
     fun switchToTab(tab: NavigationTab, addToBackStack: Boolean = true) {

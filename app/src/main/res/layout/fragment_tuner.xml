@@ -52,7 +52,7 @@
         android:id="@+id/btnToggleTuner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Toggle"
+        android:text="Toggle (off)"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

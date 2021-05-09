@@ -35,7 +35,6 @@ class TunerPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        viewState.setMessageText("Test")
     }
 
     fun onRecordAudioPermissionDenied() {

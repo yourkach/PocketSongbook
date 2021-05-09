@@ -7,6 +7,8 @@ import android.os.Looper
 import android.view.View
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
+import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
+import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
@@ -19,7 +21,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
-class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView {
+class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwitchedListener {
 
     @Inject
     lateinit var presenterProvider: Provider<TunerPresenter>
@@ -32,14 +34,20 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btnToggleTuner.setOnClickListener {
-            onToggleTunerClick()
+            toggleTuner()
         }
     }
 
-    private var tunerToggled = false
-    private fun onToggleTunerClick() {
-        tunerToggled = !tunerToggled
-        if (tunerToggled) presenter.onStartClick() else presenter.onStopClick()
+    private var isTunerActive = false
+    private fun toggleTuner() {
+        isTunerActive = !isTunerActive
+        btnToggleTuner.text = if (isTunerActive) {
+            presenter.onStartClick()
+            "toggle (on)"
+        } else {
+            presenter.onStopClick()
+            "toggle (off)"
+        }
     }
 
     override fun updateTunerResult(result: StringTuningResult) {
@@ -60,6 +68,12 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView {
             GuitarString.A_5 -> "A-5"
             GuitarString.E_6 -> "E-6"
             GuitarString.UNDEFINED -> ""
+        }
+    }
+
+    override fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
+        if (newTab != NavigationTab.Tuner && isTunerActive) {
+            toggleTuner()
         }
     }
 
