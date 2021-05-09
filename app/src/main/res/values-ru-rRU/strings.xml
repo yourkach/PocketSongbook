@@ -24,4 +24,9 @@
     <string name="microphone_permissions_rationale">Доступ к микрофону необходим для распознавания высоты тона.</string>
     <string name="permission_was_denied">Разрешение не было получено</string>
     <string name="settings">Настройки</string>
+
+    <string name="auto_detect_string">Распознавать струну</string>
+    <string name="enable_tuner">Включить тюнер</string>
+    <string name="disable_tuner">Выключить тюнер</string>
+
 </resources>

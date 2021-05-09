@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.TextView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.domain.tuner.MutableStringTuningResult
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
@@ -30,6 +32,16 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
         presenterProvider.get()
     }
 
+    private val stringButtonsMap: Map<GuitarString, TextView> by lazy {
+        mapOf(
+            GuitarString.E_1 to btnStringE1,
+            GuitarString.B_2 to btnStringB2,
+            GuitarString.G_3 to btnStringG3,
+            GuitarString.D_4 to btnStringD4,
+            GuitarString.A_5 to btnStringA5,
+            GuitarString.E_6 to btnStringE6
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,10 +55,10 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
         isTunerActive = !isTunerActive
         btnToggleTuner.text = if (isTunerActive) {
             presenter.onStartClick()
-            "toggle (on)"
+            getString(R.string.disable_tuner)
         } else {
             presenter.onStopClick()
-            "toggle (off)"
+            getString(R.string.enable_tuner)
         }
     }
 
@@ -60,20 +72,20 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
             (PROGRESS_MAX * offset.absoluteValue).roundToInt().coerceAtMost(PROGRESS_MAX)
         } else 0
         inactivePb.progress = 0
-        tvSomeText.text = when (result.string) {
-            GuitarString.E_1 -> "E-1"
-            GuitarString.B_2 -> "B-2"
-            GuitarString.G_3 -> "G-3"
-            GuitarString.D_4 -> "D-4"
-            GuitarString.A_5 -> "A-5"
-            GuitarString.E_6 -> "E-6"
-            GuitarString.UNDEFINED -> ""
+        stringButtonsMap.forEach { (string, button) ->
+            if (string == result.string) {
+                button.requestFocus()
+            } else {
+                button.clearFocus()
+            }
         }
     }
 
     override fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
+        // TODO: 09.05.2021 вынести логику в презентер
         if (newTab != NavigationTab.Tuner && isTunerActive) {
             toggleTuner()
+            updateTunerResult(MutableStringTuningResult(GuitarString.UNDEFINED, 0.0, 0.0))
         }
     }
 
@@ -92,10 +104,6 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
         Handler(Looper.getMainLooper()).post {
             router.replaceScreen(MicroPermissionsFragment().toScreen())
         }
-    }
-
-    override fun setMessageText(text: String) {
-        tvSomeText.text = text
     }
 
     companion object {

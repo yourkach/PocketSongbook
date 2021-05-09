@@ -18,9 +18,6 @@ import javax.inject.Inject
 interface TunerView : BaseView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setMessageText(text: String)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
     fun updateTunerResult(result: StringTuningResult)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
@@ -32,10 +29,6 @@ interface TunerView : BaseView {
 class TunerPresenter @Inject constructor(
     private val tuner: Tuner
 ) : BasePresenter<TunerView>() {
-
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-    }
 
     fun onRecordAudioPermissionDenied() {
         viewState.toMicroPermissionScreen()

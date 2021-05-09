@@ -5,58 +5,188 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/btnToggleTuner"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:background="@drawable/rounded_ripple_light_background"
+        android:elevation="3dp"
+        android:gravity="center"
+        android:paddingHorizontal="22dp"
+        android:text="@string/enable_tuner"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnStringD4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btnStringD4"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="D"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/pbOffsetUp"
+        app:layout_constraintEnd_toStartOf="@+id/pbOffsetUp"
+        app:layout_constraintStart_toStartOf="@+id/pbOffsetUp"
+        app:layout_constraintTop_toTopOf="@+id/pbOffsetUp" />
+
+    <TextView
+        android:id="@+id/btnStringA5"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="A"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnStringE6"
+        app:layout_constraintEnd_toEndOf="@+id/btnStringD4"
+        app:layout_constraintTop_toBottomOf="@+id/btnStringD4" />
+
+    <TextView
+        android:id="@+id/btnStringE6"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="E"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pbOffsetDown"
+        app:layout_constraintEnd_toEndOf="@+id/btnStringD4"
+        app:layout_constraintTop_toBottomOf="@+id/pbOffsetDown" />
+
+    <TextView
+        android:id="@+id/btnStringG3"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="G"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/pbOffsetUp"
+        app:layout_constraintEnd_toEndOf="@+id/pbOffsetUp"
+        app:layout_constraintStart_toEndOf="@+id/pbOffsetUp"
+        app:layout_constraintTop_toTopOf="@+id/pbOffsetUp" />
+
+    <TextView
+        android:id="@+id/btnStringB2"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="B"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnStringE1"
+        app:layout_constraintStart_toStartOf="@+id/btnStringG3"
+        app:layout_constraintTop_toBottomOf="@+id/btnStringG3" />
+
+    <TextView
+        android:id="@+id/btnStringE1"
+        android:layout_width="@dimen/string_button_size"
+        android:layout_height="@dimen/string_button_size"
+        android:background="@drawable/string_button_background"
+        android:clickable="true"
+        android:elevation="3dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="E"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pbOffsetDown"
+        app:layout_constraintStart_toStartOf="@+id/btnStringG3"
+        app:layout_constraintTop_toBottomOf="@+id/pbOffsetDown" />
+
     <ProgressBar
         android:id="@+id/pbOffsetDown"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/tuner_progress_length"
+        android:layout_height="@dimen/tuner_progress_length"
         android:max="1000"
-        tools:progress="200"
-        android:layout_marginStart="48dp"
+        android:paddingVertical="@dimen/tuner_progress_padding"
         android:progressDrawable="@drawable/offset_progress_drawable"
-        android:rotation="180"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        android:rotation="90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvSomeText"
-        app:layout_constraintEnd_toStartOf="@id/pbOffsetUp" />
+        app:layout_constraintTop_toBottomOf="@+id/pbOffsetUp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:gravity="center"
+        android:text="-"
+        android:textAlignment="center"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pbOffsetDown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/pbOffsetUp"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/tuner_progress_length"
+        android:layout_height="@dimen/tuner_progress_length"
         android:max="1000"
-        android:layout_marginEnd="48dp"
+        android:paddingVertical="@dimen/tuner_progress_padding"
         android:progressDrawable="@drawable/offset_progress_drawable"
-        app:layout_constraintStart_toEndOf="@id/pbOffsetDown"
-        app:layout_constraintTop_toTopOf="@id/pbOffsetDown"
-        app:layout_constraintBottom_toBottomOf="@id/pbOffsetDown"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvSomeText"
-        android:layout_width="wrap_content"
-        android:textSize="18sp"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:rotation="270"
+        app:layout_constraintBottom_toTopOf="@id/pbOffsetDown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6"
-        tools:text="frequency" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:progress="150" />
 
-
-    <Button
-        android:id="@+id/btnToggleTuner"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Toggle (off)"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="+"
+        android:textAlignment="center"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.8"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="@+id/pbOffsetUp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchDetectMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/tvDetectModeTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnStringE6"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/tvDetectModeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/auto_detect_string"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/switchDetectMode"
+        app:layout_constraintStart_toStartOf="@+id/switchDetectMode"
+        app:layout_constraintTop_toBottomOf="@+id/switchDetectMode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

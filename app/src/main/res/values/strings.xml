@@ -23,4 +23,8 @@
     <string name="microphone_permissions_rationale">Microphone access is required for pitch recognition.</string>
     <string name="permission_was_denied">Permission was denied</string>
     <string name="settings">Settings</string>
+
+    <string name="auto_detect_string">Auto detect string</string>
+    <string name="enable_tuner">Enable tuner</string>
+    <string name="disable_tuner">Disable tuner</string>
 </resources>
