@@ -1,11 +1,13 @@
 package com.example.pocketsongbook.feature.guitar_tuner.tuner_screen
 
 import android.Manifest
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
@@ -62,21 +64,23 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
         }
     }
 
-    override fun updateTunerResult(result: StringTuningResult) {
-        val offset = result.percentOffset
+    private val activeStringButtonTintColor by lazy {
+        ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.colorNavItemSelected, null))
+    }
+    override fun updateTunerResult(tuningResult: StringTuningResult) {
+        val offset = tuningResult.percentOffset
         val (activePb, inactivePb) = when {
             offset > 0 -> pbOffsetUp to pbOffsetDown
             else -> pbOffsetDown to pbOffsetUp
         }
-        activePb.progress = if (result.string != GuitarString.UNDEFINED) {
+        activePb.progress = if (tuningResult.string != GuitarString.UNDEFINED) {
             (PROGRESS_MAX * offset.absoluteValue).roundToInt().coerceAtMost(PROGRESS_MAX)
         } else 0
         inactivePb.progress = 0
         stringButtonsMap.forEach { (string, button) ->
-            if (string == result.string) {
-                button.requestFocus()
-            } else {
-                button.clearFocus()
+            button.backgroundTintList = when (string) {
+                tuningResult.string -> activeStringButtonTintColor
+                else -> null
             }
         }
     }

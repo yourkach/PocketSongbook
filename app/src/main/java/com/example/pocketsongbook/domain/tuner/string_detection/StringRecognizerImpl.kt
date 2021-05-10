@@ -16,7 +16,6 @@ class StringRecognizerImpl @Inject constructor() : StringRecognizer {
         GuitarString.UNDEFINED to 0.0,
     ).sortedBy { it.second }
 
-    @Synchronized
     override fun setFrequency(frequency: Double) {
         string = GuitarString.UNDEFINED
         stringToPitch.minByOrNull { (it.second - frequency).absoluteValue }

@@ -18,7 +18,7 @@ import javax.inject.Inject
 interface TunerView : BaseView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun updateTunerResult(result: StringTuningResult)
+    fun updateTunerResult(tuningResult: StringTuningResult)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun toMicroPermissionScreen()
