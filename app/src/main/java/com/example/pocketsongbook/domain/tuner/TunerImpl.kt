@@ -18,26 +18,34 @@ class TunerImpl @Inject constructor(
     private val stringRecognizer: StringRecognizer
 ) : Tuner {
 
-    private val tuningString = MutableStringTuningResult(
+    private val tuningResult = MutableStringTuningResult(
         string = GuitarString.UNDEFINED,
         frequency = 0.0,
-        percentOffset = 0.0
+        percentOffset = 0.0,
+        isAutoDetectModeActive = true
     )
 
-    override fun startListening(): Flow<StringTuningResult> {
+    override fun setDetectionMode(mode: TunerDetectionMode) {
+        stringRecognizer.stringDetectMode = mode
+    }
+
+    override fun startListening(mode: TunerDetectionMode): Flow<StringTuningResult> {
         return flow {
             try {
                 Timber.d("Started")
+                stringRecognizer.stringDetectMode = mode
                 audioRecorder.startRecording()
                 while (true) {
                     val pitchFrequency: Double = detector.detect(audioRecorder.readNext())
                     stringRecognizer.setFrequency(pitchFrequency)
-                    synchronized(tuningString) {
-                        tuningString.frequency = pitchFrequency
-                        tuningString.string = stringRecognizer.string
-                        tuningString.percentOffset = stringRecognizer.percentageDifference
+                    synchronized(tuningResult) {
+                        tuningResult.frequency = pitchFrequency
+                        tuningResult.string = stringRecognizer.string
+                        tuningResult.percentOffset = stringRecognizer.percentageDifference
+                        tuningResult.isAutoDetectModeActive =
+                            stringRecognizer.stringDetectMode is TunerDetectionMode.AutoDetectString
                     }
-                    this.emit(tuningString)
+                    this.emit(tuningResult)
                 }
             } catch (e: Throwable) {
                 Timber.e(e)

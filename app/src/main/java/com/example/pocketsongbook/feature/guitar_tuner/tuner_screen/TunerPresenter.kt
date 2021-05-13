@@ -2,9 +2,13 @@ package com.example.pocketsongbook.feature.guitar_tuner.tuner_screen
 
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
+import com.example.pocketsongbook.common.extensions.alsoInvokeOnCompletion
+import com.example.pocketsongbook.common.extensions.isNullOrCompleted
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.Tuner
+import com.example.pocketsongbook.domain.tuner.TunerDetectionMode
+import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -18,7 +22,7 @@ import javax.inject.Inject
 interface TunerView : BaseView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun updateTunerResult(tuningResult: StringTuningResult)
+    fun updateTunerState(tunerState: TunerState)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun toMicroPermissionScreen()
@@ -34,25 +38,48 @@ class TunerPresenter @Inject constructor(
         viewState.toMicroPermissionScreen()
     }
 
-    fun onStartClick() {
-        startDetection()
+    fun onToggleTunerClick() {
+        if (detectionJob.isNullOrCompleted) {
+            startDetectionWithMode(TunerDetectionMode.AutoDetectString)
+        } else detectionJob = null
     }
 
-    private var detectionJob by setAndCancelJob()
-    private fun startDetection() {
-        detectionJob = launch {
-            withContext(Dispatchers.IO) {
-                tuner.startListening().collect { tuningResult ->
-                    withContext(Dispatchers.Main) {
-                        viewState.updateTunerResult(tuningResult)
-                    }
-                }
-            }
+
+    fun onAutoDetectStringClick() {
+        startDetectionWithMode(TunerDetectionMode.AutoDetectString)
+    }
+
+    fun onStringButtonClick(string: GuitarString) {
+        startDetectionWithMode(TunerDetectionMode.SelectedString(string))
+    }
+
+    private fun startDetectionWithMode(tunerMode: TunerDetectionMode) {
+        if (detectionJob.isNullOrCompleted) {
+            startDetection(tunerMode)
+        } else {
+            tuner.setDetectionMode(tunerMode)
         }
     }
 
-    fun onStopClick() {
-        detectionJob = null
+    private var detectionJob by setAndCancelJob()
+    private fun startDetection(mode: TunerDetectionMode) {
+        detectionJob = launch {
+            val mutableTunerState = MutableActiveTunerState(StringTuningResult.EmptyResult)
+            withContext(Dispatchers.IO) {
+                tuner.startListening(mode).collect { tuningResult ->
+                    withContext(Dispatchers.Main) {
+                        mutableTunerState.tuningResult = tuningResult
+                        viewState.updateTunerState(mutableTunerState)
+                    }
+                }
+            }
+        }.alsoInvokeOnCompletion {
+            viewState.updateTunerState(TunerState.Inactive)
+        }
+    }
+
+    fun onTabSwitchedAway() {
+        detectionJob?.cancel()
     }
 
 }

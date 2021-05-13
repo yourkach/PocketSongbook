@@ -1,5 +1,6 @@
 package com.example.pocketsongbook.domain.tuner.string_detection
 
+import com.example.pocketsongbook.domain.tuner.TunerDetectionMode
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
@@ -17,13 +18,27 @@ class StringRecognizerImpl @Inject constructor() : StringRecognizer {
     ).sortedBy { it.second }
 
     override fun setFrequency(frequency: Double) {
-        string = GuitarString.UNDEFINED
-        stringToPitch.minByOrNull { (it.second - frequency).absoluteValue }
-            ?.let { (guitarString, stringPitch) ->
-                string = guitarString
-                percentageDifference = ((frequency - stringPitch) / 25.0).coerceIn(-1.0, 1.0)
-            }
+        if (frequency == -1.0) {
+            string = stringDetectMode.string
+            percentageDifference = 0.0
+            return
+        }
+        (stringDetectMode as? TunerDetectionMode.SelectedString)?.let { detectMode ->
+            string = detectMode.string
+            val stringPitch =
+                stringToPitch.first { (string, _) -> string == detectMode.string }.second
+            percentageDifference = ((frequency - stringPitch) / 25.0).coerceIn(-1.0, 1.0)
+        } ?: run {
+            string = GuitarString.UNDEFINED
+            stringToPitch.minByOrNull { (it.second - frequency).absoluteValue }
+                ?.let { (guitarString, stringPitch) ->
+                    string = guitarString
+                    percentageDifference = ((frequency - stringPitch) / 25.0).coerceIn(-1.0, 1.0)
+                }
+        }
     }
+
+    override var stringDetectMode: TunerDetectionMode = TunerDetectionMode.AutoDetectString
 
     override var string: GuitarString = GuitarString.UNDEFINED
         private set

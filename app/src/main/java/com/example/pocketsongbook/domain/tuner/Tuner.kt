@@ -12,5 +12,8 @@ interface Tuner {
      *
      * @return An [<] providing all the found [StringTuningResult].
      */
-    fun startListening(): Flow<StringTuningResult>
+    fun startListening(mode: TunerDetectionMode): Flow<StringTuningResult>
+
+    fun setDetectionMode(mode: TunerDetectionMode)
+
 }

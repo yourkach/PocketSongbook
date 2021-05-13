@@ -8,12 +8,12 @@ import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.domain.tuner.MutableStringTuningResult
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
@@ -47,27 +47,39 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnToggleTuner.setOnClickListener {
-            toggleTuner()
+        btnToggleTuner.setOnClickListener { presenter.onToggleTunerClick() }
+        btnAutoDetectString.setOnClickListener { presenter.onAutoDetectStringClick() }
+        stringButtonsMap.forEach { (string, button) ->
+            button.setOnClickListener { presenter.onStringButtonClick(string) }
         }
     }
 
-    private var isTunerActive = false
-    private fun toggleTuner() {
-        isTunerActive = !isTunerActive
-        btnToggleTuner.text = if (isTunerActive) {
-            presenter.onStartClick()
-            getString(R.string.disable_tuner)
-        } else {
-            presenter.onStopClick()
-            getString(R.string.enable_tuner)
+    override fun updateTunerState(tunerState: TunerState) {
+        when (tunerState) {
+            is TunerState.Inactive -> updateTuningResult(StringTuningResult.EmptyResult)
+            is TunerState.Active -> updateTuningResult(tunerState.tuningResult)
+        }
+        setToggleTunerButtonState(tunerState.isTunerActive)
+    }
+
+    private fun setToggleTunerButtonState(isTunerActive: Boolean) {
+        btnToggleTuner.text = when (isTunerActive) {
+            true -> getString(R.string.disable_tuner)
+            false -> getString(R.string.enable_tuner)
         }
     }
 
     private val activeStringButtonTintColor by lazy {
-        ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.colorNavItemSelected, null))
+        ColorStateList.valueOf(
+            ResourcesCompat.getColor(
+                resources,
+                R.color.colorNavItemSelected,
+                null
+            )
+        )
     }
-    override fun updateTunerResult(tuningResult: StringTuningResult) {
+
+    private fun updateTuningResult(tuningResult: StringTuningResult) {
         val offset = tuningResult.percentOffset
         val (activePb, inactivePb) = when {
             offset > 0 -> pbOffsetUp to pbOffsetDown
@@ -83,14 +95,30 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
                 else -> null
             }
         }
+        setAutoDetectButtonVisible(!tuningResult.isAutoDetectModeActive)
+    }
+
+    private var currentButtonTargetVisibility: Boolean? = null
+    private fun setAutoDetectButtonVisible(targetVisibility: Boolean) {
+        btnAutoDetectString.also { btn ->
+            if (btn.isVisible == targetVisibility || currentButtonTargetVisibility == targetVisibility) return
+            currentButtonTargetVisibility = targetVisibility
+            val buttonHeight = resources.getDimension(R.dimen.tuner_text_buttons_height)
+            btn.translationY = if (targetVisibility) buttonHeight * 3 else 0.0f
+            if (targetVisibility) btn.isVisible = true
+            btn.animate().apply {
+                translationY(if (targetVisibility) 0.0f else buttonHeight * 3)
+                duration = AUTO_DETECT_BTN_ANIMATION_DURATION
+                withEndAction {
+                    if (!targetVisibility) btn.isVisible = false
+                    currentButtonTargetVisibility = null
+                }
+            }.start()
+        }
     }
 
     override fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
-        // TODO: 09.05.2021 вынести логику в презентер
-        if (newTab != NavigationTab.Tuner && isTunerActive) {
-            toggleTuner()
-            updateTunerResult(MutableStringTuningResult(GuitarString.UNDEFINED, 0.0, 0.0))
-        }
+        if (newTab != NavigationTab.Tuner) presenter.onTabSwitchedAway()
     }
 
     override fun onResume() {
@@ -112,6 +140,7 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
 
     companion object {
         private const val PROGRESS_MAX = 1000
+        private const val AUTO_DETECT_BTN_ANIMATION_DURATION = 150L
     }
 
 }

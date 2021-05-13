@@ -1,5 +1,7 @@
 package com.example.pocketsongbook.domain.tuner.string_detection
 
+import com.example.pocketsongbook.domain.tuner.TunerDetectionMode
+
 /**
  * An interface for implementations that finds the closest string and frequency difference
  * based on a provided frequency value.
@@ -28,4 +30,6 @@ interface StringRecognizer {
      * @return The percent offset from the closest string, in range [-1, 1]
      */
     val percentageDifference: Double
+
+    var stringDetectMode: TunerDetectionMode
 }

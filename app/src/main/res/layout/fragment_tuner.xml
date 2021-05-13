@@ -8,9 +8,9 @@
     <TextView
         android:id="@+id/btnToggleTuner"
         android:layout_width="wrap_content"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/tuner_text_buttons_height"
         android:background="@drawable/rounded_ripple_light_background"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:gravity="center"
         android:paddingHorizontal="22dp"
         android:text="@string/enable_tuner"
@@ -26,7 +26,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="D"
@@ -42,7 +42,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="A"
@@ -57,7 +57,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="E"
@@ -72,7 +72,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="G"
@@ -88,7 +88,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="B"
@@ -103,7 +103,7 @@
         android:layout_height="@dimen/string_button_size"
         android:background="@drawable/string_button_background"
         android:clickable="true"
-        android:elevation="3dp"
+        android:elevation="@dimen/tuner_buttons_elevation"
         android:focusable="true"
         android:gravity="center"
         android:text="E"
@@ -128,6 +128,7 @@
 
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -167,26 +168,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pbOffsetUp" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switchDetectMode"
+    <TextView
+        android:id="@+id/btnAutoDetectString"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/tvDetectModeTitle"
+        android:layout_height="@dimen/tuner_text_buttons_height"
+        android:background="@drawable/rounded_ripple_light_background"
+        android:elevation="@dimen/tuner_buttons_elevation"
+        android:gravity="center"
+        android:paddingHorizontal="22dp"
+        android:text="@string/auto_detect_string"
+        android:textSize="22sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStringE6"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/tvDetectModeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="@string/auto_detect_string"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/switchDetectMode"
-        app:layout_constraintStart_toStartOf="@+id/switchDetectMode"
-        app:layout_constraintTop_toBottomOf="@+id/switchDetectMode" />
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
