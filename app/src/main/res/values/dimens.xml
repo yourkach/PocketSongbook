@@ -7,8 +7,8 @@
     <dimen name="song_button_size">42dp</dimen>
     <dimen name="chords_bar_corners_radius">12dp</dimen>
     <dimen name="suggestion_ic_delete_size">54dp</dimen>
-    <dimen name="tuner_progress_length">220dp</dimen>
-    <dimen name="tuner_progress_padding">90dp</dimen>
+    <dimen name="tuner_progress_length">180dp</dimen>
+    <dimen name="tuner_progress_padding">70dp</dimen>
     <dimen name="string_button_size">68dp</dimen>
     <dimen name="tuner_buttons_elevation">3dp</dimen>
     <dimen name="tuner_text_buttons_height">56dp</dimen>
