@@ -36,16 +36,10 @@ class TunerImpl @Inject constructor(
                 stringRecognizer.stringDetectMode = mode
                 audioRecorder.startRecording()
                 while (true) {
-                    val pitchFrequency: Double = detector.detect(audioRecorder.readNext())
-                    stringRecognizer.setFrequency(pitchFrequency)
-                    synchronized(tuningResult) {
-                        tuningResult.frequency = pitchFrequency
-                        tuningResult.string = stringRecognizer.string
-                        tuningResult.percentOffset = stringRecognizer.percentageDifference
-                        tuningResult.isAutoDetectModeActive =
-                            stringRecognizer.stringDetectMode is TunerDetectionMode.AutoDetectString
-                    }
-                    this.emit(tuningResult)
+                    val audioWave = audioRecorder.readNext()
+                    val frequency = detector.detect(audioWave)
+                    tuningResult.updateByFrequency(frequency)
+                    emit(tuningResult)
                 }
             } catch (e: Throwable) {
                 Timber.e(e)
@@ -54,6 +48,15 @@ class TunerImpl @Inject constructor(
                 audioRecorder.stopRecording()
             }
         }
+    }
+
+    private fun MutableStringTuningResult.updateByFrequency(frequency: Double) {
+        stringRecognizer.setFrequency(frequency)
+        tuningResult.frequency = frequency
+        tuningResult.string = stringRecognizer.string
+        tuningResult.percentOffset = stringRecognizer.percentageDifference
+        tuningResult.isAutoDetectModeActive =
+            stringRecognizer.stringDetectMode is TunerDetectionMode.AutoDetectString
     }
 
 }
