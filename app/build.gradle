@@ -9,6 +9,17 @@ android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
+    signingConfigs {
+        debug {
+            keyAlias 'debug_key'
+            keyPassword 'debug_key'
+            storePassword 'debug_key'
+            storeFile file('../keystore/debug_keystore.keystore')
+        }
+        release {
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.pocketsongbook"
         minSdkVersion 23
