@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.databinding.ItemSuggestionBinding
 import com.example.pocketsongbook.feature.search.QuerySuggestion
 import com.example.pocketsongbook.utils.EqualsDiffCallback
 import com.example.pocketsongbook.utils.inflate
-import kotlinx.android.synthetic.main.item_suggestion.view.*
 
 class SuggestionsAdapter(
     private val onSuggestionClick: (String) -> Unit,
@@ -25,11 +25,14 @@ class SuggestionsAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        private val binding = ItemSuggestionBinding.bind(itemView)
+
         fun bind(suggestion: QuerySuggestion) {
             with(itemView) {
-                tvSuggestionText.text = suggestion.text
+                binding.tvSuggestionText.text = suggestion.text
                 setOnClickListener { onSuggestionClick(suggestion.text) }
-                ivDeleteSuggestion.setOnClickListener { onSuggestionDelete(suggestion.text) }
+                binding.ivDeleteSuggestion.setOnClickListener { onSuggestionDelete(suggestion.text) }
             }
         }
     }

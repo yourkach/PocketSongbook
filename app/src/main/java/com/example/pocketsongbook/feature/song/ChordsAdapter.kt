@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.databinding.ItemChordBinding
 import com.example.pocketsongbook.domain.models.Chord
-import kotlinx.android.synthetic.main.item_chord.view.*
 
 class ChordsAdapter() :
     RecyclerView.Adapter<ChordsAdapter.ViewHolder>() {
@@ -32,12 +32,15 @@ class ChordsAdapter() :
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding = ItemChordBinding.bind(itemView)
+
         fun bind(chord: Chord) {
             itemView.apply {
-                Glide.with(chordPicIv.context)
+                Glide.with(binding.chordPicIv.context)
                     .load(chord.imgUrl)
                     .error(R.drawable.ic_chord_stub)
-                    .into(chordPicIv)
+                    .into(binding.chordPicIv)
             }
         }
     }

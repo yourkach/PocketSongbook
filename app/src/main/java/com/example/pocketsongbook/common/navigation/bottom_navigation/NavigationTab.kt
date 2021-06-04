@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.common.navigation.bottom_navigation
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class NavigationTab : Parcelable {

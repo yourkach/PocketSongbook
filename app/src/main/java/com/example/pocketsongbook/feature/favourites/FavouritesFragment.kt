@@ -4,14 +4,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
+import com.example.pocketsongbook.databinding.FragmentFavouritesBinding
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_favourites.*
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
@@ -20,6 +21,8 @@ import javax.inject.Inject
 
 class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), FavouritesView,
     SearchView.OnQueryTextListener {
+
+    private val binding by viewBinding(FragmentFavouritesBinding::bind)
 
     @Inject
     lateinit var favoritesPresenter: FavoritesPresenter
@@ -44,14 +47,14 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
     }
 
     private fun setUpRecycler() {
-        favouritesRv.apply {
+        binding.favouritesRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = favoriteSongItemsAdapter
         }
     }
 
     private fun setUpToolbar() {
-        searchViewFavourites.setOnQueryTextListener(this)
+        binding.searchViewFavourites.setOnQueryTextListener(this)
     }
 
     override fun updateItems(newItems: List<FavoriteSongModel>) {
@@ -64,7 +67,7 @@ class FavouritesFragment : BaseFragment(R.layout.fragment_favourites), Favourite
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (query != null) presenter.onQueryTextChanged(query)
-        favouritesToolbar.clearFocus()
+        binding.favouritesToolbar.clearFocus()
         return true
     }
 

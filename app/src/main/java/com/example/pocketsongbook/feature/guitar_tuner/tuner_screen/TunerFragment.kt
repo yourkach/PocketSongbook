@@ -9,15 +9,16 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.databinding.FragmentTunerBinding
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
-import kotlinx.android.synthetic.main.fragment_tuner.*
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -34,21 +35,25 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
         presenterProvider.get()
     }
 
+    private val binding by viewBinding(FragmentTunerBinding::bind)
+
     private val stringButtonsMap: Map<GuitarString, TextView> by lazy {
-        mapOf(
-            GuitarString.E_1 to btnStringE1,
-            GuitarString.B_2 to btnStringB2,
-            GuitarString.G_3 to btnStringG3,
-            GuitarString.D_4 to btnStringD4,
-            GuitarString.A_5 to btnStringA5,
-            GuitarString.E_6 to btnStringE6
-        )
+        with(binding) {
+            mapOf(
+                GuitarString.E_1 to btnStringE1,
+                GuitarString.B_2 to btnStringB2,
+                GuitarString.G_3 to btnStringG3,
+                GuitarString.D_4 to btnStringD4,
+                GuitarString.A_5 to btnStringA5,
+                GuitarString.E_6 to btnStringE6
+            )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnToggleTuner.setOnClickListener { presenter.onToggleTunerClick() }
-        btnAutoDetectString.setOnClickListener { presenter.onAutoDetectStringClick() }
+        binding.btnToggleTuner.setOnClickListener { presenter.onToggleTunerClick() }
+        binding.btnAutoDetectString.setOnClickListener { presenter.onAutoDetectStringClick() }
         stringButtonsMap.forEach { (string, button) ->
             button.setOnClickListener { presenter.onStringButtonClick(string) }
         }
@@ -63,7 +68,7 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
     }
 
     private fun setToggleTunerButtonState(isTunerActive: Boolean) {
-        btnToggleTuner.text = when (isTunerActive) {
+        binding.btnToggleTuner.text = when (isTunerActive) {
             true -> getString(R.string.disable_tuner)
             false -> getString(R.string.enable_tuner)
         }
@@ -80,27 +85,30 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
     }
 
     private fun updateTuningResult(tuningResult: StringTuningResult) {
-        val offset = tuningResult.percentOffset
-        val (activePb, inactivePb) = when {
-            offset > 0 -> pbOffsetUp to pbOffsetDown
-            else -> pbOffsetDown to pbOffsetUp
-        }
-        activePb.progress = if (tuningResult.string != GuitarString.UNDEFINED) {
-            (PROGRESS_MAX * offset.absoluteValue).roundToInt().coerceAtMost(PROGRESS_MAX)
-        } else 0
-        inactivePb.progress = 0
-        stringButtonsMap.forEach { (string, button) ->
-            button.backgroundTintList = when (string) {
-                tuningResult.string -> activeStringButtonTintColor
-                else -> null
+        with(binding) {
+            val offset = tuningResult.percentOffset
+            val (activePb, inactivePb) = when {
+                offset > 0 -> pbOffsetUp to pbOffsetDown
+                else -> pbOffsetDown to pbOffsetUp
             }
+
+            activePb.progress = if (tuningResult.string != GuitarString.UNDEFINED) {
+                (PROGRESS_MAX * offset.absoluteValue).roundToInt().coerceAtMost(PROGRESS_MAX)
+            } else 0
+            inactivePb.progress = 0
+            stringButtonsMap.forEach { (string, button) ->
+                button.backgroundTintList = when (string) {
+                    tuningResult.string -> activeStringButtonTintColor
+                    else -> null
+                }
+            }
+            setAutoDetectButtonVisible(!tuningResult.isAutoDetectModeActive)
         }
-        setAutoDetectButtonVisible(!tuningResult.isAutoDetectModeActive)
     }
 
     private var currentButtonTargetVisibility: Boolean? = null
     private fun setAutoDetectButtonVisible(targetVisibility: Boolean) {
-        btnAutoDetectString.also { btn ->
+        binding.btnAutoDetectString.also { btn ->
             if (btn.isVisible == targetVisibility || currentButtonTargetVisibility == targetVisibility) return
             currentButtonTargetVisibility = targetVisibility
             val buttonHeight = resources.getDimension(R.dimen.tuner_text_buttons_height)

@@ -7,18 +7,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.databinding.FragmentMicroPermissionsBinding
 import com.example.pocketsongbook.feature.guitar_tuner.tuner_screen.TunerFragment
-import kotlinx.android.synthetic.main.fragment_micro_permissions.*
 import timber.log.Timber
 
 class MicroPermissionsFragment : BaseFragment(R.layout.fragment_micro_permissions) {
 
+    private val binding by viewBinding(FragmentMicroPermissionsBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ivMicrophoneIcon.setOnClickListener {
+        binding.ivMicrophoneIcon.setOnClickListener {
             requestMicrophonePermission()
         }
         requestMicrophonePermission()
@@ -54,7 +57,7 @@ class MicroPermissionsFragment : BaseFragment(R.layout.fragment_micro_permission
     private fun onMicroPermissionDenied() {
         val message = getString(R.string.permission_was_denied)
         val actionText = getString(R.string.settings)
-        showActionSnackBar(message, actionText, coordinatorLayout) {
+        showActionSnackBar(message, actionText, binding.coordinatorLayout) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", requireContext().packageName, null)
             }

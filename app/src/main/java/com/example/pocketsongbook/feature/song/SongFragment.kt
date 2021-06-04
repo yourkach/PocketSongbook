@@ -8,18 +8,19 @@ import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ParcelableArgument
+import com.example.pocketsongbook.databinding.FragmentSongBinding
 import com.example.pocketsongbook.domain.models.Chord
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
-import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.fragment_song.*
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
@@ -39,6 +40,8 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
 
     private val chordsAdapter by lazy { ChordsAdapter() }
 
+    private val binding: FragmentSongBinding by viewBinding(FragmentSongBinding::bind)
+
     override val enterTransitionRes: Int = R.transition.slide_right
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,15 +54,16 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     override fun onPause() {
         super.onPause()
         presenter.onViewPaused()
+
     }
 
     private fun setUpSeekBar() {
-        songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.songScrollSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                songScrollSb.animate().apply {
+                binding.songScrollSb.animate().apply {
                     alpha(1.0f)
                     duration = 200
                     start()
@@ -68,7 +72,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.progress?.let(::setAutoScrollSpeed)
-                songScrollSb.animate().apply {
+                binding.songScrollSb.animate().apply {
                     alpha(0.3f)
                     duration = 200
                     start()
@@ -109,19 +113,21 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
      * [speed] must be in 0..30 range
      */
     fun setAutoScrollSpeed(speed: Int) {
-        if (speed != 0) {
-            scrollJob = CoroutineScope(Dispatchers.Main).launch {
-                coroutineTimer(repeatMillis = (35 - speed).toLong()) {
-                    svSongLyrics.smoothScrollBy(0, 1)
-                    songLinearLayout.measuredHeight > (svSongLyrics.scrollY + svSongLyrics.height)
+        with(binding) {
+            if (speed != 0) {
+                scrollJob = CoroutineScope(Dispatchers.Main).launch {
+                    coroutineTimer(repeatMillis = (35 - speed).toLong()) {
+                        svSongLyrics.smoothScrollBy(0, 1)
+                        songLinearLayout.measuredHeight > (svSongLyrics.scrollY + svSongLyrics.height)
+                    }
+                }.apply {
+                    invokeOnCompletion {
+                        if (it !is CancellationException) songScrollSb.progress = 0
+                    }
                 }
-            }.apply {
-                invokeOnCompletion {
-                    if (it !is CancellationException) songScrollSb.progress = 0
-                }
+            } else {
+                scrollJob?.cancel()
             }
-        } else {
-            scrollJob?.cancel()
         }
     }
 
@@ -139,7 +145,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     }
 
     private fun setUpChordsRecycler() {
-        songChordsRv.apply {
+        binding.songChordsRv.apply {
             layoutManager = LinearLayoutManager(
                 requireContext(), LinearLayoutManager.HORIZONTAL, false
             )
@@ -148,49 +154,51 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     }
 
     private fun setOnClickListeners() {
-        songKeyUpBtn.setOnClickListener {
+        binding.songKeyUpBtn.setOnClickListener {
             presenter.onChordsKeyChangeInteraction(ChangeType.Increment)
         }
-        songKeyDownBtn.setOnClickListener {
+        binding.songKeyDownBtn.setOnClickListener {
             presenter.onChordsKeyChangeInteraction(ChangeType.Decrement)
         }
-        songKeyAmountTv.setOnClickListener {
+        binding.songKeyAmountTv.setOnClickListener {
             presenter.onChordsKeyChangeInteraction(ChangeType.SetDefault)
         }
-        songFontPlusBtn.setOnClickListener {
+        binding.songFontPlusBtn.setOnClickListener {
             presenter.onFontSizeChangeInteraction(ChangeType.Increment)
         }
-        songFontMinusBtn.setOnClickListener {
+        binding.songFontMinusBtn.setOnClickListener {
             presenter.onFontSizeChangeInteraction(ChangeType.Decrement)
         }
-        songFontSizeTv.setOnClickListener {
+        binding.songFontSizeTv.setOnClickListener {
             presenter.onFontSizeChangeInteraction(ChangeType.SetDefault)
         }
-        songOpenChordsFb.setOnClickListener {
+        binding.songOpenChordsFb.setOnClickListener {
             presenter.onChordsBarButtonClick()
         }
-        songAddToFavouriteIv.setOnClickListener {
+        binding.songAddToFavouriteIv.setOnClickListener {
             presenter.onSongToggleFavoriteClicked()
         }
-        svSongLyrics.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+        binding.svSongLyrics.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY - oldScrollY < 0) {
-                songOpenChordsFb.show()
+                binding.songOpenChordsFb.show()
             } else {
-                songOpenChordsFb.hide()
+                binding.songOpenChordsFb.hide()
             }
         }
     }
 
     private fun bindSongInfo(artist: String, title: String, lyricsHtml: String) {
-        tvSongArtist.text = artist
-        tvSongTitle.text = title
-        songLyricsTv.text = HtmlCompat.fromHtml(lyricsHtml, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        with(binding) {
+            tvSongArtist.text = artist
+            tvSongTitle.text = title
+            songLyricsTv.text = HtmlCompat.fromHtml(lyricsHtml, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        }
     }
 
     private var currentKeyOption: ChangeableOption<ChordsKey>? = null
     private fun bindKeyOption(keyOption: ChangeableOption<ChordsKey>) {
         if (currentKeyOption == keyOption) return
-        songKeyAmountTv.text = when {
+        binding.songKeyAmountTv.text = when {
             keyOption.isDefault -> getString(R.string.song_key_default)
             else -> keyOption.selectedValue.key.toString()
         }
@@ -200,11 +208,11 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     private var currentFontSizeOption: ChangeableOption<FontSize>? = null
     private fun bindFontSizeOption(sizeOption: ChangeableOption<FontSize>) {
         if (currentFontSizeOption == sizeOption) return
-        songFontSizeTv.text = when {
+        binding.songFontSizeTv.text = when {
             sizeOption.isDefault -> getString(R.string.song_font_default)
             else -> sizeOption.selectedValue.size.toString()
         }
-        songLyricsTv.setTextSize(
+        binding.songLyricsTv.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
             sizeOption.selectedValue.size.toFloat()
         )
@@ -216,7 +224,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
             true -> R.drawable.ic_star_white_36dp
             else -> R.drawable.ic_star_border_white_36dp
         }
-        songAddToFavouriteIv.setImageResource(resource)
+        binding.songAddToFavouriteIv.setImageResource(resource)
     }
 
     private fun setChordsBarItems(chords: List<Chord>) {
@@ -224,7 +232,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     }
 
     private fun setChordsBarOpened(isVisible: Boolean) {
-        songChordsBarFl.isVisible = isVisible
+        binding.songChordsBarFl.isVisible = isVisible
     }
 
     override fun onDestroy() {

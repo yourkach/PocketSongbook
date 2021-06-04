@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 
 apply plugin: "androidx.navigation.safeargs.kotlin"
@@ -36,8 +36,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-
+    buildFeatures {
+        viewBinding true
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -68,6 +69,9 @@ dependencies {
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+
+    // ViewBinding delegate
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6'
 
     //Jsoup
     def jsoup_version = '1.13.1'
@@ -117,8 +121,4 @@ dependencies {
     // Timber logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-}
-
-androidExtensions {
-    experimental = true
 }

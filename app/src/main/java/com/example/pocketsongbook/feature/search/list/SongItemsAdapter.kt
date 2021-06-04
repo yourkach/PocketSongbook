@@ -6,13 +6,13 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
+import com.example.pocketsongbook.databinding.ItemChordBinding
+import com.example.pocketsongbook.databinding.ItemSearchSongBinding
+import com.example.pocketsongbook.databinding.ItemSearchSongSkeletonBinding
 import com.example.pocketsongbook.domain.models.FoundSongModel
 import com.example.pocketsongbook.utils.EqualsDiffCallback
 import com.example.pocketsongbook.utils.inflate
 import com.example.pocketsongbook.utils.setOnSafeClickListener
-import kotlinx.android.synthetic.main.item_search_song.view.*
-import kotlinx.android.synthetic.main.item_search_song.view.tvSongTitle
-import kotlinx.android.synthetic.main.item_search_song_skeleton.view.*
 
 class SongItemsAdapter(
     private val onItemClick: (searchItem: FoundSongModel) -> Unit
@@ -64,16 +64,15 @@ class SongItemsAdapter(
     abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     inner class SkeletonHolder(itemView: View) : ViewHolder(itemView) {
-        fun bind() {
-            itemView.itemShimmerLayout.apply {
-                startShimmerAnimation()
-            }
-        }
+        private val binding = ItemSearchSongSkeletonBinding.bind(itemView)
+        fun bind() = binding.itemShimmerLayout.startShimmerAnimation()
     }
 
     inner class ItemHolder(itemView: View) : ViewHolder(itemView) {
+        private val binding = ItemSearchSongBinding.bind(itemView)
+
         fun bind(searchItem: FoundSongModel) {
-            itemView.apply {
+            binding.apply {
                 tvSongArtist.text = searchItem.artist
                 tvSongTitle.text = searchItem.title
                 songFavoriteIv.isVisible = searchItem.isFavourite

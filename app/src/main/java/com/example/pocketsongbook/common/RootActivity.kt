@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
 import com.example.pocketsongbook.common.navigation.TabCiceronesHolder
@@ -11,18 +12,19 @@ import com.example.pocketsongbook.common.navigation.bottom_navigation.BottomNavi
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
+import com.example.pocketsongbook.databinding.ActivityMainBinding
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_navigation_bar_layout.*
 import moxy.MvpAppCompatActivity
 import javax.inject.Inject
 
 class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
+
+    private val binding by viewBinding(ActivityMainBinding::bind)
 
     @Inject
     lateinit var holder: TabCiceronesHolder
@@ -62,23 +64,30 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     }
 
     private fun setNavigationButtonsListeners() {
-        navFavoritesFrame.setOnClickListener {
-            navigationHelper.switchToTab(NavigationTab.Favorites)
-        }
-        navSearchFrame.setOnClickListener {
-            navigationHelper.switchToTab(NavigationTab.Search)
-        }
-        navTunerFrame.setOnClickListener {
-            navigationHelper.switchToTab(NavigationTab.Tuner)
+        with(binding.bottomNavigationBar) {
+            navFavoritesFrame.setOnClickListener {
+                navigationHelper.switchToTab(NavigationTab.Favorites)
+            }
+            navSearchFrame.setOnClickListener {
+                navigationHelper.switchToTab(NavigationTab.Search)
+            }
+            navTunerFrame.setOnClickListener {
+                navigationHelper.switchToTab(NavigationTab.Tuner)
+            }
         }
     }
 
     private val bottomNavigationTabViews by lazy {
-        mapOf(
-            NavigationTab.Favorites to NavigationTabViews(navIvFavoritesIcon, navTvFavoritesLabel),
-            NavigationTab.Search to NavigationTabViews(navIvSearchIcon, navTvSearchLabel),
-            NavigationTab.Tuner to NavigationTabViews(navIvTunerIcon, navTvTunerLabel)
-        )
+        with(binding.bottomNavigationBar) {
+            mapOf(
+                NavigationTab.Favorites to NavigationTabViews(
+                    navIvFavoritesIcon,
+                    navTvFavoritesLabel
+                ),
+                NavigationTab.Search to NavigationTabViews(navIvSearchIcon, navTvSearchLabel),
+                NavigationTab.Tuner to NavigationTabViews(navIvTunerIcon, navTvTunerLabel)
+            )
+        }
     }
 
 
@@ -126,15 +135,15 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
     }
 
     fun setNavigationBarVisible(isVisible: Boolean) {
-        bottomNavigationBar.isVisible = isVisible
+        binding.bottomNavigationBar.root.isVisible = isVisible
     }
 
     fun showLoading() {
-        loadingStub.isVisible = true
+        binding.loadingStub.isVisible = true
     }
 
     fun hideLoading() {
-        loadingStub.isVisible = false
+        binding.loadingStub.isVisible = false
     }
 
     companion object {

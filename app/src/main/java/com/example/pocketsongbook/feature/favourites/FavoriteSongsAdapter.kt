@@ -7,12 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
+import com.example.pocketsongbook.databinding.ItemFavoriteSongBinding
 import com.example.pocketsongbook.utils.EqualsDiffCallback
 import com.example.pocketsongbook.utils.formatByDefault
-import com.example.pocketsongbook.utils.millisToLocalDate
-import kotlinx.android.synthetic.main.item_favorite_song.view.*
-import kotlinx.android.synthetic.main.item_search_song.view.tvSongArtist
-import kotlinx.android.synthetic.main.item_search_song.view.tvSongTitle
+import com.example.pocketsongbook.utils.utcMillisToLocalDate
 
 class FavoriteSongsAdapter(
     private val onItemClickResponse: (song: FavoriteSongModel) -> Unit
@@ -37,19 +35,16 @@ class FavoriteSongsAdapter(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val dateFormat by lazy {
-
-        }
+        private val binding = ItemFavoriteSongBinding.bind(itemView)
 
         fun bind(model: FavoriteSongModel) {
-            itemView.apply {
+            binding.apply {
                 tvSongArtist.text = model.song.artist
                 tvSongTitle.text = model.song.title
                 tvSongWebsite.text = model.song.website.websiteName
-                val dateText = model.timeAdded.millisToLocalDate().formatByDefault()
-                tvSavedDatetime.text = context.getString(R.string.saved_at, dateText)
-                setOnClickListener {
+                val dateText = model.timeAdded.utcMillisToLocalDate().formatByDefault()
+                tvSavedDatetime.text = root.context.getString(R.string.saved_at, dateText)
+                root.setOnClickListener {
                     onItemClickResponse(model)
                 }
             }

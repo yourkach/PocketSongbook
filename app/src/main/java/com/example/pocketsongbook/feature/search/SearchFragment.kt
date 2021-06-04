@@ -8,9 +8,11 @@ import android.widget.ListPopupWindow
 import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.databinding.FragmentSearchBinding
 import com.example.pocketsongbook.domain.models.SongModel
 import com.example.pocketsongbook.domain.search.SongsWebsite
 import com.example.pocketsongbook.domain.search.toSongsWebsiteOrNull
@@ -22,8 +24,6 @@ import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
 import com.example.pocketsongbook.utils.isViewFocused
 import com.example.pocketsongbook.utils.queryText
-import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.fragment_search.view.*
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,9 +39,11 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     private val presenter by moxyPresenter { searchPresenterProvider.get() }
 
+    private val binding by viewBinding(FragmentSearchBinding::bind)
+
     private val searchItemsAdapter by lazy {
         SongItemsAdapter { item ->
-            songsSearchView.hideKeyboard()
+            binding.songsSearchView.hideKeyboard()
             presenter.onSongClicked(item)
         }
     }
@@ -53,7 +55,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         initWebsitesSelector()
     }
 
-    override fun onBackPressed(): Boolean = with(songsSearchView) {
+    override fun onBackPressed(): Boolean = with(binding.songsSearchView) {
         if (isViewFocused) {
             clearFocus()
             true
@@ -61,7 +63,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     private fun initRecyclerView() {
-        searchRv.apply {
+        binding.searchRv.apply {
             layoutManager = SearchLayoutManager(requireContext())
             adapter = searchItemsAdapter
         }
@@ -71,7 +73,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     private fun initWebsitesSelector() {
         val websiteNames = SongsWebsite.values().map { it.websiteName }
         websitesListPopup.apply {
-            anchorView = tvSelectedWebsite
+            anchorView = binding.tvSelectedWebsite
             ArrayAdapter(
                 requireContext(),
                 R.layout.item_website,
@@ -84,7 +86,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                 dismiss()
             }
         }
-        tvSelectedWebsite.setOnClickListener {
+        binding.tvSelectedWebsite.setOnClickListener {
             websitesListPopup.show()
         }
     }
@@ -107,7 +109,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     private fun initSearchView() {
-        songsSearchView.apply {
+        binding.songsSearchView.apply {
             val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
             findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
             setOnQueryTextFocusChangeListener { v, hasFocus ->
@@ -119,7 +121,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                         val trimmedQuery = query.orEmpty().trim()
                         if (trimmedQuery.isNotEmpty()) {
                             presenter.onQueryTextSubmit(trimmedQuery)
-                            songsSearchView.hideKeyboard()
+                            binding.songsSearchView.hideKeyboard()
                         }
                         return true
                     }
@@ -127,14 +129,14 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                     override fun onQueryTextChange(newText: String?): Boolean {
                         presenter.onQueryTextChange(
                             query = newText?.trim().orEmpty(),
-                            isQueryFocused = songsSearchView.focusedChild != null
+                            isQueryFocused = binding.songsSearchView.focusedChild != null
                         )
                         return true
                     }
                 }
             )
         }
-        rvSearchSuggestions.apply {
+        binding.rvSearchSuggestions.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = suggestionsAdapter
@@ -143,7 +145,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
 
     override fun showLoading() {
         super.showLoading()
-        nothingFoundStub.isVisible = false
+        binding.nothingFoundStub.isVisible = false
     }
 
     override fun toSongScreen(song: SongModel) {
@@ -165,27 +167,27 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     private fun renderQueryState(searchQueryState: SearchQueryState) {
-        with(songsSearchView) {
+        with(binding.songsSearchView) {
             isViewFocused = searchQueryState.isFocused
             queryText = searchQueryState.queryText
         }
     }
 
     private fun renderSelectedWebsite(website: SongsWebsite) {
-        tvSelectedWebsite.text = website.websiteName
+        binding.tvSelectedWebsite.text = website.websiteName
     }
 
     private fun renderQuerySuggestionsState(suggestionsState: SuggestionsState) {
         suggestionsAdapter.submitList(suggestionsState.suggestionsList)
-        rvSearchSuggestions.isVisible = suggestionsState.isVisible
+        binding.rvSearchSuggestions.isVisible = suggestionsState.isVisible
     }
 
     private fun renderSearchItemsState(state: SearchItemsState) {
-        searchRv.isNestedScrollingEnabled = false
-        nothingFoundStub.isVisible = false
+        binding.searchRv.isNestedScrollingEnabled = false
+        binding.nothingFoundStub.isVisible = false
         when (state) {
             is SearchItemsState.SearchResult.NothingFound -> {
-                nothingFoundStub.isVisible = true
+                binding.nothingFoundStub.isVisible = true
                 searchItemsAdapter.setLoadedSongs(listOf())
             }
             is SearchItemsState.SearchResult.Loading -> {
@@ -198,8 +200,8 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
                 searchItemsAdapter.setLoadedSongs(listOf())
             }
             is SearchItemsState.SearchResult.Loaded -> {
-                searchRv.isNestedScrollingEnabled = state.items.isNotEmpty()
-                nothingFoundStub.isVisible = false
+                binding.searchRv.isNestedScrollingEnabled = state.items.isNotEmpty()
+                binding.nothingFoundStub.isVisible = false
                 setScrollingEnabled(true)
                 searchItemsAdapter.setLoadedSongs(state.items)
             }
@@ -207,7 +209,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     }
 
     private fun setScrollingEnabled(isEnabled: Boolean) {
-        (searchRv.layoutManager as? SearchLayoutManager)?.isScrollingEnabled = isEnabled
+        (binding.searchRv.layoutManager as? SearchLayoutManager)?.isScrollingEnabled = isEnabled
     }
 
     override fun showFailedToLoadSongError() {
