@@ -9,9 +9,14 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
+import com.example.pocketsongbook.common.ViewModelFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
@@ -19,21 +24,24 @@ import com.example.pocketsongbook.databinding.FragmentTunerBinding
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.ktx.moxyPresenter
+import timber.log.Timber
+import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
-class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwitchedListener {
+class TunerFragment : ViewModelFragment(R.layout.fragment_tuner), TunerView, OnTabSwitchedListener {
 
     @Inject
-    lateinit var presenterProvider: Provider<TunerPresenter>
+    lateinit var viewModelProvider: Provider<TunerViewModel>
 
-    private val presenter by moxyPresenter {
-        presenterProvider.get()
-    }
+    private val viewModel: TunerViewModel by viewModelCreator { viewModelProvider.get() }
 
     private val binding by viewBinding(FragmentTunerBinding::bind)
 
@@ -52,10 +60,27 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnToggleTuner.setOnClickListener { presenter.onToggleTunerClick() }
-        binding.btnAutoDetectString.setOnClickListener { presenter.onAutoDetectStringClick() }
+        initView()
+        initViewModelSubscription()
+    }
+
+    private fun initViewModelSubscription() {
+        viewModel.viewStateFlow.onEach { tunerState ->
+            Timber.d(tunerState.toString())
+            updateTunerState(tunerState)
+        }.launchIn(lifecycleScope)
+        viewModel.viewActionsFlow.onEach { viewAction ->
+            when (viewAction) {
+                TunerViewAction.OpenPermissionsScreen -> toMicroPermissionScreen()
+            }
+        }.launchIn(lifecycleScope)
+    }
+
+    private fun initView() {
+        binding.btnToggleTuner.setOnClickListener { viewModel.onToggleTunerClick() }
+        binding.btnAutoDetectString.setOnClickListener { viewModel.onAutoDetectStringClick() }
         stringButtonsMap.forEach { (string, button) ->
-            button.setOnClickListener { presenter.onStringButtonClick(string) }
+            button.setOnClickListener { viewModel.onStringButtonClick(string) }
         }
     }
 
@@ -126,7 +151,7 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
     }
 
     override fun onTabSwitched(oldTab: NavigationTab?, newTab: NavigationTab) {
-        if (newTab != NavigationTab.Tuner) presenter.onTabSwitchedAway()
+        if (newTab != NavigationTab.Tuner) viewModel.onTabSwitchedAway()
     }
 
     override fun onResume() {
@@ -136,7 +161,7 @@ class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwi
 
     private fun checkMicroPermission() {
         if (!isPermissionGranted(Manifest.permission.RECORD_AUDIO)) {
-            presenter.onRecordAudioPermissionDenied()
+            viewModel.onRecordAudioPermissionDenied()
         }
     }
 

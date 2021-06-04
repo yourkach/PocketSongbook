@@ -38,6 +38,7 @@ class StringRecognizerImpl @Inject constructor() : StringRecognizer {
         }
     }
 
+    @Volatile
     override var stringDetectMode: TunerDetectionMode = TunerDetectionMode.AutoDetectString
 
     override var string: GuitarString = GuitarString.UNDEFINED

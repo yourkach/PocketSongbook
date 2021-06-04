@@ -16,5 +16,6 @@ val TunerState.isTunerActive: Boolean
     get() = this is TunerState.Active
 
 class MutableActiveTunerState(
+    @Volatile
     override var tuningResult: StringTuningResult
 ) : TunerState.Active()
