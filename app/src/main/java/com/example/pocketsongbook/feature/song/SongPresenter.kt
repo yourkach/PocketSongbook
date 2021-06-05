@@ -3,6 +3,7 @@ package com.example.pocketsongbook.feature.song
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
+import com.example.pocketsongbook.common.mvi_core.MviReducer
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.favorites.ToggleSongFavoriteStatusUseCase
@@ -27,6 +28,8 @@ interface SongView : BaseView {
     fun applyState(state: SongScreenState)
 
 }
+
+/** TODO: 05.06.2021 переработать архитектуру, изменять ViewState синхронно, использовать [MviReducer] */
 
 @InjectViewState
 class SongPresenter @AssistedInject constructor(
