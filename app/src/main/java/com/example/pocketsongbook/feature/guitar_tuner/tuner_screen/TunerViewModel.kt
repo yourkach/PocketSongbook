@@ -1,6 +1,5 @@
 package com.example.pocketsongbook.feature.guitar_tuner.tuner_screen
 
-import androidx.lifecycle.viewModelScope
 import com.example.pocketsongbook.common.BaseViewModel
 import com.example.pocketsongbook.common.extensions.alsoInvokeOnCompletion
 import com.example.pocketsongbook.common.extensions.isNullOrCompleted
@@ -65,6 +64,7 @@ class TunerViewModel @Inject constructor(
                 tuner.startListening(mode).collect { tuningResult ->
                     mutableTunerState.tuningResult = tuningResult
                     mutableStateFlow.emit(mutableTunerState)
+                    mutableActionsFlow.emit(TunerViewAction.TunerStateUpdate)
                 }
             }
         }.alsoInvokeOnCompletion {

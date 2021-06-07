@@ -9,34 +9,28 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
-import com.example.pocketsongbook.common.ViewModelFragment
 import com.example.pocketsongbook.common.navigation.bottom_navigation.NavigationTab
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.toScreen
+import com.example.pocketsongbook.common.extensions.viewModelCreator
 import com.example.pocketsongbook.databinding.FragmentTunerBinding
 import com.example.pocketsongbook.domain.tuner.StringTuningResult
 import com.example.pocketsongbook.domain.tuner.string_detection.GuitarString
 import com.example.pocketsongbook.feature.guitar_tuner.permissions_screen.MicroPermissionsFragment
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import moxy.ktx.moxyPresenter
 import timber.log.Timber
-import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
-class TunerFragment : ViewModelFragment(R.layout.fragment_tuner), TunerView, OnTabSwitchedListener {
+class TunerFragment : BaseFragment(R.layout.fragment_tuner), TunerView, OnTabSwitchedListener {
 
     @Inject
     lateinit var viewModelProvider: Provider<TunerViewModel>
@@ -72,6 +66,7 @@ class TunerFragment : ViewModelFragment(R.layout.fragment_tuner), TunerView, OnT
         viewModel.viewActionsFlow.onEach { viewAction ->
             when (viewAction) {
                 TunerViewAction.OpenPermissionsScreen -> toMicroPermissionScreen()
+                TunerViewAction.TunerStateUpdate -> updateTunerState(viewModel.viewStateFlow.value)
             }
         }.launchIn(lifecycleScope)
     }
