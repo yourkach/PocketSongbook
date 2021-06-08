@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ListPopupWindow
 import android.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -111,7 +112,9 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
     private fun initSearchView() {
         binding.songsSearchView.apply {
             val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
-            findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
+            findViewById<AutoCompleteTextView>(id).setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
+            )
             setOnQueryTextFocusChangeListener { v, hasFocus ->
                 presenter.onSearchFieldFocusChanged(hasFocus)
             }
