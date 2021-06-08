@@ -7,6 +7,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.transition.TransitionInflater
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
@@ -86,8 +87,8 @@ abstract class BaseFragment(@LayoutRes layoutId: Int) : MvpAppCompatFragment(lay
         @ColorRes backgroundColorId: Int? = null
     ): Snackbar {
         return Snackbar.make(requireView(), text, Snackbar.LENGTH_LONG).apply {
-            backgroundColorId?.let {
-                this.setBackgroundTint(context.resources.getColor(backgroundColorId, context.theme))
+            backgroundColorId?.let { id ->
+                setBackgroundTint(ResourcesCompat.getColor(context.resources, id, context.theme))
             }
             show()
         }

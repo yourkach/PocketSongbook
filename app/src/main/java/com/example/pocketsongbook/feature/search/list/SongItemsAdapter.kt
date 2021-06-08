@@ -65,7 +65,9 @@ class SongItemsAdapter(
 
     inner class SkeletonHolder(itemView: View) : ViewHolder(itemView) {
         private val binding = ItemSearchSongSkeletonBinding.bind(itemView)
-        fun bind() = binding.itemShimmerLayout.startShimmerAnimation()
+        fun bind() {
+            // TODO: настроить шиммер
+        }
     }
 
     inner class ItemHolder(itemView: View) : ViewHolder(itemView) {

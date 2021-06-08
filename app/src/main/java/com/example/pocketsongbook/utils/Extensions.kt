@@ -105,7 +105,3 @@ fun View.hideKeyboard() {
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 }
-
-fun Any.logTagged(text: String) {
-    Timber.tag(this::class.simpleName).d(text)
-}
