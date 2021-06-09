@@ -1,2 +1,3 @@
 rootProject.name = "Pocket Songbook"
-include("app")
+include("app", "core")
+include(":core_db")

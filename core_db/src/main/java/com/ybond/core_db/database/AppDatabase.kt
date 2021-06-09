@@ -1,10 +1,10 @@
-package com.example.pocketsongbook.data.database
+package com.ybond.core_db.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
-import com.example.pocketsongbook.data.database.entities.SavedQueryEntity
-import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
+import com.ybond.core_db.database.entities.FavoriteSongEntity
+import com.ybond.core_db.database.entities.SavedQueryEntity
+import com.ybond.core_db.database.entities.SongOptionsEntity
 
 @Database(
     entities = [

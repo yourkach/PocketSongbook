@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song.models
 
-import com.example.pocketsongbook.domain.models.Chord
+import com.ybond.core.models.Chord
 
 data class TransposeLyricsResponse(
     val formattedLyricsHtml: String,

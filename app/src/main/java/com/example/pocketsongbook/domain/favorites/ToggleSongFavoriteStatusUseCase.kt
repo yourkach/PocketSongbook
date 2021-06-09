@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.domain.favorites
 
-import com.example.pocketsongbook.domain.event_bus.Event
+import com.ybond.core.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.EventBus
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.SongModel
 import javax.inject.Inject
 
 class ToggleSongFavoriteStatusUseCase @Inject constructor(

@@ -1,6 +1,4 @@
-package com.example.pocketsongbook.domain.models
-
-import com.example.pocketsongbook.domain.search.SongsWebsite
+package com.ybond.core.models
 
 data class FoundSongModel(
     val artist: String,

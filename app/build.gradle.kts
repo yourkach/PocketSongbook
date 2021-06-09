@@ -62,10 +62,8 @@ dependencies {
     testImplementation("junit:junit:${Versions.junit}")
     implementation("androidx.recyclerview:recyclerview:${Versions.recyclerView}")
     implementation("com.google.android.material:material:${Versions.material}")
-
-    //Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+    implementation(project(":core"))
+    implementation(project(":core_db"))
 
     // ViewBinding delegate
     implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:${Versions.viewBindingDelegate}")
@@ -102,10 +100,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:${Versions.glide}")
     kapt("com.github.bumptech.glide:compiler:${Versions.glide}")
 
-    //Room
-    implementation("androidx.room:room-runtime:${Versions.room}")
-    implementation("androidx.room:room-ktx:${Versions.room}")
-    kapt("androidx.room:room-compiler:${Versions.room}")
+    //Coroutines
+    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(Dependencies.kotlinCoroutinesCore)
 
     // Timber logging
     implementation("com.jakewharton.timber:timber:${Versions.timber}")

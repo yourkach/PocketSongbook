@@ -1,11 +1,11 @@
 package com.example.pocketsongbook.data.favorites.impl
 
-import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.favorites.FavoriteModelMapper
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.data.favorites.FavoriteSongsUrlsDao
 import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.SongModel
+import com.ybond.core_db.database.FavouriteSongsDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

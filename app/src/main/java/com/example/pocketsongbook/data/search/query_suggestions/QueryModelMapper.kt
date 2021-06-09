@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.data.search.query_suggestions
 
-import com.example.pocketsongbook.data.database.entities.SavedQueryEntity
+import com.ybond.core_db.database.entities.SavedQueryEntity
 import com.example.pocketsongbook.domain.search.suggestions.SavedQueryModel
 import javax.inject.Inject
 
@@ -11,7 +11,10 @@ class QueryModelMapper @Inject constructor() {
     }
 
     fun toEntity(model: SavedQueryModel): SavedQueryEntity {
-        return SavedQueryEntity(text = model.text, saved_at = model.savedAt)
+        return SavedQueryEntity(
+            text = model.text,
+            saved_at = model.savedAt
+        )
     }
 
 }

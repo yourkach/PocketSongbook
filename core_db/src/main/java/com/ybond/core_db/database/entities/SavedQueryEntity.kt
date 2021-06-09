@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.data.database.entities
+package com.ybond.core_db.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

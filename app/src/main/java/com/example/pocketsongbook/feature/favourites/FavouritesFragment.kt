@@ -10,7 +10,7 @@ import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.databinding.FragmentFavouritesBinding
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import dagger.android.support.AndroidSupportInjection
 import moxy.ktx.moxyPresenter

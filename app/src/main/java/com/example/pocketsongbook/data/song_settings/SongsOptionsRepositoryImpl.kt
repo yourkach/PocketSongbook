@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.data.song_settings
 
-import com.example.pocketsongbook.data.database.SongsOptionsDao
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core_db.database.SongsOptionsDao
+import com.ybond.core.models.SongModel
 import com.example.pocketsongbook.domain.song_settings.SongsOptionsRepository
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 import javax.inject.Inject

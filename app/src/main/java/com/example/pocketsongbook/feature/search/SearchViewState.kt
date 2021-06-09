@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.feature.search
 
 import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
-import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.models.FoundSongModel
+import com.ybond.core.models.SongsWebsite
 
 data class SearchViewState(
     val selectedWebsite: SongsWebsite,

@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song
 
-import com.example.pocketsongbook.domain.models.Chord
+import com.ybond.core.models.Chord
 
 interface ChordsMapper {
     fun mapToChords(chordNames: List<String>): List<Chord>

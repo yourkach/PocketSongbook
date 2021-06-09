@@ -1,5 +1,6 @@
 package com.example.pocketsongbook.domain.event_bus
 
+import com.ybond.core.event_bus.Event
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.domain.search
+package com.ybond.core.models
 
 enum class SongsWebsite(val websiteName: String) {
     AmDm("AmDm.ru"),

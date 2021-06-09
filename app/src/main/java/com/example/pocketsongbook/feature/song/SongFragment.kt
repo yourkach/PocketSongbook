@@ -14,11 +14,12 @@ import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ParcelableArgument
 import com.example.pocketsongbook.databinding.FragmentSongBinding
-import com.example.pocketsongbook.domain.models.Chord
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.Chord
+import com.ybond.core.models.SongModel
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
+import com.ybond.core.models.SongsWebsite
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import moxy.ktx.moxyPresenter
@@ -33,7 +34,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     lateinit var songPresenterFactory: SongPresenter.Factory
 
     private val presenter: SongPresenter by moxyPresenter {
-        songPresenterFactory.create(args.song)
+        songPresenterFactory.create(args.toSongModel())
     }
 
     override val hideBottomNavigationBar: Boolean = true
@@ -54,7 +55,6 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     override fun onPause() {
         super.onPause()
         presenter.onViewPaused()
-
     }
 
     private fun setUpSeekBar() {
@@ -241,15 +241,27 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     }
 
     @Parcelize
-    data class Arguments(val song: SongModel) : Parcelable
+    private data class Arguments(
+        val artist: String,
+        val title: String,
+        val lyrics: String,
+        val url: String,
+        val website: SongsWebsite
+    ) : Parcelable {
 
-    companion object {
-        fun newInstance(song:SongModel) : SongFragment {
-            return SongFragment().apply {
-                args = Arguments(song)
+        fun toSongModel(): SongModel = SongModel(artist, title, lyrics, url, website)
+
+        companion object {
+            operator fun invoke(song: SongModel): Arguments {
+                return with(song) { Arguments(artist, title, lyrics, url, website) }
             }
         }
     }
 
+    companion object {
+        fun newInstance(song: SongModel): SongFragment {
+            return SongFragment().apply { args = Arguments(song) }
+        }
+    }
 
 }

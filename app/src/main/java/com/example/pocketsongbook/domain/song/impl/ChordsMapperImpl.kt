@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song.impl
 
-import com.example.pocketsongbook.domain.models.Chord
+import com.ybond.core.models.Chord
 import com.example.pocketsongbook.domain.song.ChordsMapper
 import javax.inject.Inject
 

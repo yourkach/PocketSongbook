@@ -1,10 +1,10 @@
-package com.example.pocketsongbook.data.database
+package com.ybond.core_db.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
+import com.ybond.core_db.database.entities.FavoriteSongEntity
 
 @Dao
 interface FavouriteSongsDao {

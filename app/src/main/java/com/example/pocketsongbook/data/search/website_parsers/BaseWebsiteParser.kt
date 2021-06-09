@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.data.search.website_parsers
 
-import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.FoundSongModel
+import com.ybond.core.models.SongModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup

@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.data.song_settings
 
-import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
+import com.ybond.core_db.database.entities.SongOptionsEntity
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 
 interface SettingsMapper {

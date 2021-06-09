@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.feature.search.mvi
 
 import com.example.pocketsongbook.common.mvi_core.BaseMviReducer
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.models.SongsWebsite
 import com.example.pocketsongbook.feature.search.SearchItemsState
 import com.example.pocketsongbook.feature.search.SearchQueryState
 import com.example.pocketsongbook.feature.search.SearchViewState

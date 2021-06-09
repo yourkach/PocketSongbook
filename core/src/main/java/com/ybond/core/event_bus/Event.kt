@@ -1,4 +1,4 @@
-package com.example.pocketsongbook.domain.event_bus
+package com.ybond.core.event_bus
 
 sealed class Event {
 

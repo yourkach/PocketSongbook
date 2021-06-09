@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.feature.search.mvi.event_reducers
 
 import com.example.pocketsongbook.common.mvi_core.EventReducer
-import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.ybond.core.models.FoundSongModel
 import com.example.pocketsongbook.feature.search.SearchItemsState
 import com.example.pocketsongbook.feature.search.SearchViewState
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenEvent

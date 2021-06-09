@@ -1,9 +1,9 @@
 package com.example.pocketsongbook.feature.search.usecase
 
 import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
-import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.ybond.core.models.FoundSongModel
 import com.example.pocketsongbook.domain.search.SongsRemoteRepository
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.models.SongsWebsite
 import javax.inject.Inject
 
 class GetSearchResultsUseCase @Inject constructor(

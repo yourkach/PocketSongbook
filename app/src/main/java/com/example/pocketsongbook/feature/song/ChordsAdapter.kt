@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.databinding.ItemChordBinding
-import com.example.pocketsongbook.domain.models.Chord
+import com.ybond.core.models.Chord
 
 class ChordsAdapter() :
     RecyclerView.Adapter<ChordsAdapter.ViewHolder>() {

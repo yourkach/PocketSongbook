@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.data.favorites
 
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.SongModel
 
 data class FavoriteSongModel(
     val song: SongModel,

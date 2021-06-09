@@ -6,10 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.databinding.ItemChordBinding
 import com.example.pocketsongbook.databinding.ItemSearchSongBinding
 import com.example.pocketsongbook.databinding.ItemSearchSongSkeletonBinding
-import com.example.pocketsongbook.domain.models.FoundSongModel
+import com.ybond.core.models.FoundSongModel
 import com.example.pocketsongbook.utils.EqualsDiffCallback
 import com.example.pocketsongbook.utils.inflate
 import com.example.pocketsongbook.utils.setOnSafeClickListener

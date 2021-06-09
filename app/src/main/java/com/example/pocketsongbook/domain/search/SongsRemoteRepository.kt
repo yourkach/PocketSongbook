@@ -1,7 +1,8 @@
 package com.example.pocketsongbook.domain.search
 
-import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.FoundSongModel
+import com.ybond.core.models.SongModel
+import com.ybond.core.models.SongsWebsite
 
 interface SongsRemoteRepository {
 

@@ -5,10 +5,10 @@ import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.mvi_core.StateListener
 import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
 import com.example.pocketsongbook.data.search.website_parsers.ParseSongPageError
-import com.example.pocketsongbook.domain.event_bus.Event
+import com.ybond.core.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
-import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.models.FoundSongModel
+import com.ybond.core.models.SongsWebsite
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenEvent
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenReducer
 import com.example.pocketsongbook.feature.search.usecase.DeleteQuerySuggestionUseCase

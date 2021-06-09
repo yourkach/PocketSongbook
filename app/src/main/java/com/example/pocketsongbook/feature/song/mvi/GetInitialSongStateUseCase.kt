@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.feature.song.mvi
 
 import com.example.pocketsongbook.domain.favorites.CheckIsFavoriteUseCase
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.models.SongModel
 import com.example.pocketsongbook.domain.song.GetLyricsStateUseCase
 import com.example.pocketsongbook.domain.song_settings.usecase.GetSongSettingsUseCase
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChordBarViewStateModel

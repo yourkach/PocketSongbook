@@ -1,11 +1,10 @@
 package com.example.pocketsongbook.di.modules
 
 import android.content.Context
-import androidx.room.Room
-import com.example.pocketsongbook.data.database.AppDatabase
-import com.example.pocketsongbook.data.database.FavouriteSongsDao
-import com.example.pocketsongbook.data.database.SavedQueriesDao
-import com.example.pocketsongbook.data.database.SongsOptionsDao
+import com.ybond.core_db.database.FavouriteSongsDao
+import com.ybond.core_db.database.SavedQueriesDao
+import com.ybond.core_db.database.SongsOptionsDao
+import com.ybond.core_db.database.provider.DaoProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -15,23 +14,23 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): AppDatabase = Room.databaseBuilder(
-        context,
-        AppDatabase::class.java, "songbook_database"
-    ).build()
+    fun provideDaoProvider(context: Context): DaoProvider = DaoProvider(context)
 
     @Provides
     @Singleton
-    fun provideFavouriteSongsDao(database: AppDatabase): FavouriteSongsDao =
-        database.favouriteSongsDao()
+    fun provideFavouriteSongsDao(daoProvider: DaoProvider): FavouriteSongsDao {
+        return daoProvider.getFavoritesDao()
+    }
 
     @Provides
     @Singleton
-    fun provideQueriesDao(database: AppDatabase): SavedQueriesDao =
-        database.savedQueriesDao()
+    fun provideQueriesDao(daoProvider: DaoProvider): SavedQueriesDao {
+        return daoProvider.getSavedQueriesDao()
+    }
 
     @Provides
     @Singleton
-    fun provideSettingsDao(database: AppDatabase): SongsOptionsDao =
-        database.songsSettingsDao()
+    fun provideSettingsDao(daoProvider: DaoProvider): SongsOptionsDao {
+        return daoProvider.getSongsOptionsDao()
+    }
 }

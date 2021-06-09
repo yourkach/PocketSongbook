@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.data.favorites
 
-import com.example.pocketsongbook.data.database.entities.FavoriteSongEntity
-import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core_db.database.entities.FavoriteSongEntity
+import com.ybond.core.models.SongModel
+import com.ybond.core.models.SongsWebsite
 import javax.inject.Inject
 
 class FavoriteModelMapper @Inject constructor() {
