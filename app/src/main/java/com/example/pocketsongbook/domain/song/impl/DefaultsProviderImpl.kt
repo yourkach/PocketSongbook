@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.song.DefaultsProvider
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
+import com.ybond.core_entities.models.FontChangeDefaults
+import com.ybond.core_entities.models.KeyChangeDefaults
 import javax.inject.Inject
 
 class DefaultsProviderImpl @Inject constructor() : DefaultsProvider {

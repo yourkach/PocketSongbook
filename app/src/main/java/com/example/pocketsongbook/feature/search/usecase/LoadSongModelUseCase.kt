@@ -1,14 +1,14 @@
 package com.example.pocketsongbook.feature.search.usecase
 
-import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
-import com.ybond.core.models.FoundSongModel
-import com.ybond.core.models.SongModel
-import com.example.pocketsongbook.domain.search.SongsRemoteRepository
+import com.ybond.domain.repositories.FavouriteSongsRepository
+import com.ybond.core_entities.models.FoundSongModel
+import com.ybond.core_entities.models.SongModel
+import com.ybond.domain.repositories.SongsRemoteRepository
 import javax.inject.Inject
 
 class LoadSongModelUseCase @Inject constructor(
-    private val songsRemoteRepository: SongsRemoteRepository,
-    private val favouriteSongsRepository: FavouriteSongsRepository
+    private val songsRemoteRepository: com.ybond.domain.repositories.SongsRemoteRepository,
+    private val favouriteSongsRepository: com.ybond.domain.repositories.FavouriteSongsRepository
 ) {
 
     suspend operator fun invoke(foundSong: FoundSongModel): SongModel {

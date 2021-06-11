@@ -1,9 +1,9 @@
 package com.example.pocketsongbook.feature.song.mvi
 
-import com.example.pocketsongbook.domain.favorites.CheckIsFavoriteUseCase
-import com.ybond.core.models.SongModel
+import com.ybond.domain.usecases.favorites.CheckIsFavoriteUseCase
+import com.ybond.core_entities.models.SongModel
 import com.example.pocketsongbook.domain.song.GetLyricsStateUseCase
-import com.example.pocketsongbook.domain.song_settings.usecase.GetSongSettingsUseCase
+import com.ybond.domain.usecases.song_settings.GetSongSettingsUseCase
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChordBarViewStateModel
 import com.example.pocketsongbook.feature.song.mvi.state_models.SongScreenState
 import com.example.pocketsongbook.feature.song.mvi.state_models.SongViewStateModel

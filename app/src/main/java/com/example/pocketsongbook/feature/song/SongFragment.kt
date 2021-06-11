@@ -14,12 +14,8 @@ import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ParcelableArgument
 import com.example.pocketsongbook.databinding.FragmentSongBinding
-import com.ybond.core.models.Chord
-import com.ybond.core.models.SongModel
-import com.example.pocketsongbook.domain.song.models.ChordsKey
-import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
-import com.ybond.core.models.SongsWebsite
+import com.ybond.core_entities.models.*
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import moxy.ktx.moxyPresenter

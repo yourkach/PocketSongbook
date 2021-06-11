@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.feature.search
 
 import com.example.pocketsongbook.common.BaseView
-import com.ybond.core.models.SongModel
+import com.ybond.core_entities.models.SongModel
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.SkipStrategy

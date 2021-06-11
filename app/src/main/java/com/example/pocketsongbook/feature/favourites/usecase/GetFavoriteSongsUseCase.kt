@@ -1,12 +1,12 @@
 package com.example.pocketsongbook.feature.favourites.usecase
 
-import com.example.pocketsongbook.data.favorites.FavoriteSongModel
-import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
+import com.ybond.core_entities.models.FavoriteSongModel
+import com.ybond.domain.repositories.FavouriteSongsRepository
 import com.example.pocketsongbook.feature.favourites.ObtainSongsOption
 import javax.inject.Inject
 
 class GetFavoriteSongsUseCase @Inject constructor(
-    private val favouriteSongsRepository: FavouriteSongsRepository
+    private val favouriteSongsRepository: com.ybond.domain.repositories.FavouriteSongsRepository
 ) {
 
     suspend operator fun invoke(option: ObtainSongsOption): List<FavoriteSongModel> {

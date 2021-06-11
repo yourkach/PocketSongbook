@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.song.ChordsKeyChangeHelper
-import com.example.pocketsongbook.domain.song.KeyChangeDefaults
-import com.example.pocketsongbook.domain.song.models.ChordsKey
-import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeType
-import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
+import com.ybond.core_entities.models.KeyChangeDefaults
+import com.ybond.core_entities.models.ChordsKey
+import com.ybond.core_entities.models.ChangeType
+import com.ybond.core_entities.models.ChangeableOption
 import javax.inject.Inject
 
 class ChordsKeyChangeHelperImpl @Inject constructor(

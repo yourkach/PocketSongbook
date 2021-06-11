@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.feature.search.usecase
 
-import com.example.pocketsongbook.domain.search.SavedSearchQueryRepository
+import com.ybond.domain.repositories.SavedSearchQueryRepository
 import com.example.pocketsongbook.feature.search.QuerySuggestion
 import javax.inject.Inject
 

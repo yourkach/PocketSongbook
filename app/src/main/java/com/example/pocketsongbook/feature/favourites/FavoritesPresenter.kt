@@ -3,10 +3,10 @@ package com.example.pocketsongbook.feature.favourites
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.BaseView
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
-import com.example.pocketsongbook.data.favorites.FavoriteSongModel
-import com.ybond.core.event_bus.Event
-import com.example.pocketsongbook.domain.event_bus.EventBus
-import com.ybond.core.models.SongModel
+import com.ybond.core_entities.models.FavoriteSongModel
+import com.ybond.core_entities.event_bus.Event
+import com.ybond.domain.usecases.event_bus.EventBus
+import com.ybond.core_entities.models.SongModel
 import com.example.pocketsongbook.feature.favourites.usecase.GetFavoriteSongsUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

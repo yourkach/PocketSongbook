@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.feature.search.usecase
 
-import com.example.pocketsongbook.domain.search.SavedSearchQueryRepository
+import com.ybond.domain.repositories.SavedSearchQueryRepository
 import javax.inject.Inject
 
 class DeleteQuerySuggestionUseCase @Inject constructor(
-    private val savedSearchQueryRepository: SavedSearchQueryRepository
+    private val savedSearchQueryRepository: com.ybond.domain.repositories.SavedSearchQueryRepository
 ) {
 
     suspend operator fun invoke(suggestionText: String) {

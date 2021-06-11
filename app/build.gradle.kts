@@ -62,14 +62,14 @@ dependencies {
     testImplementation("junit:junit:${Versions.junit}")
     implementation("androidx.recyclerview:recyclerview:${Versions.recyclerView}")
     implementation("com.google.android.material:material:${Versions.material}")
-    implementation(project(":core"))
-    implementation(project(":core_db"))
+
+    // Module dependencies
+    implementation(project(":core_entities"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
 
     // ViewBinding delegate
     implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:${Versions.viewBindingDelegate}")
-
-    //Jsoup
-    implementation("org.jsoup:jsoup:${Versions.jsoupVersion}")
 
     // Skeleton shimmer
     implementation("com.facebook.shimmer:shimmer:${Versions.shimmer}")
@@ -88,10 +88,6 @@ dependencies {
     implementation("com.google.dagger:dagger:${Versions.dagger}")
     implementation("com.google.dagger:dagger-android-support:${Versions.dagger}")
     implementation("com.google.dagger:dagger-android:${Versions.dagger}")
-
-    // Kotpref
-    implementation("com.chibatching.kotpref:kotpref:${Versions.kotpref}")
-    implementation("com.chibatching.kotpref:initializer:${Versions.kotpref}")
 
     //Cicerone Navigation
     implementation("com.github.terrakok:cicerone:${Versions.cicerone}")

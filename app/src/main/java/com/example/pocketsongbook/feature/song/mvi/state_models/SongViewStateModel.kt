@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.feature.song.mvi.state_models
 
-import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
+import com.ybond.core_entities.models.SongOptionsState
 
 sealed class SongViewStateModel {
     object Loading : SongViewStateModel()

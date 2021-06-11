@@ -1,10 +1,10 @@
 package com.example.pocketsongbook.domain.song.impl
 
-import com.example.pocketsongbook.domain.song.FontChangeDefaults
+import com.ybond.core_entities.models.FontChangeDefaults
 import com.example.pocketsongbook.domain.song.FontSizeChangeHelper
-import com.example.pocketsongbook.domain.song.models.FontSize
-import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeType
-import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
+import com.ybond.core_entities.models.FontSize
+import com.ybond.core_entities.models.ChangeType
+import com.ybond.core_entities.models.ChangeableOption
 import javax.inject.Inject
 
 class FontSizeChangeHelperImpl @Inject constructor(

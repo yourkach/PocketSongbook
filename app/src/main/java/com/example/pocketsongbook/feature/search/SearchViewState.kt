@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.feature.search
 
-import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
-import com.ybond.core.models.FoundSongModel
-import com.ybond.core.models.SongsWebsite
+import com.ybond.core_entities.models.FoundSongModel
+import com.ybond.core_entities.models.InternalError
+import com.ybond.core_entities.models.SongsWebsite
 
 data class SearchViewState(
     val selectedWebsite: SongsWebsite,
@@ -44,7 +44,7 @@ sealed class SearchItemsState {
         ) : SearchResult()
 
         class Failed(
-            val error: LoadSearchResultsError,
+            val error: InternalError.LoadSearchResultsError,
             override val query: String,
             override val website: SongsWebsite
         ) : SearchResult()

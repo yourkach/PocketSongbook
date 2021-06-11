@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.domain.song.impl
 
 import com.example.pocketsongbook.domain.song.SongTransponder
-import com.example.pocketsongbook.domain.song.models.ChordsKey
+import com.ybond.core_entities.models.ChordsKey
 import com.example.pocketsongbook.utils.ChordsTransponder
 import javax.inject.Inject
 

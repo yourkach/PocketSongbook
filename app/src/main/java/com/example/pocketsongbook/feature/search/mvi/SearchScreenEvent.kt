@@ -1,9 +1,9 @@
 package com.example.pocketsongbook.feature.search.mvi
 
-import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
-import com.ybond.core.models.FoundSongModel
-import com.ybond.core.models.SongsWebsite
+import com.ybond.core_entities.models.FoundSongModel
+import com.ybond.core_entities.models.SongsWebsite
 import com.example.pocketsongbook.feature.search.QuerySuggestion
+import com.ybond.core_entities.models.InternalError
 
 sealed class SearchScreenEvent {
 
@@ -30,7 +30,7 @@ sealed class SearchScreenEvent {
         data class Failed(
             override val query: String,
             override val website: SongsWebsite,
-            val error: LoadSearchResultsError
+            val error: InternalError.LoadSearchResultsError
         ) : SearchItemsEvent()
     }
 

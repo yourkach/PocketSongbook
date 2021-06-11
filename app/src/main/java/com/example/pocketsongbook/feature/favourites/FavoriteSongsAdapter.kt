@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pocketsongbook.R
-import com.example.pocketsongbook.data.favorites.FavoriteSongModel
+import com.ybond.core_entities.models.FavoriteSongModel
 import com.example.pocketsongbook.databinding.ItemFavoriteSongBinding
 import com.example.pocketsongbook.utils.EqualsDiffCallback
 import com.example.pocketsongbook.utils.formatByDefault

@@ -2,6 +2,7 @@ package com.example.pocketsongbook.di
 
 import com.example.pocketsongbook.common.SongbookApplication
 import com.example.pocketsongbook.di.modules.*
+import com.ybond.data.di.DataComponent
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -14,17 +15,10 @@ import javax.inject.Singleton
     modules = [
         AppModule::class,
         NavigationModule::class,
-        SearchModule::class,
-        DatabaseModule::class,
         DefaultsModule::class,
-        SettingsModule::class,
         SongModule::class,
         TunerModule::class,
-        PrefsBindingModule::class,
-        FavouritesModule::class,
-        AndroidInjectionModule::class,
-        AndroidSupportInjectionModule::class,
-        ActivityInjectionModule::class
+        AndroidInjectionModule::class
     ]
 )
 interface AppComponent : AndroidInjector<SongbookApplication> {

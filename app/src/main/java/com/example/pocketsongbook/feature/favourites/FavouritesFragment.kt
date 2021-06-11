@@ -8,9 +8,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
-import com.example.pocketsongbook.data.favorites.FavoriteSongModel
+import com.ybond.core_entities.models.FavoriteSongModel
 import com.example.pocketsongbook.databinding.FragmentFavouritesBinding
-import com.ybond.core.models.SongModel
+import com.ybond.core_entities.models.SongModel
 import com.example.pocketsongbook.feature.song.SongFragment
 import dagger.android.support.AndroidSupportInjection
 import moxy.ktx.moxyPresenter

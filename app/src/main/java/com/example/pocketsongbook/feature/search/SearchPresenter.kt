@@ -3,18 +3,17 @@ package com.example.pocketsongbook.feature.search
 import com.example.pocketsongbook.common.BasePresenter
 import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.mvi_core.StateListener
-import com.example.pocketsongbook.data.search.website_parsers.LoadSearchResultsError
-import com.example.pocketsongbook.data.search.website_parsers.ParseSongPageError
-import com.ybond.core.event_bus.Event
-import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
-import com.ybond.core.models.FoundSongModel
-import com.ybond.core.models.SongsWebsite
+import com.ybond.core_entities.event_bus.Event
+import com.ybond.domain.usecases.event_bus.SubscribeToEventsUseCase
+import com.ybond.core_entities.models.FoundSongModel
+import com.ybond.core_entities.models.SongsWebsite
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenEvent
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenReducer
 import com.example.pocketsongbook.feature.search.usecase.DeleteQuerySuggestionUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetQuerySuggestionsUseCase
 import com.example.pocketsongbook.feature.search.usecase.GetSearchResultsUseCase
 import com.example.pocketsongbook.feature.search.usecase.LoadSongModelUseCase
+import com.ybond.core_entities.models.InternalError
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
@@ -120,7 +119,7 @@ class SearchPresenter @Inject constructor(
                 screenStateReducer.obtainEvent(
                     SearchScreenEvent.SearchItemsEvent.Loaded(query, website, items)
                 )
-            } catch (e: LoadSearchResultsError) {
+            } catch (e: InternalError.LoadSearchResultsError) {
                 screenStateReducer.obtainEvent(
                     SearchScreenEvent.SearchItemsEvent.Failed(query, website, e)
                 )
@@ -149,9 +148,9 @@ class SearchPresenter @Inject constructor(
 
     override fun onFailure(e: Throwable) {
         when (e) {
-            is LoadSearchResultsError.ParsingError -> viewState.showSearchFailedError()
-            is ParseSongPageError -> viewState.showFailedToLoadSongError()
-            is LoadSearchResultsError.ConnectionError,
+            is InternalError.LoadSearchResultsError.ParsingError -> viewState.showSearchFailedError()
+            is InternalError.ParseSongPageError -> viewState.showFailedToLoadSongError()
+            is InternalError.LoadSearchResultsError.ConnectionError,
             is SocketTimeoutException,
             is UnknownHostException -> viewState.showInternetConnectionError()
         }

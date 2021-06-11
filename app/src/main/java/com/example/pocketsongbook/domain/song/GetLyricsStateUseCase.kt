@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song
 
-import com.example.pocketsongbook.domain.song.models.ChordsKey
+import com.ybond.core_entities.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.TransposeLyricsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
