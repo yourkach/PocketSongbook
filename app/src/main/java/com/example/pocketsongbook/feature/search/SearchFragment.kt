@@ -112,7 +112,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
         binding.songsSearchView.apply {
             val id = context.resources.getIdentifier("android:id/search_src_text", null, null)
             findViewById<AutoCompleteTextView>(id).setTextColor(requireContext().getColor(R.color.colorPrimaryDark))
-            setOnQueryTextFocusChangeListener { v, hasFocus ->
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
                 presenter.onSearchFieldFocusChanged(hasFocus)
             }
             setOnQueryTextListener(

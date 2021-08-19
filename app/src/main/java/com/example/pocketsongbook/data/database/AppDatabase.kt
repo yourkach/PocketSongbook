@@ -12,7 +12,8 @@ import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
         SongOptionsEntity::class,
         SavedQueryEntity::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favouriteSongsDao(): FavouriteSongsDao

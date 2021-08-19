@@ -9,7 +9,7 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
     override val website = SongsWebsite.MyChords
 
-    private val baseUrl by lazy { "https://hm6.ru/" }
+    private val baseUrl by lazy { "https://ru.my-chord.net/" }
 
     private val searchUrl by lazy { "search?q=" }
 
