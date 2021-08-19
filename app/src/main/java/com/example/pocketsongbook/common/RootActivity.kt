@@ -1,9 +1,12 @@
 package com.example.pocketsongbook.common
 
+import android.animation.Animator
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.navigation.BackPressedListener
@@ -13,6 +16,7 @@ import com.example.pocketsongbook.common.navigation.bottom_navigation.Navigation
 import com.example.pocketsongbook.common.navigation.bottom_navigation.OnTabSwitchedListener
 import com.example.pocketsongbook.common.navigation.impl.TabsFactoryImpl
 import com.example.pocketsongbook.databinding.ActivityMainBinding
+import com.example.pocketsongbook.utils.startFloatAnimator
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import dagger.android.AndroidInjection
@@ -134,8 +138,30 @@ class RootActivity : MvpAppCompatActivity(), HasAndroidInjector {
         return holder.getCicerone(tab)
     }
 
+    private var bottomBarAnimator: Animator? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
+
     fun setNavigationBarVisible(isVisible: Boolean) {
-        binding.bottomNavigationBar.root.isVisible = isVisible
+        with(binding.bottomNavigationBar.root) {
+            val barHeight = context.resources.getDimension(R.dimen.nav_bar_height)
+            val (from, to) = if (isVisible) barHeight to 0f else 0f to barHeight
+            bottomBarAnimator = startFloatAnimator(
+                fromValue = from,
+                toValue = to,
+                durationMillis = 100L,
+                onUpdate = { animatedValue ->
+                    binding.bottomNavigationBar.root.translationY = animatedValue
+                },
+                onStart = {
+                    binding.rootContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        bottomMargin = if (isVisible) barHeight.toInt() else 0
+                    }
+                }
+            )
+        }
     }
 
     fun showLoading() {

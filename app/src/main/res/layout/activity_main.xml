@@ -5,7 +5,6 @@
     android:id="@+id/clRootContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     tools:context=".common.RootActivity">
 
     <include
@@ -20,12 +19,9 @@
 
     <FrameLayout
         android:id="@+id/rootContainer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/nav_bar_height" />
 
 
     <FrameLayout
