@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song_settings.usecase
 
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.domain.song_settings.SongsOptionsRepository
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 import javax.inject.Inject

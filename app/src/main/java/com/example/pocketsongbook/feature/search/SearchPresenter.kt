@@ -8,7 +8,7 @@ import com.example.pocketsongbook.data.search.website_parsers.ParseSongPageError
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.entities.SongsWebsite
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenEvent
 import com.example.pocketsongbook.feature.search.mvi.SearchScreenReducer
 import com.example.pocketsongbook.feature.search.usecase.DeleteQuerySuggestionUseCase

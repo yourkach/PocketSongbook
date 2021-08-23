@@ -1,23 +1,23 @@
 package com.example.pocketsongbook.data.favorites.impl
 
-import com.example.pocketsongbook.data.database.FavouriteSongsDao
 import com.example.pocketsongbook.data.favorites.FavoriteModelMapper
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.data.favorites.FavoriteSongsUrlsDao
 import com.example.pocketsongbook.domain.favorites.FavouriteSongsRepository
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
+import com.ybond.core_db_api.dao.FavoriteSongsDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FavouriteSongsRepositoryImpl @Inject constructor(
-    private val favouriteSongsDao: FavouriteSongsDao,
+    private val favoriteSongsDao: FavoriteSongsDao,
     private val favoriteSongsUrlsDao: FavoriteSongsUrlsDao,
     private val modelMapper: FavoriteModelMapper
 ) : FavouriteSongsRepository {
 
     override suspend fun getAllFavourites(): List<FavoriteSongModel> {
-        return favouriteSongsDao.getAll().map(modelMapper::toModel).also { songs ->
+        return favoriteSongsDao.getAll().map(modelMapper::toModel).also { songs ->
             favoriteSongsUrlsDao.urls.apply {
                 clear()
                 addAll(songs.map { it.song.url })
@@ -26,15 +26,15 @@ class FavouriteSongsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSongsByQuery(query: String): List<FavoriteSongModel> {
-        return favouriteSongsDao.findByQuery(query).map(modelMapper::toModel)
+        return favoriteSongsDao.findByQuery(query).map(modelMapper::toModel)
     }
 
     override suspend fun findSongByUrl(url: String): FavoriteSongModel? {
-        return favouriteSongsDao.findByUrl(url).firstOrNull()?.let(modelMapper::toModel)
+        return favoriteSongsDao.findByUrl(url).firstOrNull()?.let(modelMapper::toModel)
     }
 
     override suspend fun removeSongByUrl(url: String) {
-        favouriteSongsDao.deleteByUrl(url)
+        favoriteSongsDao.deleteByUrl(url)
         favoriteSongsUrlsDao.urls.remove(url)
     }
 
@@ -43,7 +43,7 @@ class FavouriteSongsRepositoryImpl @Inject constructor(
             song = song,
             timeAdded = System.currentTimeMillis()
         )
-        favouriteSongsDao.insert(modelMapper.toEntity(favoriteSongModel))
+        favoriteSongsDao.insert(modelMapper.toEntity(favoriteSongModel))
         favoriteSongsUrlsDao.urls.add(song.url)
     }
 

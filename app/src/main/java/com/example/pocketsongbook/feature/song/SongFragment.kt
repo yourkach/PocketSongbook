@@ -15,7 +15,7 @@ import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.common.navigation.ParcelableArgument
 import com.example.pocketsongbook.databinding.FragmentSongBinding
 import com.example.pocketsongbook.domain.models.Chord
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.feature.song.mvi.state_models.*
@@ -244,7 +244,7 @@ class SongFragment : BaseFragment(R.layout.fragment_song), SongView {
     data class Arguments(val song: SongModel) : Parcelable
 
     companion object {
-        fun newInstance(song:SongModel) : SongFragment {
+        fun newInstance(song: SongModel) : SongFragment {
             return SongFragment().apply {
                 args = Arguments(song)
             }

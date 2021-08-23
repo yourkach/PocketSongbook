@@ -2,9 +2,9 @@ package com.example.pocketsongbook.data.search
 
 import com.example.pocketsongbook.data.search.website_parsers.SongsWebsiteParser
 import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.domain.search.SongsRemoteRepository
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.entities.SongsWebsite
 
 
 class SongsRemoteRepositoryImpl(vararg websiteParsers: SongsWebsiteParser) :

@@ -6,7 +6,7 @@ import com.example.pocketsongbook.common.extensions.setAndCancelJob
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.EventBus
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.feature.favourites.usecase.GetFavoriteSongsUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

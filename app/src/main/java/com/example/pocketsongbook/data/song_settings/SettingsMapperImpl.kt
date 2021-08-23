@@ -1,12 +1,12 @@
 package com.example.pocketsongbook.data.song_settings
 
-import com.example.pocketsongbook.data.database.entities.SongOptionsEntity
 import com.example.pocketsongbook.domain.song.FontChangeDefaults
 import com.example.pocketsongbook.domain.song.KeyChangeDefaults
 import com.example.pocketsongbook.domain.song.models.ChordsKey
 import com.example.pocketsongbook.domain.song.models.FontSize
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 import com.example.pocketsongbook.feature.song.mvi.state_models.ChangeableOption
+import com.ybond.core_db_api.entities.SongOptionsEntity
 import javax.inject.Inject
 
 class SettingsMapperImpl @Inject constructor(

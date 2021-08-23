@@ -13,9 +13,8 @@ import com.example.pocketsongbook.R
 import com.example.pocketsongbook.common.BaseFragment
 import com.example.pocketsongbook.common.navigation.toScreen
 import com.example.pocketsongbook.databinding.FragmentSearchBinding
-import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
-import com.example.pocketsongbook.domain.search.toSongsWebsiteOrNull
+import com.ybond.core.entities.SongModel
+import com.ybond.core.entities.SongsWebsite
 import com.example.pocketsongbook.feature.favourites.FavouritesFragment
 import com.example.pocketsongbook.feature.search.list.SongItemsAdapter
 import com.example.pocketsongbook.feature.search.list.SuggestionsAdapter
@@ -24,6 +23,7 @@ import com.example.pocketsongbook.utils.SearchLayoutManager
 import com.example.pocketsongbook.utils.hideKeyboard
 import com.example.pocketsongbook.utils.isViewFocused
 import com.example.pocketsongbook.utils.queryText
+import com.ybond.core.entities.toSongsWebsiteOrNull
 import moxy.ktx.moxyPresenter
 import timber.log.Timber
 import javax.inject.Inject

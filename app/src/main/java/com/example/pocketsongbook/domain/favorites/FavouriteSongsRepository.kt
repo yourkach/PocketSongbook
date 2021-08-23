@@ -1,7 +1,7 @@
 package com.example.pocketsongbook.domain.favorites
 
 import com.example.pocketsongbook.data.favorites.FavoriteSongModel
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 
 interface FavouriteSongsRepository {
     suspend fun getAllFavourites(): List<FavoriteSongModel>

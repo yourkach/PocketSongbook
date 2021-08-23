@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.data.search.query_suggestions
 
-import com.example.pocketsongbook.data.database.SavedQueriesDao
 import com.example.pocketsongbook.domain.search.SavedSearchQueryRepository
 import com.example.pocketsongbook.domain.search.suggestions.SavedQueryModel
+import com.ybond.core_db_api.dao.SavedQueriesDao
 import javax.inject.Inject
 
 class SavedSearchQueryRepositoryImpl @Inject constructor(

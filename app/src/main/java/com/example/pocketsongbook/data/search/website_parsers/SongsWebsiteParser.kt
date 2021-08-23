@@ -1,8 +1,8 @@
 package com.example.pocketsongbook.data.search.website_parsers
 
 import com.example.pocketsongbook.domain.models.FoundSongModel
-import com.example.pocketsongbook.domain.models.SongModel
-import com.example.pocketsongbook.domain.search.SongsWebsite
+import com.ybond.core.entities.SongModel
+import com.ybond.core.entities.SongsWebsite
 
 interface SongsWebsiteParser {
 

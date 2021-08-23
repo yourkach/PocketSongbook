@@ -7,7 +7,7 @@ import com.example.pocketsongbook.common.mvi_core.MviReducer
 import com.example.pocketsongbook.domain.event_bus.Event
 import com.example.pocketsongbook.domain.event_bus.SubscribeToEventsUseCase
 import com.example.pocketsongbook.domain.favorites.ToggleSongFavoriteStatusUseCase
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.domain.song_settings.usecase.SaveOrUpdateSongOptionsState
 import com.example.pocketsongbook.feature.song.mvi.GetInitialSongStateUseCase
 import com.example.pocketsongbook.feature.song.mvi.GetUpdatedStateUseCase

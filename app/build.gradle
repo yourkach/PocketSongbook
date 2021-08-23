@@ -122,4 +122,8 @@ dependencies {
     // Timber logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    implementation(project(":core_db_api"))
+    implementation(project(":feature_songview_api"))
+    implementation(project(":core"))
+
 }

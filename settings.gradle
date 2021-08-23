@@ -1,2 +1,8 @@
 rootProject.name='Pocket Songbook'
 include ':app'
+include ':feature_favorites_api'
+include ':feature_favorites_impl'
+include ':core_db_api'
+include ':core_presentation'
+include ':core'
+include ':feature_songview_api'

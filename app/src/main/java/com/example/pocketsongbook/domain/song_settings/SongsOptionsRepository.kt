@@ -1,6 +1,6 @@
 package com.example.pocketsongbook.domain.song_settings
 
-import com.example.pocketsongbook.domain.models.SongModel
+import com.ybond.core.entities.SongModel
 import com.example.pocketsongbook.domain.song_settings.model.SongOptionsState
 
 interface SongsOptionsRepository {

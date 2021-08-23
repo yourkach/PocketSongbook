@@ -3,9 +3,9 @@ package com.example.pocketsongbook.di.modules
 import android.content.Context
 import androidx.room.Room
 import com.example.pocketsongbook.data.database.AppDatabase
-import com.example.pocketsongbook.data.database.FavouriteSongsDao
-import com.example.pocketsongbook.data.database.SavedQueriesDao
-import com.example.pocketsongbook.data.database.SongsOptionsDao
+import com.ybond.core_db_api.dao.FavoriteSongsDao
+import com.ybond.core_db_api.dao.SavedQueriesDao
+import com.ybond.core_db_api.dao.SongsOptionsDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -22,8 +22,8 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideFavouriteSongsDao(database: AppDatabase): FavouriteSongsDao =
-        database.favouriteSongsDao()
+    fun provideFavoriteSongsDao(database: AppDatabase): FavoriteSongsDao =
+        database.favoriteSongsDao()
 
     @Provides
     @Singleton
@@ -33,5 +33,5 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideSettingsDao(database: AppDatabase): SongsOptionsDao =
-        database.songsSettingsDao()
+        database.songsOptionsDao()
 }

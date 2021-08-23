@@ -2,6 +2,8 @@ package com.example.pocketsongbook.di
 
 import com.example.pocketsongbook.common.SongbookApplication
 import com.example.pocketsongbook.di.modules.*
+import com.ybond.core_db_api.DatabaseApi
+import com.ybond.feature_songview_api.SongViewApi
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -19,6 +21,7 @@ import javax.inject.Singleton
         DefaultsModule::class,
         SettingsModule::class,
         SongModule::class,
+        SongViewModule::class,
         TunerModule::class,
         PrefsBindingModule::class,
         FavouritesModule::class,
@@ -27,7 +30,7 @@ import javax.inject.Singleton
         ActivityInjectionModule::class
     ]
 )
-interface AppComponent : AndroidInjector<SongbookApplication> {
+interface AppComponent : AndroidInjector<SongbookApplication>, DatabaseApi, SongViewApi {
 
     @Component.Factory
     interface Builder {
