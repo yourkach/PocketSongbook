@@ -115,7 +115,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search),
             findViewById<AutoCompleteTextView>(id).setTextColor(
                 ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             )
-            setOnQueryTextFocusChangeListener { v, hasFocus ->
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
                 presenter.onSearchFieldFocusChanged(hasFocus)
             }
             setOnQueryTextListener(

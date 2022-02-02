@@ -7,8 +7,6 @@ import javax.inject.Inject
 
 class AmdmWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
-    override val website = SongsWebsite.AmDm
-
     private val baseUrl = "https://amdm.ru/search/?q="
 
     override fun buildSearchURL(searchQuery: String): String {
@@ -35,7 +33,7 @@ class AmdmWebsiteParser @Inject constructor() : BaseWebsiteParser() {
                     artist = artist,
                     title = title,
                     url = link,
-                    website = website
+                    website = SongsWebsite.AmDm
                 )
             )
         }

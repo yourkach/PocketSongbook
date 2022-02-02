@@ -7,8 +7,6 @@ import javax.inject.Inject
 
 class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
 
-    override val website = SongsWebsite.MyChords
-
     private val baseUrl by lazy { "https://ru.my-chord.net/" }
 
     private val searchUrl by lazy { "search?q=" }
@@ -43,7 +41,7 @@ class MychordsWebsiteParser @Inject constructor() : BaseWebsiteParser() {
                     artist = artist,
                     title = title,
                     url = link,
-                    website = website
+                    website = SongsWebsite.MyChords
                 )
             )
         }
