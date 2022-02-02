@@ -21,13 +21,14 @@ class ChordsMapperImpl @Inject constructor() : ChordsMapper {
         private val chordPicturePatterns: List<ChordPictureUrlPattern> by lazy {
             listOf(
                 ChordPictureUrlPattern(
-                    baseUrl = "https://amdm.ru/images/chords/${NAME_PLACEHOLDER}_0.gif",
+                    baseUrl = "https://cs.amdm.ru/images/chords/${NAME_PLACEHOLDER}_0.gif",
                     nameSharpReplacement = "w"
-                ),
-                ChordPictureUrlPattern(
-                    baseUrl = "https://hm6.ru/i/img/akkords/${NAME_PLACEHOLDER}.png?ch201",
-                    nameSharpReplacement = "sharp"
                 )
+                //,
+                //ChordPictureUrlPattern(
+                //    baseUrl = "https://hm6.ru/i/img/akkords/${NAME_PLACEHOLDER}.png?ch201",
+                //    nameSharpReplacement = "sharp"
+                //)
             )
         }
     }
